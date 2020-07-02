@@ -1,0 +1,46 @@
+.ReactVirtualized__Table__headerColumn {
+  // flex: 0 0 150px !important;
+
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+  margin: 0;
+}
+.ReactVirtualized__Table__headerRow {
+  cursor: pointer;
+
+  background: #f9faff;
+}
+.ReactVirtualized__Table__Grid {
+  outline: none;
+}
+.ReactVirtualized__Table__rowColumn {
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+  margin: 0;
+}
+.no-data {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  font-family: "Roboto", "sans-serif";
+}
+// .ReactVirtualized__Table__Grid::-webkit-scrollbar {
+//   width: 1rem;
+//   background-color: #f9faff;
+// }
+// .ReactVirtualized__Table__Grid::-webkit-scrollbar-thumb {
+//   background-color: #618583;
+//   border-radius: 10px;
+// }
+// .ReactVirtualized__Table__Grid::-webkit-scrollbar-track {
+//   border-radius: 10px;
+//   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+//   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+//   background-color: #f9faff;
+// }
+// .ReactVirtualized__Table__Grid::-webkit-scrollbar-corner {
+//   background-color: #f9faff;
+// }

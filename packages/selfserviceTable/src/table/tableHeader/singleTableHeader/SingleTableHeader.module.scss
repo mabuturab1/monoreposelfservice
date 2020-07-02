@@ -1,0 +1,37 @@
+.tableHeader {
+  width: 100%;
+  cursor: pointer;
+
+  padding: 4px 2px !important;
+}
+.headerItemWrapper {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: transparent;
+  padding: 8px;
+  border-radius: 7px;
+  min-width: 7rem;
+  border: 1px solid rgba($color: #4a4a4a, $alpha: 0.05);
+
+  //   padding: 0.4rem 1rem;
+
+  span {
+    font-family: "Roboto", "Open Sans", sans-serif;
+    font-size: 0.8rem;
+
+    color: #4a4a4a;
+    font-weight: 500;
+  }
+  .sort {
+    font-size: 7px;
+    line-height: 10px;
+    right: 20px;
+    position: absolute;
+    padding-left: "7px";
+    bottom: 0px;
+    right: 20px;
+    text-transform: "capitalize";
+  }
+}

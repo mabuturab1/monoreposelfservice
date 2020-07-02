@@ -1,0 +1,20 @@
+.wrapper {
+  display: flex;
+}
+.singleDropdown {
+  padding: 0;
+}
+
+.inputStyle {
+  &,
+  &:focus,
+  &:active {
+    margin-top: 10px;
+    border: none;
+    font-size: 13px;
+    outline: none;
+    padding: 5px;
+    background-color: #f9faff;
+    padding: 4px 4px;
+  }
+}

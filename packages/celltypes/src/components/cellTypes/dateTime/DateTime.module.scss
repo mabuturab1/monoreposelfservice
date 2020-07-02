@@ -1,0 +1,34 @@
+.dateTimeWrapper {
+  width: 100%;
+}
+.dateTimeModal {
+  width: 35rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+}
+.datePicker {
+  max-width: 20rem;
+  overflow: hidden;
+}
+.inputWrapper {
+  border: 1px solid rgba($color: #939393, $alpha: 0.4);
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0.3rem;
+  border-radius: 4px;
+  width: 11.5rem;
+}
+.input {
+  &,
+  &:focus,
+  &:active {
+    border: none;
+    outline: none;
+    text-align: center;
+    font-family: "Open Sans", "sans-serif";
+    font-weight: 600;
+    color: #939393;
+  }
+}

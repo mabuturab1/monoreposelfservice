@@ -1,0 +1,48 @@
+// input:-webkit-autofill,
+// input:-webkit-autofill:hover,
+// input:-webkit-autofill:focus,
+// textarea:-webkit-autofill,
+// textarea:-webkit-autofill:hover,
+// textarea:-webkit-autofill:focus,
+// select:-webkit-autofill,
+// select:-webkit-autofill:hover,
+// select:-webkit-autofill:focus {
+//   -webkit-transition-delay: 99999s;
+//   transition-delay: 99999s;
+// }
+
+.input {
+  width: 90%;
+  color: #4a4a4a;
+  font-weight: 500;
+  font-size: 0.8rem;
+  background-color: transparent;
+  font-family: inherit;
+  //   padding: 0.4rem 1rem;
+  &,
+  &:focus {
+    border: 1px solid rgba(0, 0, 50, 0.4);
+    outline: none;
+    border-radius: 5px;
+  }
+  &:read-only {
+    border: 1px solid transparent;
+    outline: none;
+  }
+  &::placeholder {
+    font-weight: 400;
+    opacity: 0.8;
+    color: #cacaca;
+  }
+}
+.error {
+  font-size: 0.8rem;
+  color: red;
+}
+.popupError {
+  background-color: red !important;
+  color: white !important;
+  &:before {
+    background-color: red !important;
+  }
+}

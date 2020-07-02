@@ -1,0 +1,39 @@
+textarea {
+  resize: none;
+
+  vertical-align: middle;
+}
+.textArea {
+  resize: none;
+  outline: none;
+  width: 90%;
+
+  min-height: 1rem;
+  max-height: 4rem;
+  color: #4a4a4a;
+  font-weight: 500;
+  font-size: 0.8rem;
+  background-color: transparent;
+  font-family: inherit;
+
+  //   padding: 0.4rem 1rem;
+  &,
+  &:focus {
+    border: 1px solid rgba(0, 0, 50, 0.4);
+    outline: none;
+    border-radius: 5px;
+  }
+  &:read-only {
+    border: 1px solid transparent;
+    outline: none;
+  }
+  &::placeholder {
+    font-weight: 500;
+
+    color: #cacaca;
+  }
+}
+.error {
+  font-size: 0.8rem;
+  color: red;
+}

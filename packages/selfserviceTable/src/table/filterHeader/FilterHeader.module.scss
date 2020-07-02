@@ -1,0 +1,86 @@
+.wrapper {
+  display: flex;
+  background-color: transparent;
+  .lockDisabled {
+    background-color: yellow;
+  }
+}
+.filterWrapper {
+  display: flex;
+  flex-flow: column;
+}
+.icon {
+  padding-right: 10px;
+}
+.topHeaderItemWrapper {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: white;
+  padding: 8px;
+  border-radius: 7px;
+  margin: 5px 10px;
+
+  //   padding: 0.4rem 1rem;
+
+  span {
+    color: #4a4a4a;
+    font-weight: 500;
+    font-size: 0.8rem;
+    background-color: transparent;
+    font-family: "Roboto", "sans-serif";
+  }
+}
+.searchWrapper {
+  border: none;
+}
+.applyElevation {
+  box-shadow: 0px 1px 1px -1px rgba(0, 0, 0, 0.2),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 1px 0px rgba(0, 0, 0, 0.12);
+}
+
+.mediumPadding {
+  padding: 8px 16px;
+}
+.input {
+  color: #939393;
+  font-weight: 600;
+  font-size: 0.8rem;
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  //   padding: 0.4rem 1rem;
+  &,
+  &:focus {
+    outline: none;
+  }
+  &:read-only {
+    border: 1px solid transparent;
+    outline: none;
+    font-family: inherit;
+  }
+  &::placeholder {
+    font-weight: 400;
+    opacity: 0.6;
+  }
+}
+.filterButton {
+  background: white;
+  color: blue;
+  outline: none;
+  font-family: "Roboto", "Open Sans", "sans-serif";
+  border: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 10px;
+  font-weight: 600;
+}
+
+.danger {
+  color: red;
+}
+.buttonWrapper {
+  display: flex;
+  justify-content: space-between;
+}

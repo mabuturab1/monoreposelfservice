@@ -1,0 +1,87 @@
+.timePickerWrapper {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  background: white;
+  z-index: 1000;
+}
+.timePicker {
+  height: 2rem;
+  width: 2.5rem;
+  border: 1px solid #939393;
+  text-align: center;
+  border-radius: 5px;
+  font-family: "Open Sans", "sans-serif";
+
+  &:focus,
+  &:active {
+    border: 1px solid #3c88fd;
+    outline: none;
+  }
+}
+.applyCursor {
+  cursor: pointer;
+}
+.textUnselect {
+  &,
+  &:focus &:active {
+    -webkit-user-select: none; /* Chrome all / Safari all */
+    -moz-user-select: none; /* Firefox all */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none;
+  }
+  &::selection {
+    color: none;
+    background: none;
+  }
+}
+.timeInput {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 12rem;
+  justify-content: space-between;
+  margin-left: 1rem;
+}
+.timeLabel {
+  font-size: 0.7rem;
+  color: #939393;
+  outline: none;
+  border: none;
+  display: block;
+  margin: 1rem 0.5rem;
+  text-align: left;
+}
+.timeLabelWrapper {
+  width: 100%;
+}
+.buttonWrapper {
+  display: flex;
+  flex-flow: column;
+  margin-top: 1rem;
+}
+.button {
+  width: 14rem;
+  height: 2.5rem;
+  font-size: 1rem;
+  text-align: center;
+  background: #31b0d5;
+  border: 1px solid #269abc;
+  border-radius: 4px;
+  outline: none;
+  color: white;
+  font-family: "Open Sans", "sans-serif";
+  margin: 5px 0;
+  cursor: pointer;
+  &:disabled {
+    background-color: rgba($color: #31b0d5, $alpha: 0.5);
+    border: none;
+  }
+}
+.errorText {
+  color: red;
+  font-size: 0.5rem;
+  position: absolute;
+  top: 110%;
+  left: 10%;
+}

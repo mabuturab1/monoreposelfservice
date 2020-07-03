@@ -3,7 +3,7 @@
   display: flex;
   background-color: #f9faff !important;
   flex-flow: column;
-
+  flex: 1;
   .table {
     flex: 1;
     background: inherit;
@@ -36,4 +36,10 @@
 
 table tr:last-child td:last-child {
   border-bottom-right-radius: 10px;
+}
+.noData {
+  font-family: "Roboto", "sans-serif";
+  color: #4a4a4a;
+  font-weight: 500;
+  font-size: 1.2rem;
 }

@@ -1,39 +1,6 @@
-.wrapper {
-  overflow: auto;
-  display: flex;
-  background-color: #f9faff !important;
-  flex-flow: column;
-
-  .table {
-    flex: 1;
-    background: inherit;
-  }
-}
-.content {
-  overflow: auto;
-  flex: 1;
-  width: 100%;
-  background: inherit;
-}
-.filterHeader {
-  background-color: #f9faff;
+.selfServiceTableWrapper {
   width: 100vw;
-}
-.bodyWrapper {
+  height: 100vh;
   display: flex;
-
-  justify-content: center;
-  padding-top: 2rem;
-}
-.tableWrapper {
-  font-family: inherit;
-  background: white;
-  border: 1px solid rgba(0, 0, 50, 0.1);
-}
-.tableWrapper tr:last-child td:first-child {
-  border-bottom-left-radius: 10px;
-}
-
-table tr:last-child td:last-child {
-  border-bottom-right-radius: 10px;
+  flex-flow: column;
 }

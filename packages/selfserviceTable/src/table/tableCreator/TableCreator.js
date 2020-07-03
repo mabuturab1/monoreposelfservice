@@ -247,6 +247,7 @@ const TableCreator = (props) => {
         <Paper
           style={{
             margin: "0 auto",
+            flex: 1,
             width: tableData.length > 0 ? tableWidth : "100vw",
           }}
         >
@@ -273,19 +274,24 @@ const TableCreator = (props) => {
                 <div
                   style={{
                     width: "100vw",
-                    height: "100vh",
+                    height: "100%",
+
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                   }}
                 >
-                  <Loader
-                    type="ThreeDots"
-                    color="#00BFFF"
-                    height={50}
-                    width={50}
-                    timeout={0} //3 secs
-                  />
+                  {props.tableDataPending ? (
+                    <Loader
+                      type="ThreeDots"
+                      color="#00BFFF"
+                      height={50}
+                      width={50}
+                      timeout={0} //3 secs
+                    />
+                  ) : (
+                    <h4 className={styles.noData}>No Record Found</h4>
+                  )}
                 </div>
               ) : (
                 <InfiniteLoader

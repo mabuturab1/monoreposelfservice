@@ -66,6 +66,12 @@ export const updateApiUrl = (data) => {
     payload: data,
   };
 };
+export const updateCurrentReportId = (data) => {
+  return {
+    type: actionTypes.UPDATING_CURRENT_REPORT_ID,
+    payload: data,
+  };
+};
 export const updateFieldDataSuccess = (data) => {
   return {
     type: actionTypes.UPDATING_FIELD_DATA_SUCCESS,

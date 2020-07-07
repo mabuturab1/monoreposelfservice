@@ -21,7 +21,9 @@ const TableCreator = (props) => {
   const tableData = props.tableData || [];
   const tableHeader = props.tableHeader || [];
 
-  const [editAllowed, setEditAllowed] = useState(props.editAllowed || true);
+  const [editAllowed, setEditAllowed] = useState(
+    props.editAllowed != null ? props.editAllowed : true
+  );
 
   let {
     apiUrl,
@@ -30,6 +32,7 @@ const TableCreator = (props) => {
     fetchTableData: mFetchTableData,
     fetchTableHeader: mFetchTableHeader,
     updateApiUrl: mUpdateApiUrl,
+    updateCurrentReportId: mUpdateCurrentReportId,
   } = {
     ...props,
   };
@@ -39,7 +42,7 @@ const TableCreator = (props) => {
     key: "",
     order: "",
     isNewKey: false,
-    filters: "",
+    filters: new URLSearchParams(),
     search: "",
   });
   const createHeaderSpecs = useCallback(() => {
@@ -99,24 +102,28 @@ const TableCreator = (props) => {
     return Yup.object().shape(createValidationSchema());
   }, [createValidationSchema]);
   const fetchTableData = useCallback(() => {
-    mFetchTableData(
-      apiUrl,
-      currentReportId,
-      {
-        pageNumber: queryParams.pageNumber,
-        pageSize: queryParams.pageSize,
-        sortBy: queryParams.key !== "" ? queryParams.key : undefined,
-        sortDirection: queryParams.order !== "" ? queryParams.order : undefined,
-        filters: queryParams.filters !== "" ? queryParams.filters : undefined,
-        search: queryParams.search !== "" ? queryParams.search : undefined,
-      },
-      queryParams.isNewKey
-    );
+    const params = new URLSearchParams();
+    params.append("pageNumber", queryParams.pageNumber);
+    params.append("pageSize", queryParams.pageSize);
+    if (queryParams.key !== "") params.append("sortBy", queryParams.key);
+    if (queryParams.order !== "")
+      params.append("sortDirection", queryParams.order);
+    if (queryParams.filters.toString() !== "") {
+      queryParams.filters.forEach((value, key) => {
+        params.append(key, value);
+      });
+    }
+    if (queryParams.search !== "") params.append("search", queryParams.search);
+
+    mFetchTableData(apiUrl, currentReportId, params, queryParams.isNewKey);
   }, [mFetchTableData, apiUrl, currentReportId, queryParams]);
 
   const updateApiUrl = useCallback(() => {
     mUpdateApiUrl(apiUrl);
   }, [mUpdateApiUrl, apiUrl]);
+  const updateCurrentReportId = useCallback(() => {
+    mUpdateCurrentReportId(apiUrl);
+  }, [mUpdateCurrentReportId, currentReportId]);
 
   let getKey = (tableDataId, fieldKey) => {
     return tableDataId + fieldKey;
@@ -166,13 +173,17 @@ const TableCreator = (props) => {
     if (!apiUrl) return;
     updateApiUrl(apiUrl);
   }, [apiUrl, updateApiUrl]);
+  useEffect(() => {
+    if (!currentReportId) return;
+    updateCurrentReportId(currentReportId);
+  }, [currentReportId, updateCurrentReportId]);
 
   useEffect(() => {
     fetchTableHeader(apiUrl, currentReportId);
   }, [fetchTableHeader, apiUrl, currentReportId]);
   const updateFieldData = (rowId, data, newKey, isSuccess) => {
     props.updateFieldData(
-      props.apiAddress,
+      apiUrl,
       props.currentReportId,
       rowId,
       data,
@@ -188,7 +199,7 @@ const TableCreator = (props) => {
     else columnsWidth[el.key] = 160;
   });
   let handleNewFilterData = (filterData) => {
-    let newFilter = "";
+    let newFilter = new URLSearchParams();
     const { data } = filterData;
 
     if (data == null) return;
@@ -198,13 +209,12 @@ const TableCreator = (props) => {
       OR: "&",
     };
     for (let i = 0; i < (filterData.numFilters || 0); i++) {
-      if (i > 0)
-        newFilter =
-          newFilter + (queryMap[data[i + "listQV"]] || "&") + "filters=";
-      newFilter =
-        newFilter + data[i + "listFV"] + data[i + "listSV"] + data[i + "list"];
+      newFilter.append(
+        "filters",
+        data[i + "listFV"] + data[i + "listSV"] + data[i + "list"]
+      );
     }
-    if (newFilter !== queryParams.filters) {
+    if (newFilter.toString() !== queryParams.filters.toString()) {
       setQueryParams({
         ...queryParams,
         pageNumber: 0,
@@ -281,7 +291,7 @@ const TableCreator = (props) => {
                     alignItems: "center",
                   }}
                 >
-                  {props.tableDataPending ? (
+                  {props.tableDataPending || props.tableHeaderPending ? (
                     <Loader
                       type="ThreeDots"
                       color="#00BFFF"
@@ -322,8 +332,6 @@ TableCreator.propTypes = {
 };
 const mapStateToProps = (state) => {
   return {
-    apiAddress: state.apiAddress,
-    currentReportId: state.currentReportId,
     tableData: state.tableData,
     tableHeader: state.tableHeader,
     serverError: state.serverError,
@@ -343,6 +351,8 @@ const mapDispatchToProps = (dispatch) => {
     removeError: () => dispatch(actions.removeError()),
     clearTableData: () => dispatch(actions.clearTableData()),
     updateApiUrl: (apiAddress) => dispatch(actions.updateApiUrl(apiAddress)),
+    updateCurrentReportId: (currentReportId) =>
+      dispatch(actions.updateCurrentReportId(currentReportId)),
     updateFieldData: (apiUrl, reportId, rowId, data, newKey, isSuccess) =>
       dispatch(
         actions.updateFieldData(

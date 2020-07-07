@@ -32,6 +32,8 @@ const FilterHeader = (props) => {
   );
   const queryConditions = ["WHERE", "AND", "OR"];
   const [filterData, setFilterData] = useState(filterDataState);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   let updateReduxState = (filter) => {
     props.storeFilterData(filter);
@@ -111,7 +113,6 @@ const FilterHeader = (props) => {
       });
     });
   }
-  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -129,7 +130,7 @@ const FilterHeader = (props) => {
       if (props.handleSearch) props.handleSearch(searchValue);
     }
   };
-  const open = Boolean(anchorEl);
+  if (Boolean(anchorEl) !== open) setOpen(Boolean(anchorEl));
   const id = open ? "simple-popover" : undefined;
   let editLockedClasses = [
     styles.topHeaderItemWrapper,

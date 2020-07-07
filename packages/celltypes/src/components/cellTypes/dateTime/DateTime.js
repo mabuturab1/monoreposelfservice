@@ -19,7 +19,7 @@ const DateTime = (props) => {
     decodeFormat: mDecodeFormat,
     min,
     max,
-    value,
+    value: mValue,
 
     updateFieldData,
   } = {
@@ -28,6 +28,9 @@ const DateTime = (props) => {
   let submitFormat = mSubmitFormat;
   let decodeFormat = mDecodeFormat;
   let showFormat = mShowFormat;
+  let value = null;
+  let dateValid = moment(mValue);
+  if (dateValid.isValid()) value = mValue;
   if (submitFormat)
     submitFormat = mSubmitFormat.replace("yyyy", "YYYY").replace("dd", "DD");
   if (decodeFormat)
@@ -86,7 +89,7 @@ const DateTime = (props) => {
 
     return format;
   };
-  const open = Boolean(anchorEl);
+  const open = Boolean(anchorEl) && props.editAllowed;
   const id = open ? "simple-popover" : undefined;
 
   let getLocalTime = (val) => {
@@ -130,7 +133,7 @@ const DateTime = (props) => {
       </div>
       <Popover
         id={id}
-        open={open && props.editAllowed}
+        open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{

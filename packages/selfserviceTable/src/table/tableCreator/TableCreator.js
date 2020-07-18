@@ -122,7 +122,7 @@ const TableCreator = (props) => {
     mUpdateApiUrl(apiUrl);
   }, [mUpdateApiUrl, apiUrl]);
   const updateCurrentReportId = useCallback(() => {
-    mUpdateCurrentReportId(apiUrl);
+    mUpdateCurrentReportId(currentReportId);
   }, [mUpdateCurrentReportId, currentReportId]);
 
   let getKey = (tableDataId, fieldKey) => {
@@ -203,11 +203,7 @@ const TableCreator = (props) => {
     const { data } = filterData;
 
     if (data == null) return;
-    let queryMap = {
-      WHERE: "&",
-      AND: "&",
-      OR: "&",
-    };
+
     for (let i = 0; i < (filterData.numFilters || 0); i++) {
       newFilter.append(
         "filters",

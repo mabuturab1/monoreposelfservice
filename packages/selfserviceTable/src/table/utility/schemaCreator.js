@@ -35,6 +35,8 @@ const toYup = (type) => {
     case "RATE":
     case "DECIMAL":
       return "number";
+    case "SWITCH":
+      return "bool";
     case "DATETIME":
       return "string";
     case "IMAGE":

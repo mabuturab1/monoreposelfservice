@@ -4,7 +4,7 @@ import TextField from "./cellTypes/text/Text";
 import TextArea from "./cellTypes/textArea/TextArea";
 import TableCell from "@material-ui/core/TableCell";
 import ReadOnlyText from "./cellTypes/readOnlyText/ReadOnlyText";
-
+import SwitchButton from "./cellTypes/switchButton/SwitchButton";
 import Dropdown from "./cellTypes/dropdown/Dropdown";
 
 import Image from "./cellTypes/image/Image";
@@ -27,6 +27,7 @@ const MyTableCell = (props) => {
     DATETIME: DateTime,
     DROPDOWN: Dropdown,
     READONLY_TEXT: ReadOnlyText,
+    SWITCH: SwitchButton,
   };
   let getType = (val) => {
     switch (val) {
@@ -39,6 +40,8 @@ const MyTableCell = (props) => {
       case "NUMBER":
       case "DECIMAL":
         return "number";
+      case "SWITCH":
+        return "bool";
       default:
         return "text";
     }

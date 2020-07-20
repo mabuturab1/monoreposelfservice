@@ -63,115 +63,72 @@ const Dropdown = (props) => {
   const {
     name,
     // label,
-    value,
+    value: mValue,
     error,
     touched,
     ignoreEditLocked,
-    options,
-    valuesList,
+    options: mOptions,
+
     setFieldValue,
     setFieldTouched,
     updateFieldData,
   } = {
     ...props,
   };
+  let options = [];
+  let valuesList = [];
+  if (mOptions && mOptions.length > 0) {
+    options = mOptions.map((el) => el.t);
+    valuesList = mOptions.map((el) => el.i);
+  }
   const currentValue =
-    (valuesList && valuesList.includes(value)) ||
-    (!valuesList && options && options.includes(value))
-      ? value
-      : "";
-  const [anchorEl, setAnchorEl] = useState(null);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-    handleDataSubmit();
-  };
-  const getCurrentValueStatus = (val) => {
-    return (
-      ((valuesList && valuesList.includes(val)) ||
-        (!valuesList && options && options.includes(val))) &&
-      value.includes(val)
-    );
-  };
-  const isValidValue = (val) => {
-    return (
-      (valuesList && valuesList.includes(val)) ||
-      (!valuesList && options && options.includes(val))
-    );
-  };
-  let currentValue = value.filter((el) => isValidValue(el));
+    valuesList && valuesList.includes(value.t) ? value.t : "";
   const [selectValue, setSelectValue] = useState({
     originalState: currentValue,
     tempState: currentValue,
   });
   const classes = useStyles();
   let list = [];
-  const checkboxValueChanged = (event, val) => {
-    let tempSelectVal = selectValue.tempState.slice();
-    let index = selectValue.find((el) => el === val);
-    if (index == -1) tempSelectVal.push(val);
-    updateFieldData(tempSelectVal);
-    setSelectValue({
-      ...selectValue,
-      tempState: tempSelectVal,
-    });
 
-    e.persist();
-    setTimeout(() => {
-      setFieldValue(name, tempSelectVal);
-      setTimeout(() => onBlur(e), 10);
-    });
-  };
   if (options && options.length > 0) {
     for (let i = 0; i < options.length; i++) {
-      let currValue =
-        valuesList && valuesList.length > i ? valuesList[i] : options[i];
       list.push(
-        <div>
-          <Checkbox
-            key={i}
-            checked={getCurrentValueStatus(currValue)}
-            onChange={(event) => checkboxValueChanged(event, currValue)}
-            inputProps={{ "aria-label": "primary checkbox" }}
-          />
-        </div>
+        <MenuItem
+          key={i}
+          value={
+            valuesList && valuesList.length > i ? valuesList[i] : options[i]
+          }
+          className={classes.menuItem}
+        >
+          {options[i]}
+        </MenuItem>
       );
     }
   }
-  if (
-    currentValue.length != selectValue.originalState.length ||
-    currentValue.filter((el) => !selectValue.originalState.includes(el))
-      .length > 0
-  )
+  if (currentValue !== selectValue.originalState)
     setSelectValue({
       originalState: currentValue,
       tempState: currentValue,
     });
-
-  const open = Boolean(anchorEl) && props.editAllowed;
-  const id = open ? "simple-popover" : undefined;
   const inputUI = (
     <div className={[classes.margin].join(" ")}>
       {/* <InputLabel id="select-label">{label}</InputLabel> */}
-      <input value={value.join(", ")} readOnly={true} onClick={handleClick} />
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
+      <Select
+        labelId="select-label"
+        id="select"
+        className={styles.selectStyle}
+        value={selectValue.tempState}
+        readOnly={!props.editAllowed && !ignoreEditLocked}
+        onChange={(e) => {
+          setSelectValue({ ...selectValue, tempState: e.target.value });
+          if (updateFieldData) updateFieldData(e.target.value);
+          setTimeout(() => setFieldValue(name, e.target.value));
+          setTimeout(() => setFieldTouched(name, true), 10);
         }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
+        input={<BootstrapInput />}
       >
         {list}
-      </Popover>
+      </Select>
     </div>
   );
   return (

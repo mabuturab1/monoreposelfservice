@@ -9,6 +9,7 @@ import styles from "./Dropdown.module.scss";
 import InputBase from "@material-ui/core/InputBase";
 
 import Tooltip from "../../tooltip/Tooltip";
+import { Popover } from "@material-ui/core";
 const BootstrapInput = withStyles((theme) => ({
   root: {
     minWidth: "5rem",
@@ -75,6 +76,16 @@ const Dropdown = (props) => {
   } = {
     ...props,
   };
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    handleDataSubmit();
+  };
   const currentValue =
     (valuesList && valuesList.includes(value)) ||
     (!valuesList && options && options.includes(value))
@@ -108,25 +119,32 @@ const Dropdown = (props) => {
       originalState: currentValue,
       tempState: currentValue,
     });
+  const open = Boolean(anchorEl) && props.editAllowed;
+  const id = open ? "simple-popover" : undefined;
   const inputUI = (
     <div className={[classes.margin].join(" ")}>
       {/* <InputLabel id="select-label">{label}</InputLabel> */}
-      <Select
-        labelId="select-label"
-        id="select"
-        className={styles.selectStyle}
+      <input
         value={selectValue.tempState}
-        readOnly={!props.editAllowed && !ignoreEditLocked}
-        onChange={(e) => {
-          setSelectValue({ ...selectValue, tempState: e.target.value });
-          if (updateFieldData) updateFieldData(e.target.value);
-          setTimeout(() => setFieldValue(name, e.target.value));
-          setTimeout(() => setFieldTouched(name, true), 10);
+        readOnly={true}
+        onClick={handleClick}
+      />
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
         }}
-        input={<BootstrapInput />}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
       >
         {list}
-      </Select>
+      </Popover>
     </div>
   );
   return (

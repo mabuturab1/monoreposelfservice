@@ -1,6 +1,6 @@
 import React from "react";
-import styles from "./Dropdown.modue.scss";
-const Dropdown = (props) => {
+import styles from "./MenuList.modue.scss";
+const MenuList = (props) => {
   let items = [];
   if (props.data == null) return <div></div>;
   props.data.forEach((el) => {
@@ -20,4 +20,4 @@ const Dropdown = (props) => {
   });
   return <div>{items}</div>;
 };
-export default Dropdown;
+export default MenuList;

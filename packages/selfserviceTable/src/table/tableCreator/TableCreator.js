@@ -275,47 +275,47 @@ const TableCreator = (props) => {
               console.log("actions", actions);
             }}
           >
-            {(formData) =>
-              props.tableHeaderPending || tableData.length < 1 ? (
-                <div
-                  style={{
-                    width: "100vw",
-                    height: "100%",
+            {(formData) => (
+              // props.tableHeaderPending || tableData.length < 1 ? (
+              //   <div
+              //     style={{
+              //       width: "100vw",
+              //       height: "100%",
 
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  {props.tableDataPending || props.tableHeaderPending ? (
-                    <Loader
-                      type="ThreeDots"
-                      color="#00BFFF"
-                      height={50}
-                      width={50}
-                      timeout={0} //3 secs
-                    />
-                  ) : (
-                    <h4 className={styles.noData}>No Record Found</h4>
-                  )}
-                </div>
-              ) : (
-                <InfiniteLoader
-                  isNextPageLoading={props.tableDataPending}
-                  loadNextPage={loadMoreItems}
-                  tableData={props.tableData}
-                  tableHeader={props.tableHeader}
-                  cellSpecs={createHeaderSpecs(tableHeader)}
-                  formData={formData}
-                  totalReportItems={props.totalReportItems}
-                  columnsWidth={columnsWidth}
-                  validationSchema={createValidationSchema()}
-                  sortByColumn={queryParams}
-                  onHeaderClicked={onHeaderClicked}
-                  updateFieldData={updateFieldData}
-                />
-              )
-            }
+              //       display: "flex",
+              //       justifyContent: "center",
+              //       alignItems: "center",
+              //     }}
+              //   >
+              //     {
+              //     props.tableDataPending || props.tableHeaderPending ? (
+              //       <Loader
+              //         type="ThreeDots"
+              //         color="#00BFFF"
+              //         height={50}
+              //         width={50}
+              //         timeout={0} //3 secs
+              //       />
+              //     ) : (
+              //       <h4 className={styles.noData}>No Record Found</h4>
+              //     )}
+              //   </div>
+              // ) :
+              <InfiniteLoader
+                isNextPageLoading={props.tableDataPending}
+                loadNextPage={loadMoreItems}
+                tableData={props.tableData}
+                tableHeader={props.tableHeader}
+                cellSpecs={createHeaderSpecs(tableHeader)}
+                formData={formData}
+                totalReportItems={props.totalReportItems}
+                columnsWidth={columnsWidth}
+                validationSchema={createValidationSchema()}
+                sortByColumn={queryParams}
+                onHeaderClicked={onHeaderClicked}
+                updateFieldData={updateFieldData}
+              />
+            )}
           </Formik>
         </Paper>
       </div>

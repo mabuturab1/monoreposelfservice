@@ -3,6 +3,7 @@ import React from "react";
 import "./App.scss";
 import Table from "./table/Table";
 import QrScanner from "./common/qrReaderDialog/QrReaderDialog";
+import StyledMenuList from "../src/common/menuList/MenuList";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         currentReportId={"5ee2ec25570a12e08291ce09"}
         editAllowed={false}
       />
+
       {/* <QrScanner /> */}
     </div>
   );

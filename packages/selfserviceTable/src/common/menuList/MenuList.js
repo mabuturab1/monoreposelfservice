@@ -6,9 +6,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-
 import { Divider } from "@material-ui/core";
-import { string } from "yup";
 
 const StyledMenu = withStyles({
   paper: {
@@ -52,6 +50,11 @@ const useStyles = makeStyles(() => ({
     color: "#4A4A4A",
     fontWeight: 500,
   },
+  body1Del: {
+    lineHeight: 1,
+    color: "#FF6060",
+    fontWeight: 500,
+  },
   body1Header: {
     fontSize: "17px",
     textTransform: "uppercase",
@@ -66,9 +69,20 @@ export const StyledMenuList = (props) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
+  const getClassOfTypography = (data = "") => {
+    switch (data) {
+      case "red":
+        return classes.body1Del;
+      default:
+        return classes.body1;
+    }
+  };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handleItemSelect = (i, j, itemClose) => {
+    props.itemClicked(i, j);
+    if (itemClose) handleClose();
   };
   let items = [];
   if (props.data != null) {
@@ -89,12 +103,15 @@ export const StyledMenuList = (props) => {
             primary={el.headerTitle}
           />
           {el.options.map((el1, j) => (
-            <StyledMenuItem key={i + j} onClick={() => props.itemClicked(i, j)}>
+            <StyledMenuItem
+              key={i + j}
+              onClick={() => handleItemSelect(i, j, el1.closeRequired)}
+            >
               <ListItemIcon>{el1.icon}</ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{
                   classes: {
-                    body1: classes.body1,
+                    body1: getClassOfTypography(el1.type),
                   },
                 }}
                 primary={el1.text}

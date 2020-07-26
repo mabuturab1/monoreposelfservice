@@ -1,37 +1,43 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import StyledMenuList from "../../../common/menuList/MenuList";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import DraftsIcon from "@material-ui/icons/Drafts";
-import SendIcon from "@material-ui/icons/Send";
+import * as actions from "../../../store/actions";
 import GridOnIcon from "@material-ui/icons/GridOn";
 import AcUnitIcon from "@material-ui/icons/AcUnit";
 import CheckIcon from "@material-ui/icons/Check";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import EditIcon from "@material-ui/icons/Edit";
+import CellEditDialog from "../../../common/cellEditDialog/cellEditDialog";
+import { connect } from "react-redux";
 const TableHeaderSettings = (props) => {
-  const headerData = useRef([
+  const { apiAddress, currentReportId } = props;
+  const [currentSelection, setCurrentSelection] = useState("");
+  const [currentSortOrder, setCurrentSortOrder] = useState(props.sortOrder);
+  const headerData = [
     {
       headerTitle: "Order",
       options: [
         {
-          text: "UnSort",
+          id: "unsorted",
+          text: "Unsort",
           icon:
-            props.sort == null || props.sort == "Unsort" ? (
-              <CheckIcon style={{ color: "#000000" }} fontSize="small" />
+            currentSortOrder === null || currentSortOrder === "unsorted" ? (
+              <CheckIcon style={{ color: "#5CAEE5" }} fontSize="small" />
             ) : undefined,
         },
         {
+          id: "ASC",
           text: "Ascending",
           icon:
-            props.sort && props.sort == "Ascending" ? (
-              <CheckIcon style={{ color: "#000000" }} fontSize="small" />
+            currentSortOrder && currentSortOrder === "ASC" ? (
+              <CheckIcon style={{ color: "#5CAEE5" }} fontSize="small" />
             ) : undefined,
         },
         {
+          id: "DESC",
           text: "Descending",
           icon:
-            props.sort && props.sort == "Descending" ? (
-              <CheckIcon style={{ color: "#000000" }} fontSize="small" />
+            currentSortOrder && currentSortOrder === "DESC" ? (
+              <CheckIcon style={{ color: "#5CAEE5" }} fontSize="small" />
             ) : undefined,
         },
       ],
@@ -40,6 +46,7 @@ const TableHeaderSettings = (props) => {
       headerTitle: "Settings",
       options: [
         {
+          id: "freeze",
           text: "Freeze",
           icon: (
             <div style={{ position: "relative" }}>
@@ -69,25 +76,81 @@ const TableHeaderSettings = (props) => {
             </div>
           ),
         },
-        { text: "Edit", icon: <EditIcon fontSize="small" /> },
-        { text: "Delete", icon: <DeleteOutlineIcon fontSize="small" /> },
+        {
+          id: "edit",
+          text: "Edit",
+          icon: <EditIcon style={{ color: "#4A4A4A" }} fontSize="small" />,
+          closeRequired: true,
+        },
+        {
+          id: "delete",
+          text: "Delete",
+          type: "red",
+          icon: (
+            <DeleteOutlineIcon style={{ color: "#FF6060" }} fontSize="small" />
+          ),
+        },
       ],
     },
-  ]);
+  ];
+
+  const isSortOrder = (data) => {
+    if (data === "unsorted" || data === "ASC" || data === "DESC") return true;
+    else return false;
+  };
+
   const handleItemClicked = (i, j) => {
-    console.log(i, j);
-    const section = headerData.current[i];
+    const section = headerData[i];
     let item = null;
     if (section) item = section.options[j];
-    console.log("item clicked is", item);
+    if (item != null) setCurrentSelection(item.id);
+    if (i === 0 && item && isSortOrder(item.id)) setCurrentSortOrder(item.id);
+
+    setTimeout(() => props.onItemSelect(item.id));
+  };
+  const handleSubmitData = (values) => {
+    console.log("changed values are");
   };
   return (
-    <StyledMenuList
-      itemClicked={handleItemClicked}
-      trigger={props.children}
-      headerStyle={{ color: "#D6D6D6", fontSize: "22px" }}
-      data={headerData.current}
-    />
+    <React.Fragment>
+      {!props.defaultSelection ? (
+        <StyledMenuList
+          itemClicked={handleItemClicked}
+          trigger={props.children}
+          headerStyle={{ color: "#D6D6D6", fontSize: "22px" }}
+          data={headerData}
+        />
+      ) : null}
+      {props.defaultSelection ? (
+        <div onClick={() => setCurrentSelection(props.defaultSelection)}>
+          {props.children}
+        </div>
+      ) : null}
+      <CellEditDialog
+        ref={props.currentTarget}
+        onDialogClosed={() => setCurrentSelection("")}
+        onSubmitData={handleSubmitData}
+        openAllowed={currentSelection === "edit"}
+        cellSpecs={{ ...props.cellSpecs, ...props.cellSpecs.data }}
+      />
+    </React.Fragment>
   );
 };
-export default TableHeaderSettings;
+const mapStateToProps = (state) => {
+  return {
+    currentReportId: state.currentReportId,
+    apiAddress: state.apiAddress,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateFieldData: (apiUrl, currentReportId, fieldKey, data) =>
+      dispatch(
+        actions.updateFieldData(apiUrl, currentReportId, fieldKey, data)
+      ),
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(React.memo(TableHeaderSettings));

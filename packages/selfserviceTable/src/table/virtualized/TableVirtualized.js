@@ -87,18 +87,16 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     const formData = props.formData;
     const { classes, rowHeight, onRowClick } = props;
     const myCell = cellSpecs.find((el) => el.key === dataKey);
+
+    if (myCell.isIcon || !myCell.type)
+      return <div style={{ width: "100%", height: "100%" }}></div>;
     return (
       <MyTableCell
         editAllowed={tableContext.editAllowed}
         myKey={getKey(rowData.id, myCell.key)}
-        className={clsx(
-          classes.tableCell,
-          classes.flexContainer,
-
-          {
-            [classes.noClick]: onRowClick == null,
-          }
-        )}
+        className={clsx(classes.tableCell, classes.flexContainer, {
+          [classes.noClick]: onRowClick == null,
+        })}
         rowWidth={150}
         rowHeight={rowHeight}
         serverData={{ ...myCell.data }}
@@ -132,14 +130,10 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     );
   };
 
-  const headerRenderer = ({
-    label,
-    onHeaderClicked,
-    dataKey,
-    sortByColumn,
-  }) => {
-    const { classes } = props;
-
+  const headerRenderer = (headerData) => {
+    const { label, onHeaderClicked, dataKey, sortByColumn, data } = headerData;
+    const { classes, cellSpecs } = props;
+    let myCell = cellSpecs.find((el) => el.key === dataKey);
     return (
       <SingleTableHeader
         className={clsx(
@@ -150,9 +144,11 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
         style={
           sortByColumn.key === dataKey ? { backgroundColor: "yellow" } : {}
         }
+        cellSpecs={{ ...myCell, ...myCell.data }}
         label={label}
         sortOrder={sortByColumn.key === dataKey ? sortByColumn.order : null}
-        onClick={(e) => onHeaderClicked(dataKey)}
+        // onClick={(e) => onHeaderClicked(dataKey)}
+        onItemSelect={(option) => onHeaderClicked(dataKey, option)}
       />
     );
   };

@@ -6,6 +6,9 @@ const schemaCreator = (headerCellSpecs) => {
   let validator = yup[toYup(type)]();
   const { yupType, params } = localAssignments(type);
   if (yupType && validator[yupType]) validator = validator[yupType](...params);
+
+  if (!data) return validator;
+
   Object.keys(data).forEach((el) => {
     const { yupType, params } = getYupData(type, el, data);
     if (!validator[yupType] || !yupType) return;

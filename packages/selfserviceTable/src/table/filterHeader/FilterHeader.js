@@ -7,15 +7,17 @@ import {
   faFilter,
   faUnlock,
 } from "@fortawesome/free-solid-svg-icons";
+import AddIcon from "@material-ui/icons/AddCircleOutline";
 import styles from "./FilterHeader.module.scss";
 import TableContext from "../context/TableContext";
 import TableFilter from "../tableFilter/TableFilter";
-import { Popover } from "@material-ui/core";
+import { Popover, Button } from "@material-ui/core";
 import { connect } from "react-redux";
 import schemaCreator from "../utility/schemaCreator";
 import * as actions from "../../store/actions";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import NewRecordDialog from "../../common/newRecordDialog/NewRecordDialog";
 const FilterHeader = (props) => {
   const searchConditions = [
     "less than (<)",
@@ -284,6 +286,23 @@ const FilterHeader = (props) => {
           </Popover>
         )}
       </Formik>
+      <NewRecordDialog tableHeader={tableHeader}>
+        <div
+          className={[
+            styles.topHeaderItemWrapper,
+            styles.mediumPadding,
+
+            styles.applyElevation,
+          ].join(" ")}
+        >
+          <AddIcon fontSize="small" />
+          <div
+            style={{ marginLeft: "8px", display: "flex", alignItems: "center" }}
+          >
+            <span className={styles.label}>Add Record</span>
+          </div>
+        </div>
+      </NewRecordDialog>
     </div>
   );
 };

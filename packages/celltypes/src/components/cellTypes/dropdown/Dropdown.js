@@ -72,6 +72,8 @@ const Dropdown = (props) => {
     setFieldValue,
     setFieldTouched,
     updateFieldData,
+    customStyles,
+    disableReadOnlyMode,
   } = {
     ...props,
   };
@@ -108,14 +110,17 @@ const Dropdown = (props) => {
       tempState: currentValue,
     });
   const inputUI = (
-    <div className={[classes.margin].join(" ")}>
+    <div className={[classes.margin].join(" ")} style={{ margin: "0px" }}>
       {/* <InputLabel id="select-label">{label}</InputLabel> */}
       <Select
+        style={customStyles}
         labelId="select-label"
         id="select"
         className={styles.selectStyle}
         value={selectValue.tempState}
-        readOnly={!props.editAllowed && !ignoreEditLocked}
+        readOnly={
+          !props.editAllowed && !ignoreEditLocked && !disableReadOnlyMode
+        }
         onChange={(e) => {
           setSelectValue({ ...selectValue, tempState: e.target.value });
           if (updateFieldData) updateFieldData(e.target.value);

@@ -5,7 +5,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 
 import Select from "@material-ui/core/Select";
-import styles from "./Dropdown.module.scss";
+import styles from "./OfficerSelect.module.scss";
 import InputBase from "@material-ui/core/InputBase";
 
 import Tooltip from "../../tooltip/Tooltip";
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Dropdown = (props) => {
+const OfficerSelect = (props) => {
   const {
     name,
     // label,
@@ -77,12 +77,13 @@ const Dropdown = (props) => {
   };
   let options = [];
   let valuesList = [];
+  console.log("mOptuons are", mOptions);
   if (mOptions && mOptions.length > 0) {
     options = mOptions.map((el) => el.t);
     valuesList = mOptions.map((el) => el.i);
   }
   const currentValue =
-    valuesList && valuesList.includes(value.t) ? value.t : "";
+    valuesList && valuesList.includes(mValue.i) ? mValue.i : "";
   const [selectValue, setSelectValue] = useState({
     originalState: currentValue,
     tempState: currentValue,
@@ -121,7 +122,7 @@ const Dropdown = (props) => {
         readOnly={!props.editAllowed && !ignoreEditLocked}
         onChange={(e) => {
           setSelectValue({ ...selectValue, tempState: e.target.value });
-          if (updateFieldData) updateFieldData(e.target.value);
+          // if (updateFieldData) updateFieldData(e.target.value);
           setTimeout(() => setFieldValue(name, e.target.value));
           setTimeout(() => setFieldTouched(name, true), 10);
         }}
@@ -144,8 +145,8 @@ const Dropdown = (props) => {
     </React.Fragment>
   );
 };
-Dropdown.propTypes = {
+OfficerSelect.propTypes = {
   value: PropTypes.string,
   options: PropTypes.array,
 };
-export default Dropdown;
+export default OfficerSelect;

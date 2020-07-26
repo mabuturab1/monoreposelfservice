@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import styles from "./Text.module.scss";
 
 import Tooltip from "../../tooltip/Tooltip";
+import { currencyFormatter } from "../../common/utility";
 
 const Text = (props) => {
   const {
@@ -15,7 +16,10 @@ const Text = (props) => {
     error,
     touched,
     value,
+    customStyles,
     decimalCount,
+    disableReadOnlyMode,
+    type,
   } = { ...props };
 
   const [readOnly, setReadOnly] = useState(true);
@@ -64,11 +68,12 @@ const Text = (props) => {
 
   const inputUI = (
     <input
+      style={customStyles}
       autoComplete="off"
       className={styles.input}
-      {...{ name, disabled, label, value: inputValue.tempState }}
+      {...{ name, disabled, label, type, value: inputValue.tempState }}
       placeholder={props.editAllowed ? placeholder : ""}
-      readOnly={readOnly}
+      readOnly={readOnly && !disableReadOnlyMode}
       onDoubleClick={() => setReadOnly(false || !props.editAllowed)}
       onChange={inputChanged}
       onBlur={(e) => {

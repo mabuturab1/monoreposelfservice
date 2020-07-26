@@ -1,50 +1,20 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 
 import MenuItem from "@material-ui/core/MenuItem";
 
 import Select from "@material-ui/core/Select";
-import styles from "./Dropdown.module.scss";
+import styles from "./CheckboxList.module.scss";
 import InputBase from "@material-ui/core/InputBase";
 
 import Tooltip from "../../tooltip/Tooltip";
-const BootstrapInput = withStyles((theme) => ({
-  root: {
-    minWidth: "5rem",
-
-    fontFamily: "Open Sans",
-    "label + &": {
-      marginTop: theme.spacing(1),
-    },
-  },
-
-  input: {
-    borderRadius: 4,
-    position: "relative",
-
-    outline: "none",
-    border: "none",
-
-    color: "#4a4a4a",
-    fontWeight: "500",
-    fontSize: "0.8rem",
-    backgroundColor: "transparent",
-
-    MozBorderRadius: "10px",
-    WebkitBorderRadius: "10px",
-    padding: "3px 26px 3px 12px",
-    transition: theme.transitions.create(["border-color", "box-shadow"]),
-    // Use the system font instead of the default Roboto font.
-    fontFamily: ["Roboto", "sans-serif"].join(","),
-    "&:focus": {
-      borderRadius: 4,
-      background: "none",
-
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
-    },
-  },
-}))(InputBase);
+import { Checkbox, Popover } from "@material-ui/core";
+import { faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { checkArrEqual } from "../../common/utility";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -59,11 +29,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Dropdown = (props) => {
+const CheckboxList = (props) => {
   const {
     name,
     // label,
-    value,
+    value: mValue,
     error,
     touched,
     ignoreEditLocked,
@@ -75,26 +45,9 @@ const Dropdown = (props) => {
   } = {
     ...props,
   };
-  const currentValue =
-    (valuesList && valuesList.includes(value)) ||
-    (!valuesList && options && options.includes(value))
-      ? value
-      : "";
-  const [anchorEl, setAnchorEl] = useState(null);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-    handleDataSubmit();
-  };
-  const getCurrentValueStatus = (val) => {
-    return (
-      ((valuesList && valuesList.includes(val)) ||
-        (!valuesList && options && options.includes(val))) &&
-      value.includes(val)
-    );
-  };
+  let value = mValue;
+  if (mValue == null || mValue === "") value = [];
+
   const isValidValue = (val) => {
     return (
       (valuesList && valuesList.includes(val)) ||
@@ -106,30 +59,50 @@ const Dropdown = (props) => {
     originalState: currentValue,
     tempState: currentValue,
   });
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setTimeout(() => {
+      if (checkArrEqual(selectValue.tempState, selectValue.originalState))
+        return;
+      setFieldValue(name, selectValue.tempState);
+      setTimeout(() => setFieldTouched(name, true), 10);
+    });
+  };
+
+  const getCurrentValueStatus = (val) => {
+    return selectValue.tempState.includes(val);
+  };
+
   const classes = useStyles();
   let list = [];
-  const checkboxValueChanged = (event, val) => {
+  const checkboxValueChanged = (e, val) => {
+    console.log("event is", e);
     let tempSelectVal = selectValue.tempState.slice();
-    let index = selectValue.find((el) => el === val);
+    let index = selectValue.tempState.findIndex((el) => el === val);
     if (index == -1) tempSelectVal.push(val);
-    updateFieldData(tempSelectVal);
+    else tempSelectVal.splice(index, 1);
+    // updateFieldData(tempSelectVal);
     setSelectValue({
       ...selectValue,
       tempState: tempSelectVal,
     });
 
     e.persist();
-    setTimeout(() => {
-      setFieldValue(name, tempSelectVal);
-      setTimeout(() => onBlur(e), 10);
-    });
+    console.log("temp selected val", tempSelectVal);
   };
   if (options && options.length > 0) {
     for (let i = 0; i < options.length; i++) {
       let currValue =
         valuesList && valuesList.length > i ? valuesList[i] : options[i];
       list.push(
-        <div>
+        <div key={i} className={styles.optionWrapper}>
+          <p className={styles.text}>{options[i]}</p>
           <Checkbox
             key={i}
             checked={getCurrentValueStatus(currValue)}
@@ -140,6 +113,7 @@ const Dropdown = (props) => {
       );
     }
   }
+
   if (
     currentValue.length != selectValue.originalState.length ||
     currentValue.filter((el) => !selectValue.originalState.includes(el))
@@ -150,12 +124,22 @@ const Dropdown = (props) => {
       tempState: currentValue,
     });
 
-  const open = Boolean(anchorEl) && props.editAllowed;
+  const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   const inputUI = (
     <div className={[classes.margin].join(" ")}>
       {/* <InputLabel id="select-label">{label}</InputLabel> */}
-      <input value={value.join(", ")} readOnly={true} onClick={handleClick} />
+      <div className={styles.inputWrapper}>
+        <input
+          className={[styles.input, styles.text].join(" ")}
+          readOnly={true}
+          onClick={handleClick}
+        />
+        <FontAwesomeIcon
+          icon={open ? faSortUp : faSortDown}
+          className={styles.icon}
+        />
+      </div>
       <Popover
         id={id}
         open={open}
@@ -170,7 +154,7 @@ const Dropdown = (props) => {
           horizontal: "center",
         }}
       >
-        {list}
+        <div className={styles.optionsWrapper}>{list}</div>
       </Popover>
     </div>
   );
@@ -187,8 +171,9 @@ const Dropdown = (props) => {
     </React.Fragment>
   );
 };
-Dropdown.propTypes = {
-  value: PropTypes.string,
+CheckboxList.propTypes = {
+  value: PropTypes.any,
   options: PropTypes.array,
+  valuesList: PropTypes.array,
 };
-export default Dropdown;
+export default CheckboxList;

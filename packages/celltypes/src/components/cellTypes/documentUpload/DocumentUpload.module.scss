@@ -1,0 +1,19 @@
+.wrapper {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+.imageStyle {
+  width: 3rem;
+  height: 3rem;
+}
+.fileInput {
+  display: block;
+  font-size: 0.5rem;
+  color: #939393;
+  padding: 0;
+  margin-top: 6px;
+  cursor: pointer;
+  min-width: 7rem;
+}

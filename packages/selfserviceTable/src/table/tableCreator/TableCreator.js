@@ -9,6 +9,7 @@ import { Formik } from "formik";
 import FilterHeader from "../filterHeader/FilterHeader";
 import PropTypes from "prop-types";
 import TableContext from "../context/TableContext";
+import CellTypeContext from "../context/CellTypeContext";
 import styles from "./TableCreator.module.scss";
 import InfiniteLoader from "../infiniteLoader/InfiniteLoader";
 import { Paper } from "@material-ui/core";
@@ -16,10 +17,16 @@ import InfoDialog from "../infoDialog/InfoDialog";
 
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import Loader from "react-loader-spinner";
+import { CellTypes } from "../utility/cellTypes";
 
 const TableCreator = (props) => {
   const tableData = props.tableData || [];
-  const tableHeader = props.tableHeader || [];
+  const tableHeader = (props.tableHeader || []).concat({
+    key: "%OPEN_NEW_FIELD_DIALOG%",
+    icon: "Add",
+    label: "Add",
+    isIcon: true,
+  });
 
   const [editAllowed, setEditAllowed] = useState(
     props.editAllowed != null ? props.editAllowed : true
@@ -38,7 +45,7 @@ const TableCreator = (props) => {
   };
   const [queryParams, setQueryParams] = useState({
     pageNumber: 0,
-    pageSize: 10,
+    pageSize: 50,
     key: "",
     order: "",
     isNewKey: false,
@@ -66,6 +73,7 @@ const TableCreator = (props) => {
         data: updateTableHeaderProps(type, tableHeaderProps),
       });
     }
+
     return cellSpecs;
   }, [tableHeader]);
   const fetchTableHeader = useCallback(() => {
@@ -138,26 +146,32 @@ const TableCreator = (props) => {
     };
     setQueryParams(newQueryParams);
   };
-  let getSortOrder = (data, isNewKey) => {
-    if (isNewKey) return "ASC";
-    if (data === "") return "ASC";
-    if (data === "ASC") return "DESC";
-    if (data === "DESC") return "";
-  };
-  let onHeaderClicked = (key) => {
-    let currentSortOrder = getSortOrder(
-      queryParams.order,
-      key !== queryParams.key
-    );
-
+  // let getSortOrder = (data, isNewKey) => {
+  //   if (isNewKey) return "ASC";
+  //   if (data === "") return "ASC";
+  //   if (data === "ASC") return "DESC";
+  //   if (data === "DESC") return "";
+  // };
+  let onHeaderClicked = (key, selectedOption = "") => {
+    // let currentSortOrder = getSortOrder(
+    //   queryParams.order,
+    //   key !== queryParams.key
+    // );
+    console.log("key is", key, "option is", selectedOption);
     let newQueryParams = {};
-    if (key !== "indexIdNumber") {
+    if (key === "indexIdNumber") return;
+    if (
+      selectedOption &&
+      (selectedOption === "unsorted" ||
+        selectedOption === "ASC" ||
+        selectedOption === "DESC")
+    ) {
       newQueryParams = {
         ...queryParams,
-        key: currentSortOrder !== "" ? key : "",
-        order: currentSortOrder,
+        key: selectedOption !== "unsorted" ? key : "",
+        order: selectedOption != "unsorted" ? selectedOption : "",
         isNewKey:
-          key !== queryParams.key || currentSortOrder !== queryParams.order,
+          key !== queryParams.key || selectedOption !== queryParams.order,
       };
 
       if (newQueryParams.isNewKey) {
@@ -237,88 +251,96 @@ const TableCreator = (props) => {
         setEditAllowed: (val) => setEditAllowed(val),
       }}
     >
-      {props.tableHeader && props.tableHeader.length > 0 ? (
-        <div className={styles.filterHeader}>
-          <div
-            style={{ width: tableWidth, maxWidth: "100vw", margin: "0 auto" }}
-          >
-            <FilterHeader
-              handleNewFilterData={handleNewFilterData}
-              handleSearch={handleSearch}
-            />
+      <CellTypeContext.Provider
+        value={{
+          cellTypes: CellTypes,
+        }}
+      >
+        {props.tableHeader && props.tableHeader.length > 0 ? (
+          <div className={styles.filterHeader}>
+            <div
+              style={{ width: tableWidth, maxWidth: "100vw", margin: "0 auto" }}
+            >
+              <FilterHeader
+                handleNewFilterData={handleNewFilterData}
+                handleSearch={handleSearch}
+              />
+            </div>
           </div>
-        </div>
-      ) : null}
-      <div className={styles.wrapper}>
-        <Paper
-          style={{
-            margin: "0 auto",
-            flex: 1,
-            width: tableData.length > 0 ? tableWidth : "100vw",
-          }}
-        >
-          <InfoDialog
-            open={(props.serverError && props.serverError.length > 0) === true}
-            icon={faExclamationCircle}
-            handleClose={() => props.removeError()}
-            buttonTitle={"Okay"}
-            content={props.serverError}
-            title={"Sorry"}
-          />
-
-          <Formik
-            initialValues={getInitValues()}
-            enableReinitialize={true}
-            validationSchema={getValidationSchemaObject()}
-            onSubmit={(values, actions) => {
-              console.log("values", values);
-              console.log("actions", actions);
+        ) : null}
+        <div className={styles.wrapper}>
+          <Paper
+            style={{
+              margin: "0 auto",
+              flex: 1,
+              width: tableData.length > 0 ? tableWidth : "100vw",
             }}
           >
-            {(formData) => (
-              // props.tableHeaderPending || tableData.length < 1 ? (
-              //   <div
-              //     style={{
-              //       width: "100vw",
-              //       height: "100%",
+            <InfoDialog
+              open={
+                (props.serverError && props.serverError.length > 0) === true
+              }
+              icon={faExclamationCircle}
+              handleClose={() => props.removeError()}
+              buttonTitle={"Okay"}
+              content={props.serverError}
+              title={"Sorry"}
+            />
 
-              //       display: "flex",
-              //       justifyContent: "center",
-              //       alignItems: "center",
-              //     }}
-              //   >
-              //     {
-              //     props.tableDataPending || props.tableHeaderPending ? (
-              //       <Loader
-              //         type="ThreeDots"
-              //         color="#00BFFF"
-              //         height={50}
-              //         width={50}
-              //         timeout={0} //3 secs
-              //       />
-              //     ) : (
-              //       <h4 className={styles.noData}>No Record Found</h4>
-              //     )}
-              //   </div>
-              // ) :
-              <InfiniteLoader
-                isNextPageLoading={props.tableDataPending}
-                loadNextPage={loadMoreItems}
-                tableData={props.tableData}
-                tableHeader={props.tableHeader}
-                cellSpecs={createHeaderSpecs(tableHeader)}
-                formData={formData}
-                totalReportItems={props.totalReportItems}
-                columnsWidth={columnsWidth}
-                validationSchema={createValidationSchema()}
-                sortByColumn={queryParams}
-                onHeaderClicked={onHeaderClicked}
-                updateFieldData={updateFieldData}
-              />
-            )}
-          </Formik>
-        </Paper>
-      </div>
+            <Formik
+              initialValues={getInitValues()}
+              enableReinitialize={true}
+              validationSchema={getValidationSchemaObject()}
+              onSubmit={(values, actions) => {
+                console.log("values", values);
+                console.log("actions", actions);
+              }}
+            >
+              {(formData) =>
+                props.tableHeaderPending || tableData.length < 1 ? (
+                  <div
+                    style={{
+                      width: "100vw",
+                      height: "100%",
+
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {props.tableDataPending || props.tableHeaderPending ? (
+                      <Loader
+                        type="ThreeDots"
+                        color="#00BFFF"
+                        height={50}
+                        width={50}
+                        timeout={0} //3 secs
+                      />
+                    ) : (
+                      <h4 className={styles.noData}>No Record Found</h4>
+                    )}
+                  </div>
+                ) : (
+                  <InfiniteLoader
+                    isNextPageLoading={props.tableDataPending}
+                    loadNextPage={loadMoreItems}
+                    tableData={props.tableData}
+                    tableHeader={tableHeader}
+                    cellSpecs={createHeaderSpecs(tableHeader)}
+                    formData={formData}
+                    totalReportItems={props.totalReportItems}
+                    columnsWidth={columnsWidth}
+                    validationSchema={createValidationSchema()}
+                    sortByColumn={queryParams}
+                    onHeaderClicked={onHeaderClicked}
+                    updateFieldData={updateFieldData}
+                  />
+                )
+              }
+            </Formik>
+          </Paper>
+        </div>
+      </CellTypeContext.Provider>
     </TableContext.Provider>
   );
 };

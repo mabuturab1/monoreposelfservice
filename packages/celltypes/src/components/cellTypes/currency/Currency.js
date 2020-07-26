@@ -1,8 +1,10 @@
 import React, { useState, useContext } from "react";
-import styles from "./TextArea.module.scss";
-import Tooltip from "../../tooltip/Tooltip";
+import styles from "./Currency.module.scss";
 
-const TextArea = (props) => {
+import Tooltip from "../../tooltip/Tooltip";
+import { currencyFormatter } from "../../common/utility";
+
+const Currency = (props) => {
   const {
     name,
     isDisabled: disabled,
@@ -11,19 +13,35 @@ const TextArea = (props) => {
     updateFieldData,
     setFieldValue,
     placeholder,
-    value,
     error,
     touched,
+    value,
     customStyles,
+    decimalCount,
     disableReadOnlyMode,
     type,
+    currency,
+    thousandSep,
+    decimalSep,
+    unit,
   } = { ...props };
-  // console.log("in textArea", name, error, touched);
+
   const [readOnly, setReadOnly] = useState(true);
+
   const [inputValue, setInputValue] = useState({
     originalState: value,
     tempState: value,
   });
+  const checkForDecimalCount = (value) => {
+    let myVal = value;
+    if (decimalCount && !isNaN(decimalCount)) {
+      myVal =
+        Math.round(+value * Math.pow(10, +decimalCount)) /
+        Math.pow(10, +decimalCount);
+    }
+    return myVal;
+  };
+
   const inputChanged = (e) => {
     setInputValue({
       ...inputValue,
@@ -31,38 +49,48 @@ const TextArea = (props) => {
     });
   };
   const updateInput = () => {
-    if (
-      inputValue.tempState === inputValue.originalState ||
-      (error && touched) === true
-    )
-      return;
-    updateFieldData(inputValue.tempState);
+    if (inputValue.tempState === inputValue.originalState) return;
+
+    updateFieldData(checkForDecimalCount(inputValue.tempState));
   };
   const inputBlurred = (e) => {
-    if (
-      inputValue.tempState === inputValue.originalState ||
-      (error && touched) === true
-    )
-      return;
-    setInputValue({ ...inputValue });
-    setFieldValue(name, inputValue.tempState);
+    if (inputValue.tempState === inputValue.originalState) return;
+    let updatedVal = {
+      ...inputValue,
+      tempState: checkForDecimalCount(inputValue.tempState),
+    };
+
+    if (inputValue) setInputValue({ ...updatedVal });
+
+    setFieldValue(name, updatedVal.tempState);
 
     setTimeout(() => handleBlur(e), 10);
   };
+
   if (value !== inputValue.originalState) {
     setInputValue({ originalState: value, tempState: value });
   }
+
   const inputUI = (
-    <textarea
+    <input
       style={customStyles}
-      className={styles.textArea}
-      spellCheck="false"
+      autoComplete="off"
+      className={styles.input}
       {...{
         name,
         disabled,
         label,
         type,
-        value: inputValue.tempState,
+        value: readOnly
+          ? currencyFormatter(
+              inputValue.tempState,
+              currency,
+              thousandSep,
+              decimalSep,
+              decimalCount,
+              unit
+            )
+          : inputValue.tempState,
       }}
       placeholder={props.editAllowed ? placeholder : ""}
       readOnly={readOnly && !disableReadOnlyMode}
@@ -70,30 +98,14 @@ const TextArea = (props) => {
       onChange={inputChanged}
       onBlur={(e) => {
         // onBlur(e);
-
+        if (!props.editAllowed) return;
         setReadOnly(true);
         updateInput();
         setTimeout(() => inputBlurred(e));
       }}
     />
   );
-  const readOnlyInputUI = (
-    <div
-      style={customStyles}
-      className={styles.textArea}
-      onDoubleClick={() => setReadOnly(false || !props.editAllowed)}
-    >
-      {inputValue.tempState && inputValue.tempState.length > 0 ? (
-        <span>{inputValue.tempState}</span>
-      ) : (
-        <span style={{ fontWeight: 400, opacity: 0.6 }}>{placeholder}</span>
-      )}
-    </div>
-  );
 
-  // Object.keys(data).forEach((el) => {
-  //   if (!(el in dummyTextArea)) delete updatedData[el];
-  // });
   return (
     <React.Fragment>
       <Tooltip
@@ -102,9 +114,10 @@ const TextArea = (props) => {
         open={(error && touched) === true}
         placement="bottom-start"
       >
-        {readOnly && !disableReadOnlyMode ? readOnlyInputUI : inputUI}
+        {inputUI}
       </Tooltip>
     </React.Fragment>
   );
 };
-export default TextArea;
+
+export default React.memo(Currency);

@@ -20,25 +20,31 @@ const SwitchButton = (props) => {
     updateFieldData,
   } = { ...props };
   const [inputValue, setInputValue] = useState({
-    originalState: parseInt(value || 0),
-    tempState: parseInt(value || 0),
+    originalState: value || false,
+    tempState: value || false,
   });
-  if (value > 0 && parseInt(value) !== inputValue.originalState) {
+  if (value > 0 && value !== inputValue.originalState) {
     setInputValue({
-      originalState: parseInt(value || 0),
-      tempState: parseInt(value || 0),
+      originalState: value || false,
+      tempState: value || false,
     });
   }
   const switchUI = (
     <Switch
       onChange={(e) => {
+        console.log(
+          "current taget value",
+
+          e.currentTarget,
+          e.currentTarget.checked
+        );
         if (e.currentTarget.value === inputValue.originalState) return;
-        updateFieldData(e.currentTarget.value);
+        updateFieldData(e.currentTarget.checked);
         setInputValue({
           ...inputValue,
-          tempState: e.currentTarget.value,
+          tempState: e.currentTarget.checked,
         });
-        let currentValue = e.currentTarget.value;
+        let currentValue = e.currentTarget.checked;
         e.persist();
         setTimeout(() => {
           setFieldValue(name, currentValue);

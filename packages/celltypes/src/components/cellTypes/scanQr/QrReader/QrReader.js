@@ -6,9 +6,11 @@ import jpeg from "jpeg-js";
 import { PNG } from "pngjs";
 import Webcam from "react-webcam";
 import jsqr from "jsqr";
+import styles from "./QrReader.module.scss";
 import { Button } from "@material-ui/core";
 global.Buffer = Buffer; // very important
-const QrScanner = (props) => {
+
+const QrReader = ({ onClose, onSubmit }) => {
   const videoConstraints = {
     width: 400,
     height: 400,
@@ -17,7 +19,8 @@ const QrScanner = (props) => {
 
   const webcamRef = React.useRef(null);
   const [anError, setError] = useState(false);
-  const [result, setResult] = useState("No Result");
+  const [result, setResult] = useState("");
+
   let interval = useRef(null);
   const decodeQr = React.useCallback(() => {
     if (webcamRef == null || webcamRef.current == null) return;
@@ -29,6 +32,7 @@ const QrScanner = (props) => {
     );
     const code = jsqr(Uint8ClampedArray.from(png.data), png.width, png.height);
     console.log("CODE IS", code);
+    if (code != null) setResult(code);
     // const result = decodeResult(clampedArray, width, height);
     // console.log(result);
   }, [webcamRef]);
@@ -74,13 +78,12 @@ const QrScanner = (props) => {
       }
     }, 1000);
   }, [decodeQr, anError, setError]);
+  const handleClose = () => {
+    clearInterval(interval.current);
+    onClose();
+  };
   return (
     <div>
-      {anError ? (
-        <Button onClick={resetError} variant="contained" color="secondary">
-          Retry
-        </Button>
-      ) : null}
       <Webcam
         audio={false}
         height={400}
@@ -90,8 +93,40 @@ const QrScanner = (props) => {
         mirrored={true}
         videoConstraints={videoConstraints}
       />
-      <p>{result}</p>
+
+      <p>
+        {!result || result == "" ? "No Qr code found" : "Result is: " + result}
+      </p>
+      <div className={styles.buttonWrapper}>
+        {anError ? (
+          <Button
+            style={{ margin: "0px 10px" }}
+            onClick={resetError}
+            variant="contained"
+            color="secondary"
+          >
+            Retry
+          </Button>
+        ) : null}
+        <Button
+          disabled={!result || result === ""}
+          style={{ margin: "0px 10px" }}
+          onClick={() => onSubmit(result)}
+          variant="contained"
+          color="primary"
+        >
+          Save Result
+        </Button>
+        <Button
+          style={{ margin: "0px 10px" }}
+          onClick={handleClose}
+          variant="contained"
+          color="primary"
+        >
+          Cancel
+        </Button>
+      </div>
     </div>
   );
 };
-export default QrScanner;
+export default QrReader;

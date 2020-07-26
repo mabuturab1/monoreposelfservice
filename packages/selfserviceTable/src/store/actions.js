@@ -21,6 +21,126 @@ export const getTableDataSuccess = (data) => {
     payload: data,
   };
 };
+
+export const getUploadFileStart = () => {
+  return {
+    type: actionTypes.START_UPLOAD_FILE,
+  };
+};
+export const getUploadFileFailed = () => {
+  return {
+    type: actionTypes.UPLOAD_FILE_FAILED,
+  };
+};
+export const getUploadFileSuccess = (data) => {
+  return {
+    type: actionTypes.UPLOAD_FILE_SUCCESS,
+    payload: data,
+  };
+};
+
+export const getAddContentStart = () => {
+  return {
+    type: actionTypes.START_ADD_CONTENT,
+  };
+};
+export const getAddContentFailed = () => {
+  return {
+    type: actionTypes.ADD_CONTENT_FAILED,
+  };
+};
+export const getAddContentSuccess = (data) => {
+  return {
+    type: actionTypes.ADD_CONTENT_SUCCESS,
+    payload: data,
+  };
+};
+
+export const getEditContentStart = () => {
+  return {
+    type: actionTypes.START_EDIT_CONTENT,
+  };
+};
+export const getEditContentFailed = () => {
+  return {
+    type: actionTypes.EDIT_CONTENT_FAILED,
+  };
+};
+export const getEditContentSuccess = (data) => {
+  return {
+    type: actionTypes.EDIT_CONTENT_SUCCESS,
+    payload: data,
+  };
+};
+
+export const getDeleteContentStart = () => {
+  return {
+    type: actionTypes.START_DELETE_CONTENT,
+  };
+};
+export const getDeleteContentFailed = () => {
+  return {
+    type: actionTypes.DELETE_CONTENT_FAILED,
+  };
+};
+export const getDeleteContentSuccess = (data) => {
+  return {
+    type: actionTypes.DELETE_CONTENT_SUCCESS,
+    payload: data,
+  };
+};
+
+export const getAddFieldStart = () => {
+  return {
+    type: actionTypes.START_ADD_FIELD,
+  };
+};
+export const getAddFieldFailed = () => {
+  return {
+    type: actionTypes.ADD_FIELD_FAILED,
+  };
+};
+export const getAddFieldSuccess = (data) => {
+  return {
+    type: actionTypes.ADD_FIELD_SUCCESS,
+    payload: data,
+  };
+};
+
+export const getEditFieldStart = () => {
+  return {
+    type: actionTypes.START_EDIT_FIELD,
+  };
+};
+export const getEditFieldFailed = () => {
+  return {
+    type: actionTypes.EDIT_FIELD_FAILED,
+  };
+};
+export const getEditFieldSuccess = (data) => {
+  return {
+    type: actionTypes.EDIT_FIELD_SUCCESS,
+    payload: data,
+  };
+};
+
+export const getDeleteFieldStart = () => {
+  return {
+    type: actionTypes.START_DELETE_FIELD,
+  };
+};
+export const getDeleteFieldFailed = () => {
+  return {
+    type: actionTypes.DELETE_FIELD_FAILED,
+  };
+};
+export const getDeleteFieldSuccess = (data) => {
+  return {
+    type: actionTypes.DELETE_FIELD_SUCCESS,
+    payload: data,
+  };
+};
+
 export const clearTableData = () => {
   return {
     type: actionTypes.CLEAR_TABLE_DATA,
@@ -166,6 +286,115 @@ export const getTableHeader = (apiUrl, reportId) => {
       })
       .catch((error) => {
         dispatch(getTableHeaderFailed());
+      });
+  };
+};
+
+export const uploadFile = (apiUrl, data) => {
+  return (dispatch) => {
+    dispatch(getUploadFileStart());
+    axios
+      .post(`${"/vbeta"}/uploads`, data, config)
+      .then((response) => {
+        if (response) dispatch(getUploadFileSuccess(response.data));
+        else dispatch(getUploadFileFailed());
+      })
+      .catch((error) => {
+        dispatch(getUploadFileFailed());
+      });
+  };
+};
+
+export const addTableContent = (apiUrl, reportId, data) => {
+  return (dispatch) => {
+    dispatch(getAddContentStart());
+    axios
+      .post(`${"/vbeta"}/reports/${reportId}/contents`, data, config)
+      .then((response) => {
+        if (response) dispatch(getAddContentSuccess(response.data));
+        else dispatch(getTableHeaderFailed());
+      })
+      .catch((error) => {
+        dispatch(getTableHeaderFailed());
+      });
+  };
+};
+
+export const editTableContent = (apiUrl, reportId, fieldId, data) => {
+  return (dispatch) => {
+    dispatch(getEditContentStart());
+    axios
+      .put(
+        `${"/vbeta"}/reports/${reportId}/contents/${fieldId}/data`,
+        data,
+        config
+      )
+      .then((response) => {
+        if (response) dispatch(getEditContentSuccess(response.data));
+        else dispatch(getEditContentFailed());
+      })
+      .catch((error) => {
+        dispatch(getEditContentFailed());
+      });
+  };
+};
+
+export const deleteTableContent = (apiUrl, reportId, fieldId) => {
+  return (dispatch) => {
+    dispatch(getDeleteContentStart());
+    axios
+      .delete(`${"/vbeta"}/reports/${reportId}/contents/${fieldId}`, config)
+      .then((response) => {
+        if (response) dispatch(getDeleteContentSuccess(response.data));
+        else dispatch(getDeleteContentFailed());
+      })
+      .catch((error) => {
+        dispatch(getDeleteContentFailed());
+      });
+  };
+};
+
+export const addTableField = (apiUrl, reportId, data) => {
+  return (dispatch) => {
+    dispatch(getAddFieldStart());
+    axios
+      .post(`${"/vbeta"}/reports/${reportId}/fields`, data, config)
+      .then((response) => {
+        if (response) dispatch(getAddFieldSuccess(response.data));
+        else dispatch(getAddFieldFailed());
+      })
+      .catch((error) => {
+        dispatch(getAddFieldFailed());
+      });
+  };
+};
+
+export const editTableField = (apiUrl, reportId, fieldKey, data) => {
+  return (dispatch) => {
+    dispatch(getEditFieldStart());
+    axios
+      .put(`${"/vbeta"}/reports/${reportId}/fields/${fieldKey}`, data, config)
+      .then((response) => {
+        if (response) dispatch(getEditFieldSuccess(response.data));
+        else dispatch(getEditFieldFailed());
+      })
+      .catch((error) => {
+        dispatch(getEditFieldFailed());
+      });
+  };
+};
+
+export const deleteTableField = (apiUrl, reportId, fieldKey) => {
+  return (dispatch) => {
+    dispatch(getDeleteFieldStart());
+    axios
+      .delete(`${"/vbeta"}/reports/${reportId}/fields/${fieldKey}`, config)
+      .then((response) => {
+        if (response) dispatch(getDeleteFieldSuccess(response.data));
+        else dispatch(getDeleteFieldFailed());
+      })
+      .catch((error) => {
+        dispatch(getDeleteFieldFailed());
       });
   };
 };

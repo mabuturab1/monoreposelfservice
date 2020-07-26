@@ -17,6 +17,7 @@ const MyRating = (props) => {
     error,
     touched,
     updateFieldData,
+    disableReadOnlyMode,
   } = { ...props };
   const [inputValue, setInputValue] = useState({
     originalState: parseInt(value || 0),
@@ -31,7 +32,7 @@ const MyRating = (props) => {
 
   const ratingUI = (
     <Rating
-      readOnly={!props.editAllowed}
+      readOnly={!props.editAllowed && !disableReadOnlyMode}
       // className={styles.input}
       onChange={(e) => {
         if (parseInt(e.currentTarget.value) === inputValue.originalState)

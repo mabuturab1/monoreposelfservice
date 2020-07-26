@@ -10,7 +10,7 @@ const initialState = {
   tableDataPending: false,
   filterData: { data: {}, numFilters: 0 },
   serverError: "",
-  currentReportId: "5ee2ec25570a12e08291ce09",
+  currentReportId: "",
   apiAddress: "",
   fieldUpdateStatus: { success: false, error: false },
   totalReportItems: 1,

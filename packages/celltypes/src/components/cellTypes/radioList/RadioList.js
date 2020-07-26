@@ -5,47 +5,13 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 
 import Select from "@material-ui/core/Select";
-import styles from "./Dropdown.module.scss";
+import styles from "./RadioList.module.scss";
 import InputBase from "@material-ui/core/InputBase";
 
 import Tooltip from "../../tooltip/Tooltip";
-import { Popover } from "@material-ui/core";
-const BootstrapInput = withStyles((theme) => ({
-  root: {
-    minWidth: "5rem",
-
-    fontFamily: "Open Sans",
-    "label + &": {
-      marginTop: theme.spacing(1),
-    },
-  },
-
-  input: {
-    borderRadius: 4,
-    position: "relative",
-
-    outline: "none",
-    border: "none",
-
-    color: "#4a4a4a",
-    fontWeight: "500",
-    fontSize: "0.8rem",
-    backgroundColor: "transparent",
-
-    MozBorderRadius: "10px",
-    WebkitBorderRadius: "10px",
-    padding: "3px 26px 3px 12px",
-    transition: theme.transitions.create(["border-color", "box-shadow"]),
-    // Use the system font instead of the default Roboto font.
-    fontFamily: ["Roboto", "sans-serif"].join(","),
-    "&:focus": {
-      borderRadius: 4,
-      background: "none",
-
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
-    },
-  },
-}))(InputBase);
+import { Popover, Radio } from "@material-ui/core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -68,6 +34,7 @@ const Dropdown = (props) => {
     error,
     touched,
     ignoreEditLocked,
+    handleChange,
     options,
     valuesList,
     setFieldValue,
@@ -84,7 +51,10 @@ const Dropdown = (props) => {
 
   const handleClose = () => {
     setAnchorEl(null);
-    handleDataSubmit();
+    setTimeout(() => {
+      setFieldValue(name, selectValue.tempState);
+      setTimeout(() => setFieldTouched(name, true), 10);
+    });
   };
   const currentValue =
     (valuesList && valuesList.includes(value)) ||
@@ -103,14 +73,19 @@ const Dropdown = (props) => {
       let localValue =
         valuesList && valuesList.length > i ? valuesList[i] : options[i];
       list.push(
-        <Radio
-          key={i}
-          checked={selectValue.tempState === localValue}
-          onChange={handleChange}
-          value={localValue}
-          name={name}
-          inputProps={{ "aria-label": "A" }}
-        />
+        <div key={i} className={styles.optionWrapper}>
+          <p className={styles.text}>{options[i]}</p>
+          <Radio
+            key={i}
+            checked={selectValue.tempState === localValue}
+            onChange={(e) =>
+              setSelectValue({ ...selectValue, tempState: e.target.value })
+            }
+            value={localValue}
+            name={name}
+            inputProps={{ "aria-label": "A" }}
+          />
+        </div>
       );
     }
   }
@@ -119,16 +94,23 @@ const Dropdown = (props) => {
       originalState: currentValue,
       tempState: currentValue,
     });
-  const open = Boolean(anchorEl) && props.editAllowed;
+  const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   const inputUI = (
     <div className={[classes.margin].join(" ")}>
       {/* <InputLabel id="select-label">{label}</InputLabel> */}
-      <input
-        value={selectValue.tempState}
-        readOnly={true}
-        onClick={handleClick}
-      />
+      <div className={styles.inputWrapper}>
+        <input
+          className={[styles.input, styles.text].join(" ")}
+          readOnly={true}
+          onClick={handleClick}
+          value={selectValue.tempState}
+        />
+        <FontAwesomeIcon
+          icon={open ? faSortUp : faSortDown}
+          className={styles.icon}
+        />
+      </div>
       <Popover
         id={id}
         open={open}
@@ -143,7 +125,7 @@ const Dropdown = (props) => {
           horizontal: "center",
         }}
       >
-        {list}
+        <div className={styles.optionsWrapper}>{list}</div>
       </Popover>
     </div>
   );

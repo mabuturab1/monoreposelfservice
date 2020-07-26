@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import styles from "./GoogleMaps.module.scss";
-import Autocomplete from "react-google-autocomplete";
+import AutoComplete from "react-google-autocomplete";
 import InputIcon from "../../../../common/HOC/inputIcon/InputIcon";
-import { Map, GoogleApiWrapper } from "google-maps-react";
+import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import { CircularProgress } from "@material-ui/core";
-
-const GoogleMaps = ({ google, customStyles, value, apKey }) => {
+import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+import { geocodeByPlaceId } from "react-google-places-autocomplete";
+import "react-google-places-autocomplete/dist/index.min.css";
+const GoogleMaps = ({ google, customStyles, value, apiKey }) => {
+  const [mapsLoaded, setMapsLoaded] = useState(false);
   const getCity = (addressArray) => {
     let city = "";
     for (let i = 0; i < addressArray.length; i++) {
@@ -59,6 +62,7 @@ const GoogleMaps = ({ google, customStyles, value, apKey }) => {
       latValue = place.geometry.location.lat(),
       lngValue = place.geometry.location.lng();
     // Set these values in the state.
+
     setMapData({
       ...mapData,
       address: address ? address : "",
@@ -77,7 +81,26 @@ const GoogleMaps = ({ google, customStyles, value, apKey }) => {
   };
 
   useEffect(() => {}, []);
-
+  const getLatLng = ({ place_id }) => {
+    geocodeByPlaceId(place_id)
+      .then((results) => {
+        console.log(results);
+        if (
+          results &&
+          results[0] &&
+          results[0].geometry &&
+          results[0].geometry.location
+        ) {
+          let location = results[0].geometry.location;
+          setMapData({ ...mapData, lat: location.lat(), lng: location.lng() });
+        }
+        console.log(
+          results[0].geometry.location.lat(),
+          results[0].geometry.location.lng()
+        );
+      })
+      .catch((error) => console.error(error));
+  };
   const [mapData, setMapData] = useState({
     lat: value && value.lat ? value.lat : -1.2884,
     lng: value && value.long ? value.long : 36.8233,
@@ -92,30 +115,41 @@ const GoogleMaps = ({ google, customStyles, value, apKey }) => {
     width: "550px",
     height: "550px",
   };
+  console.log("api key is", apiKey);
   console.log(value, value.lat, value.long);
+  const moveMarker = (coord) => {
+    console.log(coord, coord.latlng);
+    if (coord && coord.latlng) {
+      console.log(coord.latlng.lat(), coord.latlng.lng());
+      setMapData({
+        ...mapData,
+        lat: coord.latlng.lat(),
+        lng: coord.latlng.lng(),
+      });
+    }
+  };
   return (
     <div>
       <div></div>
       <div className={styles.mapWrapper} style={customStyles}>
+        {mapsLoaded ? (
+          <GooglePlacesAutocomplete onSelect={(data) => getLatLng(data)} />
+        ) : null}
         <Map
           google={google}
           zoom={14}
+          onReady={() => setMapsLoaded(true)}
           style={customStyles}
-          initialCenter={{
+          center={{
             lat: mapData.lat,
             lng: mapData.lng,
           }}
         >
-          <Autocomplete
-            style={{
-              width: "100%",
-              height: "40px",
-              paddingLeft: "16px",
-              marginTop: "2px",
-              marginBottom: "100px",
-            }}
-            onPlaceSelected={onPlaceSelected}
-            types={["(regions)"]}
+          <Marker
+            draggable={true}
+            onDragend={(data1, data2, data3) => moveMarker(data3)}
+            name={"GM"}
+            position={{ lat: mapData.lat, lng: mapData.lng }}
           />
         </Map>
       </div>

@@ -102,7 +102,7 @@ const Map = (props) => {
       </InputIcon>
     </div>
   );
-  console.log("in my map value is", value);
+
   return (
     <React.Fragment>
       <Tooltip

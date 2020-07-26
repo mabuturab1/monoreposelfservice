@@ -77,7 +77,7 @@ const OfficerSelect = (props) => {
   };
   let options = [];
   let valuesList = [];
-  console.log("mOptuons are", mOptions);
+
   if (mOptions && mOptions.length > 0) {
     options = mOptions.map((el) => el.t);
     valuesList = mOptions.map((el) => el.i);

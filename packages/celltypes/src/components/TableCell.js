@@ -18,7 +18,8 @@ import { makeStyles } from "@material-ui/core";
 import OfficerSelect from "./cellTypes/officerSelect/OfficerSelect";
 import ScanQr from "./cellTypes/scanQr/ScanQr";
 import DocumentUpload from "./cellTypes/documentUpload/DocumentUpload";
-
+import ContactData from "./cellTypes/contactData/ContactData";
+import MyMap from "./cellTypes/myMap/MyMap";
 const useStyles = makeStyles(() => ({
   smallPadding: {
     padding: "8px 16px",
@@ -50,6 +51,8 @@ const MyTableCell = (props) => {
     OFFICER_SELECT: OfficerSelect,
     SCAN_QR: ScanQr,
     DOCUMENT: DocumentUpload,
+    CONTACT: ContactData,
+    MAP: MyMap,
   };
   let getType = (val) => {
     switch (val) {

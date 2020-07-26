@@ -1,0 +1,42 @@
+.input {
+  width: 90%;
+  cursor: pointer;
+  //   padding: 0.4rem 1rem;
+  &,
+  &:focus {
+    border: 1px solid rgba(0, 0, 50, 0.4);
+    outline: none;
+    border-radius: 5px;
+  }
+  &:read-only {
+    border: 1px solid transparent;
+    outline: none;
+  }
+  &::placeholder {
+    font-weight: 400;
+    opacity: 0.8;
+    color: #cacaca;
+  }
+}
+.inputWrapper {
+  display: flex;
+  justify-content: space-between;
+
+  background-color: white;
+  padding: 8px;
+  border-radius: 7px;
+  cursor: pointer;
+
+  //   padding: 0.4rem 1rem;
+
+  span {
+    color: #4a4a4a;
+    font-weight: 500;
+    font-size: 0.8rem;
+    background-color: transparent;
+    font-family: "Roboto", "sans-serif";
+  }
+}
+.icon {
+  padding-right: 10px;
+}

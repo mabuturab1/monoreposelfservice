@@ -1,0 +1,33 @@
+.headerWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0px 10px 10px;
+}
+.input {
+  color: #939393;
+  font-weight: 600;
+  font-size: 0.8rem;
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  //   padding: 0.4rem 1rem;
+  &,
+  &:focus {
+    outline: none;
+  }
+  &:read-only {
+    border: 1px solid transparent;
+    outline: none;
+    font-family: inherit;
+  }
+  &::placeholder {
+    font-weight: 400;
+    opacity: 0.6;
+  }
+}
+.icon {
+  padding-right: 10px;
+  cursor: pointer;
+}

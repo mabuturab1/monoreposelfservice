@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import styles from "./GoogleMaps.module.scss";
-import AutoComplete from "react-google-autocomplete";
 import InputIcon from "../../../../common/HOC/inputIcon/InputIcon";
-import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
 import { CircularProgress } from "@material-ui/core";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { geocodeByPlaceId } from "react-google-places-autocomplete";
@@ -23,6 +22,10 @@ const GoogleMaps = ({ google, customStyles, value, apiKey }) => {
       }
     }
   };
+  const markerPositionRef = useRef({
+    lat: value && value.lat ? value.lat : -1.2884,
+    lng: value && value.long ? value.long : 36.8233,
+  });
   const getArea = (addressArray) => {
     let area = "";
     for (let i = 0; i < addressArray.length; i++) {
@@ -92,42 +95,87 @@ const GoogleMaps = ({ google, customStyles, value, apiKey }) => {
           results[0].geometry.location
         ) {
           let location = results[0].geometry.location;
-          setMapData({ ...mapData, lat: location.lat(), lng: location.lng() });
+          markerPositionRef.current = {
+            lat: location.lat(),
+            lng: location.lng(),
+          };
+          setMapData({
+            ...mapData,
+            mapPosition: {
+              lat: location.lat(),
+              lng: location.lng(),
+            },
+            markerPosition: {
+              lat: location.lat(),
+              lng: location.lng(),
+            },
+          });
         }
-        console.log(
-          results[0].geometry.location.lat(),
-          results[0].geometry.location.lng()
-        );
       })
       .catch((error) => console.error(error));
   };
+  const onInfoWindowClose = () => {
+    console.log("ON window closed");
+  };
   const [mapData, setMapData] = useState({
-    lat: value && value.lat ? value.lat : -1.2884,
-    lng: value && value.long ? value.long : 36.8233,
     address: "",
     area: "",
     city: "",
     state: "",
-    markerPosition: {},
-    mapPosition: {},
+    markerPosition: {
+      lat: value && value.lat ? value.lat : -1.2884,
+      lng: value && value.long ? value.long : 36.8233,
+    },
+    mapPosition: {
+      lat: value && value.lat ? value.lat : -1.2884,
+      lng: value && value.long ? value.long : 36.8233,
+    },
   });
   const mapStyles = {
     width: "550px",
     height: "550px",
   };
-  console.log("api key is", apiKey);
-  console.log(value, value.lat, value.long);
-  const moveMarker = (coord) => {
-    console.log(coord, coord.latlng);
-    if (coord && coord.latlng) {
-      console.log(coord.latlng.lat(), coord.latlng.lng());
-      setMapData({
-        ...mapData,
-        lat: coord.latlng.lat(),
-        lng: coord.latlng.lng(),
-      });
+
+  const moveMarker = (data1, data2, coord) => {
+    console.log(data1, data2);
+    if (coord && coord.latLng) {
+      console.log(coord.latLng.lat(), coord.latLng.lng());
+      // setMapData({
+      //   ...mapData,
+      //   markerPosition: {
+      //     lat: coord.latLng.lat(),
+      //     lng: coord.latLng.lng(),
+      //   },
+      // });
+      markerPositionRef.current = {
+        lat: coord.latLng.lat(),
+        lng: coord.latLng.lng(),
+      };
     }
   };
+  const marker = (
+    <Marker
+      draggable={true}
+      onDragend={(data1, data2, data3) => moveMarker(data1, data2, data3)}
+      name={"GM"}
+      position={{
+        lat: markerPositionRef.current.lat,
+        lng: markerPositionRef.current.lng,
+      }}
+    />
+  );
+
+  const onMapsDragEnd = ({ center }) => {
+    if (center)
+      setMapData({
+        ...mapData,
+        mapPosition: {
+          lat: center.lat(),
+          lng: center.lng(),
+        },
+      });
+  };
+
   return (
     <div>
       <div></div>
@@ -140,17 +188,19 @@ const GoogleMaps = ({ google, customStyles, value, apiKey }) => {
           zoom={14}
           onReady={() => setMapsLoaded(true)}
           style={customStyles}
+          onDragend={(data1, data2) => onMapsDragEnd(data2)}
           center={{
-            lat: mapData.lat,
-            lng: mapData.lng,
+            lat: mapData.mapPosition.lat,
+            lng: mapData.mapPosition.lng,
           }}
         >
-          <Marker
-            draggable={true}
-            onDragend={(data1, data2, data3) => moveMarker(data3)}
-            name={"GM"}
-            position={{ lat: mapData.lat, lng: mapData.lng }}
-          />
+          {marker}
+
+          <InfoWindow marker={marker} onClose={onInfoWindowClose}>
+            <div>
+              <h1>{"Test"}</h1>
+            </div>
+          </InfoWindow>
         </Map>
       </div>
     </div>

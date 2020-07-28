@@ -1,11 +1,12 @@
 .inputWrapper {
   display: flex;
   justify-content: space-between;
-
+  align-items: center;
   background-color: white;
   padding: 8px;
   border-radius: 7px;
   cursor: pointer;
+  position: relative;
 
   //   padding: 0.4rem 1rem;
 
@@ -19,4 +20,12 @@
 }
 .icon {
   padding-right: 10px;
+}
+.absoluteIcon {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  z-index: 10000;
+  color: lightgrey;
 }

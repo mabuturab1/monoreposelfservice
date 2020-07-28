@@ -6,10 +6,23 @@
 .editItemWrapper {
   display: flex;
   align-items: center;
+  max-width: 400px;
+  position: relative;
 }
 .labelWrapper {
   display: flex;
+
   justify-content: space-between;
+}
+.subFieldWrapper {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  flex: 1;
 }
 .labelText {
   text-align: left;
@@ -21,12 +34,26 @@
   font-family: "Roboto", "sans-serif";
   font-size: 15px;
 }
+.subFieldItem {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+}
 .label {
   width: 6rem;
 }
-.headerTitle {
+.headerWrapper {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+.icon {
+  padding-right: 10px;
+  cursor: pointer;
+}
+.closeIcon {
+  cursor: pointer;
 }
 .buttonWrapper {
   margin-top: 10px;

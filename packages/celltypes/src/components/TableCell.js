@@ -20,6 +20,8 @@ import ScanQr from "./cellTypes/scanQr/ScanQr";
 import DocumentUpload from "./cellTypes/documentUpload/DocumentUpload";
 import ContactData from "./cellTypes/contactData/ContactData";
 import MyMap from "./cellTypes/myMap/MyMap";
+import ItemList from "./cellTypes/itemList/ItemList";
+import NestedDropdown from "./cellTypes/nestedDropdown/NestedDropdown";
 const useStyles = makeStyles(() => ({
   smallPadding: {
     padding: "8px 16px",
@@ -53,6 +55,8 @@ const MyTableCell = (props) => {
     DOCUMENT: DocumentUpload,
     CONTACT: ContactData,
     MAP: MyMap,
+    ITEM_LIST: ItemList,
+    NETSTED_DROPDOWN: NestedDropdown,
   };
   let getType = (val) => {
     switch (val) {
@@ -72,6 +76,8 @@ const MyTableCell = (props) => {
         return "text";
     }
   };
+  if (item && item.type && item.type.toUpperCase() === "NESTED_DROPDOWN")
+    return <NestedDropdown {...props} />;
   const submitData = (rowDataContent, dataToSubmit) => {
     if (props.updateFieldData)
       props.updateFieldData(
@@ -161,6 +167,7 @@ MyTableCell.propTypes = {
   isSmallPadding: PropTypes.bool,
   onlySidePadding: PropTypes.bool,
   handlerFunctions: PropTypes.object.isRequired,
+  appSchemaObj: PropTypes.object,
   item: PropTypes.shape({
     name: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,

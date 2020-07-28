@@ -23,7 +23,7 @@ const Image = (props) => {
   });
   let src = value;
   if (!selectedFile.image) src = BlankImage;
-  if (selectedFile.image) src = URL.createObjectURL(selectedFile.image);
+  if (selectedFile.image) src = selectedFile.image;
   const onLoad = (event) => {
     if (!selectedFile.updated) {
       setFieldValue(name, selectedFile.image);
@@ -63,7 +63,7 @@ const Image = (props) => {
           onChange={(event) => {
             if (setFieldValue) {
               setSelectedFile({
-                image: event.currentTarget.files[0],
+                image: URL.createObjectURL(event.currentTarget.files[0]),
                 updated: false,
               });
             }

@@ -2,6 +2,9 @@ import React, { useState } from "react";
 
 import { Button, makeStyles, Dialog } from "@material-ui/core";
 import ContactDataDialog from "./contactDataDialog/ContactDataDialog";
+import InputIcon from "../../common/HOC/inputIcon/InputIcon";
+import StyledInput from "../../common/styledInput/StyledInput";
+import { faAddressBook } from "@fortawesome/free-solid-svg-icons";
 const useStyles = makeStyles(() => ({
   paper: {
     borderRadius: "10px",
@@ -9,6 +12,7 @@ const useStyles = makeStyles(() => ({
 }));
 const ContactData = ({ value: mValue }) => {
   const classes = useStyles();
+
   let value = mValue || {};
   const [open, setOpen] = useState(false);
   const handleClick = () => {
@@ -20,10 +24,13 @@ const ContactData = ({ value: mValue }) => {
   const id = open ? "popover" : undefined;
   return (
     <div>
-      <Button onClick={handleClick} color="primary">
-        View Contact Details
-      </Button>
+      <div onClick={handleClick}>
+        <InputIcon icon={faAddressBook}>
+          <StyledInput value={"View Contact Info"} readOnly={true} />
+        </InputIcon>
+      </div>
       <Dialog
+        maxWidth={"lg"}
         title={"Details"}
         id={id}
         classes={{
@@ -32,7 +39,7 @@ const ContactData = ({ value: mValue }) => {
         open={open}
         onClose={handleClose}
       >
-        <ContactDataDialog {...value} />
+        <ContactDataDialog {...value} onClose={handleClose} />
       </Dialog>
     </div>
   );

@@ -29,3 +29,14 @@
 .mapWrapper {
   position: relative;
 }
+.buttonWrapper {
+  padding: 0 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.icon {
+  padding-right: 10px;
+  cursor: pointer;
+}

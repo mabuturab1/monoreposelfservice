@@ -7,6 +7,7 @@ import { AutoSizer, Column, Table } from "react-virtualized";
 import SingleTableHeader from "../tableHeader/singleTableHeader/SingleTableHeader";
 import MyTableCell from "@selfservicetable/celltypes/src/App";
 import * as Constants from "../constants/Constants";
+import TableDialog from "../../common/tableDialog/TableDialog";
 import "react-virtualized/styles.css";
 import "./TableVirtualized.scss";
 import TableContext from "../context/TableContext";
@@ -67,6 +68,12 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     return tableDataId + fieldKey;
   };
   const getInitData = (el) => {
+    if (el.type === "CONTACT") {
+      let cell = columns.find((el) => el.type === "CONTACT");
+
+      if (cell.value) return cell.value;
+      else return {};
+    }
     return el.type === "IMAGE" || el.type === "DATETIME" ? null : "";
   };
   const cellRenderer = ({ dataKey, rowData }) => {
@@ -87,17 +94,18 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     const formData = props.formData;
     const { classes, rowHeight, onRowClick } = props;
     const myCell = cellSpecs.find((el) => el.key === dataKey);
-
+    const columnItem = columns.find((el) => el.key === dataKey);
     if (myCell.isIcon || !myCell.type)
       return <div style={{ width: "100%", height: "100%" }}></div>;
-    return (
+
+    const tableCell = (
       <MyTableCell
         editAllowed={tableContext.editAllowed}
         myKey={getKey(rowData.id, myCell.key)}
         className={clsx(classes.tableCell, classes.flexContainer, {
           [classes.noClick]: onRowClick == null,
         })}
-        rowWidth={150}
+        rowWidth={columnItem && columnItem.width ? columnItem.width : 150}
         rowHeight={rowHeight}
         serverData={{ ...myCell.data }}
         handlerFunctions={{
@@ -110,6 +118,9 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
         rowData={rowData}
         cellOriginalKey={myCell.key}
         updateFieldData={updateFieldData}
+        appSchemaObj={validationSchema}
+        appErrorObj={formData.errors}
+        appTouchedObj={formData.touched}
         item={{
           name: getKey(rowData.id, myCell.key),
           value:
@@ -127,6 +138,11 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
           type: myCell.type,
         }}
       />
+    );
+    return myCell.type === "ITEM_LIST" ? (
+      <TableDialog {...myCell.data}>{tableCell}</TableDialog>
+    ) : (
+      tableCell
     );
   };
 

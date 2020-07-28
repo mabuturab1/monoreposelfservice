@@ -1,0 +1,65 @@
+.headerWrapper {
+  display: flex;
+  background: #f9faff;
+}
+.optionRowWrapper {
+  display: flex;
+}
+.optionRowWrapper:nth-of-type(odd) {
+  background: #f9faff;
+}
+.headerItemWrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  background-color: transparent;
+  padding: 8px;
+  border-radius: 7px;
+
+  width: 7rem;
+  border: 1px solid rgba($color: #4a4a4a, $alpha: 0.05);
+  box-sizing: border-box;
+
+  //   padding: 0.4rem 1rem;
+
+  span {
+    font-family: "Roboto", "Open Sans", sans-serif;
+    font-size: 0.8rem;
+
+    color: #4a4a4a;
+    font-weight: 500;
+  }
+  .sort {
+    font-size: 7px;
+    line-height: 10px;
+    right: 20px;
+    position: absolute;
+    padding-left: "7px";
+    bottom: 0px;
+    right: 20px;
+    text-transform: "capitalize";
+  }
+}
+
+.option {
+  width: 7rem;
+  display: inline-block;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+}
+.dialogHeaderWrapper {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+}
+.text {
+  color: #4a4a4a;
+  font-weight: 500;
+  font-size: 0.8rem;
+  background-color: transparent;
+  font-family: inherit;
+  padding: 0;
+  margin: 0;
+}

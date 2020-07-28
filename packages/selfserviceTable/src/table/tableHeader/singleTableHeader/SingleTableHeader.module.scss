@@ -4,12 +4,22 @@
 
   padding: 4px 2px 0px 2px !important;
 }
-.headerItemWrapper {
-  position: relative;
+.headLabelWrapper {
   display: flex;
   justify-content: space-between;
   cursor: pointer;
   background-color: transparent;
+}
+.headLabelWrapperCenter {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: transparent;
+  border-bottom: 1px solid rgba($color: #4a4a4a, $alpha: 0.05);
+}
+.headerItemWrapper {
+  position: relative;
+
   padding: 8px;
   border-radius: 7px;
   min-width: 7rem;
@@ -33,5 +43,25 @@
     bottom: 0px;
     right: 20px;
     text-transform: "capitalize";
+  }
+  .subFieldWrapper {
+    display: flex;
+    flex: 1;
+  }
+
+  .subField {
+    flex: 1;
+    text-align: center;
+    font-size: 80%;
+    border: 2px solid rgba($color: #4a4a4a, $alpha: 0.05);
+    border-top: none;
+    span {
+      text-align: center;
+      font-family: "Roboto", "Open Sans", sans-serif;
+      font-size: 0.8rem;
+
+      color: #4a4a4a;
+      font-weight: 500;
+    }
   }
 }

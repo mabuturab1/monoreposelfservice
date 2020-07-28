@@ -5,7 +5,13 @@ import CryptoJS from "crypto-js";
 import InputIcon from "../../../common/HOC/inputIcon/InputIcon";
 import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-const MapDialog = ({ apiKey: mApiKey, handleSearch, onClose, value }) => {
+const MapDialog = ({
+  apiKey: mApiKey,
+  handleSearch,
+  onClose,
+  onSubmit,
+  value,
+}) => {
   const [searchValue, setSearchValue] = useState("");
   const handleKeydown = (e) => {
     if (e.key === "Enter") {
@@ -15,6 +21,10 @@ const MapDialog = ({ apiKey: mApiKey, handleSearch, onClose, value }) => {
   const mapStyles = {
     width: "650px",
     height: "550px",
+  };
+  const containerStyles = {
+    width: "650px",
+    height: "600px",
   };
   const decryptKey = (apiKey) => {
     if (!apiKey) {
@@ -28,38 +38,23 @@ const MapDialog = ({ apiKey: mApiKey, handleSearch, onClose, value }) => {
       padding: CryptoJS.pad.Pkcs7,
     });
     var originalText = bytes.toString(CryptoJS.enc.Utf8);
-    console.log("original key is", originalText, "prev key is", apiKey);
+
     return originalText;
+  };
+  const onSaveLocation = (data) => {
+    onSubmit(data);
   };
   const apiKey = decryptKey(mApiKey);
   return (
     <div>
-      <div className={styles.headerWrapper}>
-        <InputIcon icon={faSearch}>
-          <input
-            className={styles.input}
-            placeholder="Search"
-            value={searchValue}
-            onKeyDown={handleKeydown}
-            onChange={(e) => {
-              let val = e.currentTarget.value;
-              if ((!val || val === "") && val !== searchValue && handleSearch)
-                handleSearch(val);
-              setSearchValue(e.currentTarget.value);
-            }}
-          />
-        </InputIcon>
-
-        <div>
-          <FontAwesomeIcon
-            icon={faTimes}
-            onClick={onClose}
-            className={styles.icon}
-          />
-        </div>
-      </div>
-
-      <GoogleMaps value={value} customStyles={mapStyles} apiKey={apiKey} />
+      <GoogleMaps
+        value={value}
+        customStyles={mapStyles}
+        containerStyles={containerStyles}
+        apiKey={apiKey}
+        onClose={onClose}
+        onSave={onSaveLocation}
+      />
     </div>
   );
 };

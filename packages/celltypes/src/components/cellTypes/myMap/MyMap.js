@@ -51,11 +51,16 @@ const Map = (props) => {
   });
 
   const inputChanged = (value) => {
+    handleClose();
+    let newValue = {
+      lat: value.lat,
+      long: value.lng || value.long,
+    };
+    console.log("obtained data is", inputValue, newValue);
     setInputValue({
       ...inputValue,
-      tempState: value || "",
+      tempState: newValue || "",
     });
-    setOpen(false);
   };
   const updateInput = () => {
     if (inputValue.tempState === inputValue.originalState) return;
@@ -79,16 +84,25 @@ const Map = (props) => {
   if (value !== inputValue.originalState) {
     setInputValue({ originalState: value, tempState: value });
   }
-
+  const getFormattedValue = (location) => {
+    if (!location || !location.lat || !location.long) return "";
+    return `lat: ${location.lat}, long:${location.long}`;
+  };
   const id = open ? "simple-popover" : undefined;
   const inputUI = (
-    <div className={styles.inputWrapper} onClick={handleClick}>
+    <div onClick={handleClick}>
       <InputIcon icon={faMapMarkerAlt}>
         <input
           style={customStyles}
           autoComplete="off"
           className={styles.input}
-          {...{ name, disabled, label, type, value: inputValue.tempState }}
+          {...{
+            name,
+            disabled,
+            label,
+            type,
+            value: getFormattedValue(inputValue.tempState),
+          }}
           placeholder={props.editAllowed ? placeholder : ""}
           readOnly={true}
           onBlur={(e) => {
@@ -115,7 +129,7 @@ const Map = (props) => {
       </Tooltip>
 
       <Dialog
-        title={"Qr Reader"}
+        title={"Maps"}
         id={id}
         maxWidth={"lg"}
         classes={{

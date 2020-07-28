@@ -7,25 +7,50 @@ import TableHeaderSettings from "../tableHeaderSettingsDropdown/TableHeaderSetti
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 const SingleTableHeader = (props) => {
   const { cellSpecs } = props;
-
+  const isNestedDropdown = () => {
+    return cellSpecs && cellSpecs.type === "NESTED_DROPDOWN";
+  };
   const tableHeaderRef = useRef(null);
   let columnLabel = (
-    <div className={styles.headerItemWrapper} style={props.style}>
-      <div>
-        <span>{props.label}</span>
-        {props.sortOrder ? (
-          <span
-            className={styles.sort}
-          >{`(Sorted in ${props.sortOrder})`}</span>
+    <React.Fragment>
+      <div className={styles.headerItemWrapper} style={props.style}>
+        <div
+          className={
+            isNestedDropdown()
+              ? styles.headLabelWrapperCenter
+              : styles.headLabelWrapper
+          }
+        >
+          {isNestedDropdown() ? <div></div> : null}
+          <div>
+            <span>{props.label}</span>
+            {props.sortOrder ? (
+              <span
+                className={styles.sort}
+              >{`(Sorted in ${props.sortOrder})`}</span>
+            ) : null}
+          </div>
+          <span>
+            <FontAwesomeIcon
+              style={{ color: "rgba(0, 0, 50, 0.21) " }}
+              icon={faSort}
+            />
+          </span>
+        </div>
+
+        {isNestedDropdown() ? (
+          <div className={styles.subFieldWrapper}>
+            {cellSpecs && cellSpecs.data && cellSpecs.data.fields
+              ? cellSpecs.data.fields.map((el, j) => (
+                  <div key={j} className={styles.subField} style={props.style}>
+                    <span style={{ fontSize: "inherit" }}>{el.label}</span>
+                  </div>
+                ))
+              : null}
+          </div>
         ) : null}
       </div>
-      <span>
-        <FontAwesomeIcon
-          style={{ color: "rgba(0, 0, 50, 0.21) " }}
-          icon={faSort}
-        />
-      </span>
-    </div>
+    </React.Fragment>
   );
 
   const getIcon = (icon) => {

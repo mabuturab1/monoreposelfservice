@@ -6,6 +6,7 @@ import {
   faLock,
   faFilter,
   faUnlock,
+  faFileExport,
 } from "@fortawesome/free-solid-svg-icons";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import styles from "./FilterHeader.module.scss";
@@ -29,6 +30,7 @@ const FilterHeader = (props) => {
   ];
   const searchConditionsValues = ["<", "<=", ">", ">=", ":>", "::"];
   const filterDataState = props.filterData || { data: {}, numFilters: 0 };
+  const tableData = props.tableData || [];
   const tableHeader = (props.tableHeader || []).filter(
     (el) => el.key !== "indexIdNumber"
   );
@@ -150,53 +152,91 @@ const FilterHeader = (props) => {
 
   return (
     <div className={styles.wrapper}>
-      <div
-        onClick={handleClick}
-        className={[
-          styles.topHeaderItemWrapper,
-          styles.mediumPadding,
+      <div className={styles.filterButtonWrapper}>
+        <div
+          onClick={handleClick}
+          className={[
+            styles.topHeaderItemWrapper,
+            styles.mediumPadding,
 
-          styles.applyElevation,
-        ].join(" ")}
-      >
-        <FontAwesomeIcon icon={faFilter} className={styles.icon} />
-        <span className={styles.label}>Filter</span>
-      </div>
-      <div className={editLockedClasses.join(" ")} onClick={toggleEditLocked}>
-        <FontAwesomeIcon
-          icon={tableContext.editAllowed ? faUnlock : faLock}
-          className={styles.icon}
-        />
-        <span className={styles.label}>
-          {tableContext.editAllowed ? "Edit Unlocked" : "Edit Locked"}
-        </span>
-      </div>
-      <div
-        className={[
-          styles.topHeaderItemWrapper,
-          styles.searchWrapper,
-          styles.applyElevation,
-        ].join(" ")}
-      >
-        <FontAwesomeIcon icon={faSearch} className={styles.icon} />
-        <input
-          className={styles.input}
-          placeholder="Search"
-          value={searchValue}
-          onKeyDown={handleKeydown}
-          onChange={(e) => {
-            let val = e.currentTarget.value;
-            if (
-              (!val || val === "") &&
-              val !== searchValue &&
-              props.handleSearch
-            )
-              props.handleSearch(val);
-            setSearchValue(e.currentTarget.value);
-          }}
-        />
-      </div>
+            styles.applyElevation,
+          ].join(" ")}
+        >
+          <FontAwesomeIcon icon={faFilter} className={styles.icon} />
+          <span className={styles.label}>Filter</span>
+        </div>
+        <div className={editLockedClasses.join(" ")} onClick={toggleEditLocked}>
+          <FontAwesomeIcon
+            icon={tableContext.editAllowed ? faUnlock : faLock}
+            className={styles.icon}
+          />
+          <span className={styles.label}>
+            {tableContext.editAllowed ? "Edit Unlocked" : "Edit Locked"}
+          </span>
+        </div>
+        <div
+          className={[
+            styles.topHeaderItemWrapper,
+            styles.mediumPadding,
 
+            styles.applyElevation,
+          ].join(" ")}
+        >
+          <FontAwesomeIcon icon={faFileExport} className={styles.icon} />
+          <span className={styles.label}>Export</span>
+        </div>
+      </div>
+      <div className={styles.recordWrapper}>
+        <div className={styles.totalRecords}>
+          <p>Total Records:{tableData.length}</p>
+          <NewRecordDialog tableHeader={tableHeader}>
+            <div
+              className={[
+                styles.topHeaderItemWrapper,
+                styles.mediumPadding,
+
+                styles.applyElevation,
+              ].join(" ")}
+            >
+              <AddIcon fontSize="small" />
+              <div
+                style={{
+                  marginLeft: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <span className={styles.label}>Add Record</span>
+              </div>
+            </div>
+          </NewRecordDialog>
+        </div>
+        <div
+          className={[
+            styles.topHeaderItemWrapper,
+            styles.searchWrapper,
+            styles.applyElevation,
+          ].join(" ")}
+        >
+          <FontAwesomeIcon icon={faSearch} className={styles.icon} />
+          <input
+            className={styles.input}
+            placeholder="Search"
+            value={searchValue}
+            onKeyDown={handleKeydown}
+            onChange={(e) => {
+              let val = e.currentTarget.value;
+              if (
+                (!val || val === "") &&
+                val !== searchValue &&
+                props.handleSearch
+              )
+                props.handleSearch(val);
+              setSearchValue(e.currentTarget.value);
+            }}
+          />
+        </div>
+      </div>
       <Formik
         initialValues={filterData.data}
         enableReinitialize={true}
@@ -286,23 +326,6 @@ const FilterHeader = (props) => {
           </Popover>
         )}
       </Formik>
-      <NewRecordDialog tableHeader={tableHeader}>
-        <div
-          className={[
-            styles.topHeaderItemWrapper,
-            styles.mediumPadding,
-
-            styles.applyElevation,
-          ].join(" ")}
-        >
-          <AddIcon fontSize="small" />
-          <div
-            style={{ marginLeft: "8px", display: "flex", alignItems: "center" }}
-          >
-            <span className={styles.label}>Add Record</span>
-          </div>
-        </div>
-      </NewRecordDialog>
     </div>
   );
 };

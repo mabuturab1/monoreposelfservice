@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from "react";
-import * as actions from "../../store/actions";
 
 import { connect } from "react-redux";
 
@@ -21,12 +20,17 @@ import { CellTypes } from "../utility/cellTypes";
 
 const TableCreator = (props) => {
   const tableData = props.tableData || [];
-  const tableHeader = (props.tableHeader || []).concat({
-    key: "%OPEN_NEW_FIELD_DIALOG%",
-    icon: "Add",
-    label: "Add",
-    isIcon: true,
-  });
+  let concatArr = [];
+  if (props.newDataAllowed)
+    concatArr = [
+      {
+        key: "%OPEN_NEW_FIELD_DIALOG%",
+        icon: "Add",
+        label: "Add",
+        isIcon: true,
+      },
+    ];
+  const tableHeader = (props.tableHeader || []).concat(...concatArr);
 
   const [editAllowed, setEditAllowed] = useState(
     props.editAllowed != null ? props.editAllowed : true
@@ -35,7 +39,7 @@ const TableCreator = (props) => {
   let {
     apiUrl,
     currentReportId,
-
+    staticData,
     fetchTableData: mFetchTableData,
     fetchTableHeader: mFetchTableHeader,
     updateApiUrl: mUpdateApiUrl,
@@ -86,9 +90,29 @@ const TableCreator = (props) => {
     cellSpecs.forEach((el) => {
       schemaObj[el.key] = schemaCreator(el);
     });
+    let nestedDropdownItems = cellSpecs.filter(
+      (el) => el.type === "NESTED_DROPDOWN"
+    );
+    nestedDropdownItems.forEach((item) => {
+      if (item.data && item.data.fields) {
+        let list = item.data.fields;
+        list.forEach((el) => {
+          schemaObj[item.key + el.key] = schemaCreator(el);
+        });
+      }
+    });
     tableData.forEach((td) => {
       cellSpecs.forEach((el) => {
         prevSchema[getKey(td.id, el.key)] = schemaObj[el.key];
+
+        if (el.type === "NESTED_DROPDOWN" && el.data && el.data.fields) {
+          const fieldsList = el.data.fields;
+          fieldsList.forEach((fd) => {
+            if (fd.key)
+              prevSchema[getKey(td.id, el.key + fd.key)] =
+                schemaObj[el.key + fd.key];
+          });
+        }
       });
     });
     return prevSchema;
@@ -181,8 +205,14 @@ const TableCreator = (props) => {
     }
   };
   useEffect(() => {
-    fetchTableData(apiUrl, currentReportId, queryParams, queryParams.isNewKey);
-  }, [fetchTableData, apiUrl, currentReportId, queryParams]);
+    if (!staticData)
+      fetchTableData(
+        apiUrl,
+        currentReportId,
+        queryParams,
+        queryParams.isNewKey
+      );
+  }, [fetchTableData, apiUrl, currentReportId, queryParams, staticData]);
   useEffect(() => {
     if (!apiUrl) return;
     updateApiUrl(apiUrl);
@@ -193,8 +223,8 @@ const TableCreator = (props) => {
   }, [currentReportId, updateCurrentReportId]);
 
   useEffect(() => {
-    fetchTableHeader(apiUrl, currentReportId);
-  }, [fetchTableHeader, apiUrl, currentReportId]);
+    if (!staticData) fetchTableHeader(apiUrl, currentReportId);
+  }, [fetchTableHeader, apiUrl, currentReportId, staticData]);
   const updateFieldData = (rowId, data, newKey, isSuccess) => {
     props.updateFieldData(
       apiUrl,
@@ -210,6 +240,8 @@ const TableCreator = (props) => {
     let type = el.type || "";
     if (el.key === "indexIdNumber") columnsWidth[el.key] = 70;
     else if (type.toUpperCase() === "DATETIME") columnsWidth[el.key] = 200;
+    else if (type.toUpperCase() === "NESTED_DROPDOWN")
+      columnsWidth[el.key] = 3 * 160;
     else columnsWidth[el.key] = 160;
   });
   let handleNewFilterData = (filterData) => {
@@ -256,7 +288,7 @@ const TableCreator = (props) => {
           cellTypes: CellTypes,
         }}
       >
-        {props.tableHeader && props.tableHeader.length > 0 ? (
+        {props.tableHeader && props.tableHeader.length > 0 && !staticData ? (
           <div className={styles.filterHeader}>
             <div
               style={{ width: tableWidth, maxWidth: "100vw", margin: "0 auto" }}
@@ -276,16 +308,18 @@ const TableCreator = (props) => {
               width: tableData.length > 0 ? tableWidth : "100vw",
             }}
           >
-            <InfoDialog
-              open={
-                (props.serverError && props.serverError.length > 0) === true
-              }
-              icon={faExclamationCircle}
-              handleClose={() => props.removeError()}
-              buttonTitle={"Okay"}
-              content={props.serverError}
-              title={"Sorry"}
-            />
+            {props.serverError && props.serverError.length > 0 === true ? (
+              <InfoDialog
+                open={
+                  (props.serverError && props.serverError.length > 0) === true
+                }
+                icon={faExclamationCircle}
+                handleClose={() => props.removeError()}
+                buttonTitle={"Okay"}
+                content={props.serverError}
+                title={"Sorry"}
+              />
+            ) : null}
 
             <Formik
               initialValues={getInitValues()}
@@ -345,47 +379,8 @@ const TableCreator = (props) => {
   );
 };
 TableCreator.propTypes = {
-  apiUrl: PropTypes.string.isRequired,
+  apiUrl: PropTypes.string,
   editAllowed: PropTypes.bool.isRequired,
+  staticData: PropTypes.bool,
 };
-const mapStateToProps = (state) => {
-  return {
-    tableData: state.tableData,
-    tableHeader: state.tableHeader,
-    serverError: state.serverError,
-
-    tableHeaderPending: state.tableHeaderPending,
-    tableDataPending: state.tableDataPending,
-    totalReportItems: state.totalReportItems,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetchTableHeader: (apiUrl, reportId) =>
-      dispatch(actions.getTableHeader(apiUrl, reportId)),
-    fetchTableData: (apiUrl, reportId, params, isNewData) =>
-      dispatch(actions.getTableData(apiUrl, reportId, params, isNewData)),
-    removeError: () => dispatch(actions.removeError()),
-    clearTableData: () => dispatch(actions.clearTableData()),
-    updateApiUrl: (apiAddress) => dispatch(actions.updateApiUrl(apiAddress)),
-    updateCurrentReportId: (currentReportId) =>
-      dispatch(actions.updateCurrentReportId(currentReportId)),
-    updateFieldData: (apiUrl, reportId, rowId, data, newKey, isSuccess) =>
-      dispatch(
-        actions.updateFieldData(
-          apiUrl,
-          reportId,
-          rowId,
-          data,
-          newKey,
-          isSuccess
-        )
-      ),
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(React.memo(TableCreator));
+export default React.memo(TableCreator);

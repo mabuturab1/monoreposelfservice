@@ -1,6 +1,7 @@
 .wrapper {
   display: flex;
   background-color: transparent;
+  justify-content: space-between;
   .lockDisabled {
     background-color: yellow;
   }
@@ -83,4 +84,14 @@
 .buttonWrapper {
   display: flex;
   justify-content: space-between;
+}
+.recordWrapper {
+  display: flex;
+  flex-flow: column;
+}
+.totalRecords {
+  display: flex;
+}
+.filterButtonWrapper {
+  display: flex;
 }

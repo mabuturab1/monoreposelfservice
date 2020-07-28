@@ -1,7 +1,10 @@
 import React from "react";
 import ReadOnlyText from "../../readOnlyText/ReadOnlyText";
-
-const ContactDataDialog = ({ items }) => {
+import styles from "./ContactDataDialog.module.scss";
+import StyledInput from "../../../common/styledInput/StyledInput";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+const ContactDataDialog = ({ items, onClose }) => {
   const cellTypes = [
     { key: "name", label: "Name.", type: "READONLY_TEXT" },
     { key: "msisdn", label: "MSISDN.", type: "READONLY_TEXT" },
@@ -9,24 +12,29 @@ const ContactDataDialog = ({ items }) => {
     { key: "end", label: "End", type: "READONLY_TEXT" },
     { key: "duration", label: "Duration", type: "READONLY_TEXT" },
   ];
-  const tableHeader = [];
-  cellTypes.forEach((el) => {
-    <div style={{ display: "inline-block", width: "5rem" }}>
-      return <ReadOnlyText value={el.label} />
-    </div>;
-  });
+  let tableHeader = [];
+  tableHeader = cellTypes.map((el, i) => (
+    <div key={i} className={styles.headerItemWrapper}>
+      <ReadOnlyText
+        value={el.label}
+        style={{ display: "flex", justifyContent: "center" }}
+      />
+    </div>
+  ));
   const tableData = [];
+  console.log("items are", items);
   if (items)
     items.forEach((td, i) => {
       tableData.push(
-        <div key={i}>
+        <div key={i} className={styles.optionRowWrapper}>
           {cellTypes.map((el, j) => {
             return (
-              <div
-                key={i.toString() + j}
-                style={{ display: "inline-block", width: "5rem" }}
-              >
-                <ReadOnlyText value={td[el]} />
+              <div key={i.toString() + j} className={styles.option}>
+                <StyledInput
+                  value={td[el.key]}
+                  readOnly={true}
+                  style={{ textAlign: "center" }}
+                />
               </div>
             );
           })}
@@ -35,10 +43,16 @@ const ContactDataDialog = ({ items }) => {
     });
 
   return (
-    <div>
-      {tableHeader}
-      {tableData}
-    </div>
+    <React.Fragment>
+      <div className={styles.dialogHeaderWrapper}>
+        <h6 className={styles.text}>Contact Details</h6>
+        <FontAwesomeIcon icon={faTimes} onClick={onClose} />
+      </div>
+      <div className={styles.contactDialogWrapper}>
+        <div className={styles.headerWrapper}>{tableHeader}</div>
+        {tableData}
+      </div>
+    </React.Fragment>
   );
 };
 export default ContactDataDialog;

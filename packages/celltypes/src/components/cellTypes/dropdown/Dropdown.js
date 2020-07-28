@@ -77,6 +77,7 @@ const Dropdown = (props) => {
   } = {
     ...props,
   };
+
   const currentValue =
     (valuesList && valuesList.includes(value)) ||
     (!valuesList && options && options.includes(value))

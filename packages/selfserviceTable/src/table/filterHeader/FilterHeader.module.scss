@@ -2,6 +2,7 @@
   display: flex;
   background-color: transparent;
   justify-content: space-between;
+  align-items: center;
   .lockDisabled {
     background-color: yellow;
   }
@@ -23,14 +24,13 @@
   margin: 5px 10px;
 
   //   padding: 0.4rem 1rem;
-
-  span {
-    color: #4a4a4a;
-    font-weight: 500;
-    font-size: 0.8rem;
-    background-color: transparent;
-    font-family: "Roboto", "sans-serif";
-  }
+}
+.label {
+  color: #4a4a4a;
+  font-weight: 500;
+  font-size: 0.8rem;
+  background-color: transparent;
+  font-family: "Roboto", "sans-serif";
 }
 .searchWrapper {
   border: none;
@@ -91,6 +91,7 @@
 }
 .totalRecords {
   display: flex;
+  align-items: center;
 }
 .filterButtonWrapper {
   display: flex;

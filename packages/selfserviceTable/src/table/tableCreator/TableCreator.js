@@ -288,91 +288,106 @@ const TableCreator = (props) => {
           cellTypes: CellTypes,
         }}
       >
-        {props.tableHeader && props.tableHeader.length > 0 && !staticData ? (
-          <div className={styles.filterHeader}>
-            <div
-              style={{ width: tableWidth, maxWidth: "100vw", margin: "0 auto" }}
-            >
-              <FilterHeader
-                handleNewFilterData={handleNewFilterData}
-                handleSearch={handleSearch}
-              />
-            </div>
-          </div>
-        ) : null}
-        <div className={styles.wrapper}>
-          <Paper
-            style={{
-              margin: "0 auto",
-              flex: 1,
-              width: tableData.length > 0 ? tableWidth : "100vw",
-            }}
-          >
-            {props.serverError && props.serverError.length > 0 === true ? (
-              <InfoDialog
-                open={
-                  (props.serverError && props.serverError.length > 0) === true
-                }
-                icon={faExclamationCircle}
-                handleClose={() => props.removeError()}
-                buttonTitle={"Okay"}
-                content={props.serverError}
-                title={"Sorry"}
-              />
-            ) : null}
+        <div
+          style={{
+            display: "flex",
+            flexFlow: "column",
+            height: "100vh",
+            width: "100vw",
+            minHeight: "600px",
+          }}
+        >
+          {props.tableHeader && props.tableHeader.length > 0 && !staticData ? (
+            <div className={styles.filterHeader}>
+              <div
+                style={{
+                  width: tableWidth,
 
-            <Formik
-              initialValues={getInitValues()}
-              enableReinitialize={true}
-              validationSchema={getValidationSchemaObject()}
-              onSubmit={(values, actions) => {
-                console.log("values", values);
-                console.log("actions", actions);
+                  maxWidth: "100vw",
+                  margin: "0 auto",
+                }}
+              >
+                <FilterHeader
+                  handleNewFilterData={handleNewFilterData}
+                  handleSearch={handleSearch}
+                />
+              </div>
+            </div>
+          ) : null}
+          <div className={styles.wrapper}>
+            <Paper
+              style={{
+                margin: "0 auto",
+                flex: 1,
+                width: tableData.length > 0 ? tableWidth : "100vw",
               }}
             >
-              {(formData) =>
-                props.tableHeaderPending || tableData.length < 1 ? (
-                  <div
-                    style={{
-                      width: "100vw",
-                      height: "100%",
+              {props.serverError && props.serverError.length > 0 === true ? (
+                <InfoDialog
+                  open={
+                    (props.serverError && props.serverError.length > 0) === true
+                  }
+                  icon={faExclamationCircle}
+                  handleClose={() => props.removeError()}
+                  buttonTitle={"Okay"}
+                  content={props.serverError}
+                  title={"Sorry"}
+                />
+              ) : null}
 
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    {props.tableDataPending || props.tableHeaderPending ? (
-                      <Loader
-                        type="ThreeDots"
-                        color="#00BFFF"
-                        height={50}
-                        width={50}
-                        timeout={0} //3 secs
-                      />
-                    ) : (
-                      <h4 className={styles.noData}>No Record Found</h4>
-                    )}
-                  </div>
-                ) : (
-                  <InfiniteLoader
-                    isNextPageLoading={props.tableDataPending}
-                    loadNextPage={loadMoreItems}
-                    tableData={props.tableData}
-                    tableHeader={tableHeader}
-                    cellSpecs={createHeaderSpecs(tableHeader)}
-                    formData={formData}
-                    totalReportItems={props.totalReportItems}
-                    columnsWidth={columnsWidth}
-                    validationSchema={createValidationSchema()}
-                    sortByColumn={queryParams}
-                    onHeaderClicked={onHeaderClicked}
-                    updateFieldData={updateFieldData}
-                  />
-                )
-              }
-            </Formik>
-          </Paper>
+              <Formik
+                initialValues={getInitValues()}
+                enableReinitialize={true}
+                validationSchema={getValidationSchemaObject()}
+                onSubmit={(values, actions) => {
+                  console.log("values", values);
+                  console.log("actions", actions);
+                }}
+              >
+                {(formData) =>
+                  props.tableHeaderPending || tableData.length < 1 ? (
+                    <div
+                      style={{
+                        width: "100vw",
+                        height: "100%",
+
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      {props.tableDataPending || props.tableHeaderPending ? (
+                        <Loader
+                          type="ThreeDots"
+                          color="#00BFFF"
+                          height={50}
+                          width={50}
+                          timeout={0} //3 secs
+                        />
+                      ) : (
+                        <h4 className={styles.noData}>No Record Found</h4>
+                      )}
+                    </div>
+                  ) : (
+                    <InfiniteLoader
+                      isNextPageLoading={props.tableDataPending}
+                      loadNextPage={loadMoreItems}
+                      tableData={props.tableData}
+                      tableHeader={tableHeader}
+                      cellSpecs={createHeaderSpecs(tableHeader)}
+                      formData={formData}
+                      totalReportItems={props.totalReportItems}
+                      columnsWidth={columnsWidth}
+                      validationSchema={createValidationSchema()}
+                      sortByColumn={queryParams}
+                      onHeaderClicked={onHeaderClicked}
+                      updateFieldData={updateFieldData}
+                    />
+                  )
+                }
+              </Formik>
+            </Paper>
+          </div>
         </div>
       </CellTypeContext.Provider>
     </TableContext.Provider>

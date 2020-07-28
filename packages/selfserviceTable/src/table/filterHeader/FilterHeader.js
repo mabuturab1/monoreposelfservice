@@ -188,7 +188,7 @@ const FilterHeader = (props) => {
       </div>
       <div className={styles.recordWrapper}>
         <div className={styles.totalRecords}>
-          <p>Total Records:{tableData.length}</p>
+          <span className={styles.label}>Total Records:{tableData.length}</span>
           <NewRecordDialog tableHeader={tableHeader}>
             <div
               className={[

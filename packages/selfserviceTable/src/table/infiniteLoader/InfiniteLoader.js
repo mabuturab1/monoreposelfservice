@@ -26,7 +26,15 @@ const InfiniteLoaderWrapper = ({
   };
 
   return (
-    <div style={{ height: "90vh", width: "100%", position: "relative" }}>
+    <div
+      style={{
+        height: "98%",
+        overflow: "hidden",
+
+        width: "100%",
+        position: "relative",
+      }}
+    >
       <InfiniteLoader
         isRowLoaded={isItemLoaded}
         rowCount={totalReportItems}

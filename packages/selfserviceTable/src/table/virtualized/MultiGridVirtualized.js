@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import clsx from "clsx";
 import { withStyles } from "@material-ui/core/styles";
 
-import { AutoSizer, Column, Table } from "react-virtualized";
+import { AutoSizer, Column, Table, MultiGrid } from "react-virtualized";
 import SingleTableHeader from "../tableHeader/singleTableHeader/SingleTableHeader";
 import MyTableCell from "@selfservicetable/celltypes/src/App";
 import * as Constants from "../constants/Constants";
@@ -51,7 +51,6 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     headerHeight: Constants.tableHeaderHeight,
     rowHeight: Constants.tableRowHeight,
   };
-  console.log("In table virtualized", props.scrollTop, props.onScroll);
   const {
     classes,
     columns,
@@ -77,7 +76,11 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     }
     return el.type === "IMAGE" || el.type === "DATETIME" ? null : "";
   };
-  const cellRenderer = ({ dataKey, rowData }) => {
+  const cellRenderer = ({ key, rowIndex, columnIndex, style }) => {
+    let dataKey = columns[columnIndex].dataKey;
+    let rowData = tableData[columnIndex];
+    console.log("rows and column index is", rowIndex, columnIndex);
+    console.log(dataKey, rowData);
     const {
       handleChange,
       handleSubmit,
@@ -140,10 +143,14 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
         }}
       />
     );
-    return myCell.type === "ITEM_LIST" ? (
-      <TableDialog {...myCell.data}>{tableCell}</TableDialog>
-    ) : (
-      tableCell
+    return (
+      <div className="Cell" key={key} style={style}>
+        {myCell.type === "ITEM_LIST" ? (
+          <TableDialog {...myCell.data}>{tableCell}</TableDialog>
+        ) : (
+          tableCell
+        )}
+      </div>
     );
   };
 
@@ -182,15 +189,19 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
   return (
     <AutoSizer>
       {({ height, width }) => (
-        <Table
+        <MultiGrid
           height={height}
           width={getColumnsWidth(columns)}
-          scrollTop={props.scrollTop ? props.scrollTop : undefined}
-          onScroll={props.onScroll ? props.onScroll : undefined}
           rowHeight={rowHeight || defaultProps.rowHeight}
           gridStyle={{
             direction: "inherit",
           }}
+          columnCount={columns.length}
+          columnWidth={75}
+          enableFixedColumnScroll
+          enableFixedRowScroll
+          height={300}
+          rowCount={tableData.length}
           headerHeight={headerHeight || defaultProps.headerHeight}
           className={classes.table}
           onRowsRendered={onRowsRendered}
@@ -202,27 +213,8 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
           ref={ref}
           {...tableProps}
           rowClassName={getRowClassName}
-        >
-          {columns.map(({ key: dataKey, ...other }, index) => {
-            return (
-              <Column
-                key={dataKey}
-                headerRenderer={(headerProps) =>
-                  headerRenderer({
-                    ...headerProps,
-                    columnIndex: index,
-                    onHeaderClicked,
-                    sortByColumn,
-                  })
-                }
-                className={clsx(classes.flexContainer)}
-                cellRenderer={cellRenderer}
-                dataKey={dataKey}
-                {...other}
-              />
-            );
-          })}
-        </Table>
+          cellRenderer={cellRenderer}
+        ></MultiGrid>
       )}
     </AutoSizer>
   );
@@ -244,8 +236,6 @@ const areEqual = (prevProps, nextProps) => {
   let status =
     prevProps["tableData"] === nextProps["tableData"] &&
     prevProps["tableHeader"] === nextProps["tableHeader"] &&
-    (!nextProps["scrollTop"] ||
-      nextProps["scrollTop"] === prevProps["scrollTop"]) &&
     isFormDataEqual(prevProps["formData"], nextProps["formData"]);
 
   return status;

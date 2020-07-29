@@ -52,9 +52,8 @@ const NestedDropdown = ({
     return tableDataId + fieldKey;
   };
   let itemsList = [];
-  console.log("server data is", serverData);
+
   if (serverData && serverData.fields) {
-    console.log("server data fields", serverData.fields);
     itemsList = serverData.fields.map((el, i) => {
       let localKey = getKey(myKey, el.key);
 
@@ -92,7 +91,6 @@ const NestedDropdown = ({
       );
     });
   }
-  console.log("item list is", itemsList);
 
   return (
     <div style={{ display: "flex", flex: 1, flexWrap: "wrap" }}>

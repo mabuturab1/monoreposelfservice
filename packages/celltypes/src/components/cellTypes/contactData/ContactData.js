@@ -10,12 +10,13 @@ const useStyles = makeStyles(() => ({
     borderRadius: "10px",
   },
 }));
-const ContactData = ({ value: mValue }) => {
+const ContactData = ({ value: mValue, editAllowed }) => {
   const classes = useStyles();
 
   let value = mValue || {};
   const [open, setOpen] = useState(false);
   const handleClick = () => {
+    if (!editAllowed) return;
     setOpen(true);
   };
   const handleClose = () => {
@@ -36,7 +37,7 @@ const ContactData = ({ value: mValue }) => {
         classes={{
           paper: classes.paper,
         }}
-        open={open}
+        open={open && editAllowed}
         onClose={handleClose}
       >
         <ContactDataDialog {...value} onClose={handleClose} />

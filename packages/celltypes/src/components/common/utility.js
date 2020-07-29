@@ -34,9 +34,9 @@ export const currencyFormatter = (
 };
 
 export const checkArrEqual = (arr1, arr2) => {
-  let first = arr1.filter((el) => !el.includes(arr2));
+  let first = arr1.filter((el) => !arr2.includes(el));
   if (first.length > 0) return false;
-  let second = arr2.filter((el) => !el.includes(arr1));
+  let second = arr2.filter((el) => !arr1.includes(el));
   if (second.length > 0) return false;
   return true;
 };

@@ -129,7 +129,6 @@ const CellEditDialog = React.forwardRef(
           validationSchema={Yup.object().shape(validationSchema)}
           onSubmit={(values, actions) => {
             console.log("values", values);
-            console.log("actions", actions);
             handleClose();
           }}
         >

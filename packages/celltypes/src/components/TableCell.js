@@ -22,6 +22,7 @@ import ContactData from "./cellTypes/contactData/ContactData";
 import MyMap from "./cellTypes/myMap/MyMap";
 import ItemList from "./cellTypes/itemList/ItemList";
 import NestedDropdown from "./cellTypes/nestedDropdown/NestedDropdown";
+import { DummyInitValues } from "./common/constants/cellTypesDefaultValues";
 const useStyles = makeStyles(() => ({
   smallPadding: {
     padding: "8px 16px",
@@ -79,6 +80,7 @@ const MyTableCell = (props) => {
   if (item && item.type && item.type.toUpperCase() === "NESTED_DROPDOWN")
     return <NestedDropdown {...props} />;
   const submitData = (rowDataContent, dataToSubmit) => {
+    console.log("submitting data", rowDataContent, dataToSubmit);
     if (props.updateFieldData)
       props.updateFieldData(
         props.rowData.id,
@@ -94,6 +96,8 @@ const MyTableCell = (props) => {
             console.log("FALLBACK VALUE IS", fallbackValue);
             setFieldValue(name, fallbackValue);
           }
+          if (!fallbackValue)
+            setFieldValue(name, DummyInitValues[item.type.toUpperCase()] || "");
         }
       );
   };
@@ -101,7 +105,7 @@ const MyTableCell = (props) => {
   const SelectedComponent = fieldMap[item.type.toUpperCase()];
   let updateFieldData = (obtainedData) => {
     let { rowData } = { ...props };
-
+    console.log("obtained data", obtainedData, "row data", rowData);
     if (!rowData) return;
 
     let rowDataContent = { ...rowData.data };

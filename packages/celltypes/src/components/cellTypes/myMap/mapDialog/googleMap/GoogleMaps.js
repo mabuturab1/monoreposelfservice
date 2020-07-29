@@ -29,8 +29,10 @@ const GoogleMaps = ({
   });
 
   const getLatLng = ({ place_id }) => {
+    console.log("place id is", place_id);
     geocodeByPlaceId(place_id)
       .then((results) => {
+        console.log("results are", results);
         if (
           results &&
           results[0] &&

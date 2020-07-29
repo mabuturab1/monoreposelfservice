@@ -62,15 +62,23 @@ const CheckboxList = (props) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
+    if (!props.editAllowed) return;
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
     setTimeout(() => {
-      if (checkArrEqual(selectValue.tempState, selectValue.originalState))
+      if (checkArrEqual(selectValue.tempState, selectValue.originalState)) {
+        console.log(
+          "arrrays are equal",
+          selectValue.tempState,
+          selectValue.originalState
+        );
         return;
-      setFieldValue(name, selectValue.tempState);
+      }
+      updateFieldData(selectValue.tempState);
+      setTimeout(() => setFieldValue(name, selectValue.tempState), 10);
       setTimeout(() => setFieldTouched(name, true), 10);
     });
   };
@@ -82,7 +90,6 @@ const CheckboxList = (props) => {
   const classes = useStyles();
   let list = [];
   const checkboxValueChanged = (e, val) => {
-    console.log("event is", e);
     let tempSelectVal = selectValue.tempState.slice();
     let index = selectValue.tempState.findIndex((el) => el === val);
     if (index == -1) tempSelectVal.push(val);

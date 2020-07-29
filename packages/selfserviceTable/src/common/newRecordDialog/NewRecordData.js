@@ -110,6 +110,7 @@ const NewRecordData = (props) => {
       initialValues={getInitValues()}
       validationSchema={Yup.object().shape(createValidationSchema())}
       onSubmit={(values, actions) => {
+        console.log("In new record", values);
         handleClose();
       }}
     >

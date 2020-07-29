@@ -21,6 +21,7 @@ const ScanQr = (props) => {
     handleBlur,
     updateFieldData,
     setFieldValue,
+    setFieldTouched,
     placeholder,
     error,
     touched,
@@ -37,6 +38,7 @@ const ScanQr = (props) => {
 
   const handleClick = (event) => {
     console.log("setting open to true");
+    if (!props.editAllowed) return;
     setOpen(true);
   };
 
@@ -49,29 +51,38 @@ const ScanQr = (props) => {
   });
 
   const inputChanged = (value) => {
+    console.log("input changed qr", value);
     setInputValue({
       ...inputValue,
       tempState: value || "",
     });
     setOpen(false);
+    console.log("edit allowed", props.editAllowed);
+    if (!props.editAllowed) return;
+    setReadOnly(true);
+    updateInput(value);
+    setTimeout(() => inputBlurred(value));
   };
-  const updateInput = () => {
-    if (inputValue.tempState === inputValue.originalState) return;
-
-    // updateFieldData(inputValue.tempState);
+  const updateInput = (value) => {
+    console.log(
+      "updating field data in scan QR",
+      inputValue.tempState,
+      inputValue.originalState
+    );
+    if (value === inputValue.originalState) return;
+    console.log("updating field data in scan QR", inputValue.tempState);
+    updateFieldData(value);
   };
-  const inputBlurred = (e) => {
-    if (inputValue.tempState === inputValue.originalState) return;
+  const inputBlurred = (value) => {
+    if (value === inputValue.originalState) return;
     let updatedVal = {
       ...inputValue,
-      tempState: inputValue.tempState,
+      tempState: value,
     };
 
-    if (inputValue) setInputValue({ ...updatedVal });
-
     setFieldValue(name, updatedVal.tempState);
-
-    setTimeout(() => handleBlur(e), 10);
+    setFieldTouched(name, true);
+    // setTimeout(() => handleBlur(e), 10);
   };
 
   if (value !== inputValue.originalState) {
@@ -90,10 +101,6 @@ const ScanQr = (props) => {
           readOnly={true}
           onBlur={(e) => {
             // onBlur(e);
-            if (!props.editAllowed) return;
-            setReadOnly(true);
-            updateInput();
-            setTimeout(() => inputBlurred(e));
           }}
         />
       </InputIcon>
@@ -112,11 +119,12 @@ const ScanQr = (props) => {
       </Tooltip>
       <Dialog
         title={"Qr Reader"}
+        disableBackdropClick={true}
         id={id}
         classes={{
           paper: classes.paper,
         }}
-        open={open}
+        open={open && props.editAllowed}
         onClose={handleClose}
       >
         <QrReader onSubmit={inputChanged} onClose={handleClose} />

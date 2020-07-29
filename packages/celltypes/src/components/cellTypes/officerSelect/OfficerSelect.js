@@ -122,9 +122,12 @@ const OfficerSelect = (props) => {
         readOnly={!props.editAllowed && !ignoreEditLocked}
         onChange={(e) => {
           setSelectValue({ ...selectValue, tempState: e.target.value });
-          // if (updateFieldData) updateFieldData(e.target.value);
+          console.log(selectValue.originalState, e.target.value);
+
           setTimeout(() => setFieldValue(name, e.target.value));
           setTimeout(() => setFieldTouched(name, true), 10);
+          if (selectValue.originalState === e.target.value) return;
+          if (updateFieldData) updateFieldData(e.target.value);
         }}
         input={<BootstrapInput />}
       >

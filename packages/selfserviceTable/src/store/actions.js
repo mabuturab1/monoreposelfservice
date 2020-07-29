@@ -207,7 +207,7 @@ export const updateFieldDataFailed = (data) => {
 export const updateFieldData = (
   apiUrl,
   reportId,
-  fieldId,
+  rowId,
   data,
   newKey,
   isSuccess
@@ -225,14 +225,14 @@ export const updateFieldData = (
 
     axios
       .put(
-        `${"/vbeta"}/reports/${reportId}/contents/${fieldId}/data`,
+        `${"/vbeta"}/reports/${reportId}/contents/${rowId}`,
         sendData,
         config
       )
       .then((response) => {
         dispatch(
           updateFieldDataSuccess({
-            id: fieldId,
+            id: rowId,
             data: { ...data },
             newKey: newKey,
           })

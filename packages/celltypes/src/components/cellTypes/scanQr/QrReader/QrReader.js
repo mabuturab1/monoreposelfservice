@@ -31,10 +31,8 @@ const QrReader = ({ onClose, onSubmit }) => {
       Buffer.from(imageSrc.slice("data:image/png;base64,".length), "base64")
     );
     const code = jsqr(Uint8ClampedArray.from(png.data), png.width, png.height);
-    console.log("CODE IS", code);
+
     if (code != null) setResult(code);
-    // const result = decodeResult(clampedArray, width, height);
-    // console.log(result);
   }, [webcamRef]);
   const decodeResult = (clampedArray, width, height) => {
     return jsqr(clampedArray, width, height);
@@ -46,10 +44,9 @@ const QrReader = ({ onClose, onSubmit }) => {
     );
 
     var rawImageData = jpeg.decode(jpegData);
-    console.log("1 cleared");
+
     var clampedArray = new Uint8ClampedArray(rawImageData.data.lengt);
-    console.log("2 cleared");
-    console.log(clampedArray);
+
     var i;
     for (i = 0; i < rawImageData.data.length; i++) {
       clampedArray[i] = rawImageData.data[i];
@@ -66,17 +63,17 @@ const QrReader = ({ onClose, onSubmit }) => {
   useEffect(() => {
     if (interval && interval.current) clearInterval(interval.current);
     interval.current = setInterval(() => {
-      console.log("is error at very start is", anError);
       if (anError == false) {
         try {
           decodeQr();
         } catch (error) {
-          console.log("error occurred", error);
           setError(true);
         }
-        console.log("is error is", anError);
       }
     }, 1000);
+    return function cleanup() {
+      handleClose();
+    };
   }, [decodeQr, anError, setError]);
   const handleClose = () => {
     clearInterval(interval.current);
@@ -94,8 +91,10 @@ const QrReader = ({ onClose, onSubmit }) => {
         videoConstraints={videoConstraints}
       />
 
-      <p>
-        {!result || result == "" ? "No Qr code found" : "Result is: " + result}
+      <p className={styles.text}>
+        {result && result.data
+          ? "Result is: " + result.data
+          : "No Qr code found"}
       </p>
       <div className={styles.buttonWrapper}>
         {anError ? (
@@ -110,18 +109,18 @@ const QrReader = ({ onClose, onSubmit }) => {
         ) : null}
         <Button
           disabled={!result || result === ""}
-          style={{ margin: "0px 10px" }}
-          onClick={() => onSubmit(result)}
+          style={{ margin: "0px 10px", fontSize: "12px" }}
+          onClick={() => onSubmit(result.data)}
           variant="contained"
           color="primary"
         >
           Save Result
         </Button>
         <Button
-          style={{ margin: "0px 10px" }}
+          style={{ margin: "0px 10px", fontSize: "12px" }}
           onClick={handleClose}
           variant="contained"
-          color="primary"
+          color="secondary"
         >
           Cancel
         </Button>

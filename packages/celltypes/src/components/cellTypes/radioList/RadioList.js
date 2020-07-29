@@ -51,10 +51,13 @@ const Dropdown = (props) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+
     setTimeout(() => {
       setFieldValue(name, selectValue.tempState);
       setTimeout(() => setFieldTouched(name, true), 10);
     });
+    if (selectValue.originalState === selectValue.tempState) return;
+    updateFieldData(selectValue.tempState);
   };
   const currentValue =
     (valuesList && valuesList.includes(value)) ||

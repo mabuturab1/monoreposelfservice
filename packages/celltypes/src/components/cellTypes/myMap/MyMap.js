@@ -22,6 +22,7 @@ const Map = (props) => {
     handleBlur,
     updateFieldData,
     setFieldValue,
+    setFieldTouched,
     placeholder,
     error,
     touched,
@@ -39,6 +40,7 @@ const Map = (props) => {
 
   const handleClick = (event) => {
     console.log("setting open to true");
+    if (!props.editAllowed) return;
     setOpen(true);
   };
 
@@ -56,29 +58,38 @@ const Map = (props) => {
       lat: value.lat,
       long: value.lng || value.long,
     };
-    console.log("obtained data is", inputValue, newValue);
+    if (!props.editAllowed) return;
     setInputValue({
       ...inputValue,
       tempState: newValue || "",
     });
-  };
-  const updateInput = () => {
-    if (inputValue.tempState === inputValue.originalState) return;
+    setReadOnly(true);
+    updateInput(newValue);
 
-    // updateFieldData(inputValue.tempState);
+    setTimeout(() => inputBlurred(newValue));
+    console.log("obtained data is", inputValue, newValue);
   };
-  const inputBlurred = (e) => {
-    if (inputValue.tempState === inputValue.originalState) return;
+
+  const updateInput = (value) => {
+    let { lat, long } = value;
+    let { lat: latOrig, long: longOrig } = inputValue.originalState;
+    if (!lat || !long) return;
+    console.log("checking for lat,long", lat, long, latOrig, longOrig);
+    console.log(lat === latOrig && long === longOrig);
+    if (lat === latOrig && long === longOrig) return;
+
+    updateFieldData(value);
+  };
+  const inputBlurred = (value) => {
+    if (value === inputValue.originalState) return;
     let updatedVal = {
       ...inputValue,
-      tempState: inputValue.tempState,
+      tempState: value,
     };
 
-    if (inputValue) setInputValue({ ...updatedVal });
-
     setFieldValue(name, updatedVal.tempState);
-
-    setTimeout(() => handleBlur(e), 10);
+    setFieldTouched(name, true);
+    // setTimeout(() => handleBlur(e), 10);
   };
 
   if (value !== inputValue.originalState) {
@@ -107,10 +118,6 @@ const Map = (props) => {
           readOnly={true}
           onBlur={(e) => {
             // onBlur(e);
-            if (!props.editAllowed) return;
-            setReadOnly(true);
-            updateInput();
-            setTimeout(() => inputBlurred(e));
           }}
         />
       </InputIcon>
@@ -136,7 +143,7 @@ const Map = (props) => {
           paper: classes.paper,
         }}
         disableBackdropClick={true}
-        open={open}
+        open={open && props.editAllowed}
         onClose={handleClose}
       >
         <MapDialog

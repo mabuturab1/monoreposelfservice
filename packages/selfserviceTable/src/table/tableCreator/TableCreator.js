@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import TableContext from "../context/TableContext";
 import CellTypeContext from "../context/CellTypeContext";
 import styles from "./TableCreator.module.scss";
-import InfiniteLoader from "../infiniteLoader/InfiniteLoader2";
+import InfiniteLoader from "../infiniteLoader/InfiniteLoader";
 import { Paper } from "@material-ui/core";
 import InfoDialog from "../infoDialog/InfoDialog";
 

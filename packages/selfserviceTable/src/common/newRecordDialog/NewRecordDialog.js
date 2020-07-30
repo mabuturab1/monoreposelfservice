@@ -28,6 +28,7 @@ const NewRecordDialog = (props) => {
       <div onClick={handleClick}>{props.children}</div>
       <Dialog
         id={id}
+        disableBackdropClick={true}
         classes={{
           paper: classes.paper,
         }}

@@ -28,6 +28,10 @@ const mapDispatchToProps = (dispatch) => {
     updateApiUrl: (apiAddress) => dispatch(actions.updateApiUrl(apiAddress)),
     updateCurrentReportId: (currentReportId) =>
       dispatch(actions.updateCurrentReportId(currentReportId)),
+    uploadFile: (apiUrl, reportId, rowId, data, newKey, isSuccess) =>
+      dispatch(
+        actions.uploadFile(apiUrl, reportId, rowId, data, newKey, isSuccess)
+      ),
     updateFieldData: (apiUrl, reportId, rowId, data, newKey, isSuccess) =>
       dispatch(
         actions.updateFieldData(

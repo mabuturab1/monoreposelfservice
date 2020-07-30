@@ -141,7 +141,15 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
       />
     );
     return myCell.type === "ITEM_LIST" ? (
-      <TableDialog {...myCell.data}>{tableCell}</TableDialog>
+      <TableDialog
+        editAllowed={tableContext.editAllowed}
+        {...{ ...myCell.data, value: undefined }}
+        value={
+          formData.values[getKey(rowData.id, myCell.key)] || getInitData(myCell)
+        }
+      >
+        {tableCell}
+      </TableDialog>
     ) : (
       tableCell
     );

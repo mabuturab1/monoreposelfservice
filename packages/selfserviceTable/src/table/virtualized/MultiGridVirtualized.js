@@ -68,12 +68,12 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     return tableDataId + fieldKey;
   };
   const getInitData = (el) => {
-    if (el.type === "CONTACT") {
-      let cell = columns.find((el) => el.type === "CONTACT");
+    // if (el.type === "CONTACT") {
+    //   let cell = columns.find((el) => el.type === "CONTACT");
 
-      if (cell.value) return cell.value;
-      else return {};
-    }
+    //   if (cell.value) return cell.value;
+    //   else return {};
+    // }
     return el.type === "IMAGE" || el.type === "DATETIME" ? null : "";
   };
   const cellRenderer = ({ key, rowIndex, columnIndex, style }) => {

@@ -7,12 +7,13 @@ const schemaCreator = (headerCellSpecs) => {
   const { yupType, params } = localAssignments(type);
   if (yupType && validator[yupType]) validator = validator[yupType](...params);
 
-  if (!data) return validator;
-
+  if (!data || data["isDisabled"]) return validator;
   Object.keys(data).forEach((el) => {
-    const { yupType, params } = getYupData(type, el, data);
-    if (!validator[yupType] || !yupType) return;
-    validator = validator[yupType](...params);
+    if (data[el]) {
+      const { yupType, params } = getYupData(type, el, data);
+      if (!validator[yupType] || !yupType) return;
+      validator = validator[yupType](...params);
+    }
   });
   return validator;
 };

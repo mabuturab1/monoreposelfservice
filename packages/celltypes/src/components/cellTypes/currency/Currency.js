@@ -81,16 +81,17 @@ const Currency = (props) => {
         disabled,
         label,
         type,
-        value: readOnly
-          ? currencyFormatter(
-              inputValue.tempState,
-              currency,
-              thousandSep,
-              decimalSep,
-              decimalCount,
-              unit
-            )
-          : inputValue.tempState,
+        value:
+          readOnly && !disableReadOnlyMode
+            ? currencyFormatter(
+                inputValue.tempState,
+                currency,
+                thousandSep,
+                decimalSep,
+                decimalCount,
+                unit
+              )
+            : inputValue.tempState,
       }}
       placeholder={props.editAllowed ? placeholder : ""}
       readOnly={readOnly && !disableReadOnlyMode}

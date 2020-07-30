@@ -333,6 +333,7 @@ const mapStateToProps = (state) => {
   return {
     filterData: state.filterData,
     tableHeader: state.tableHeader,
+    tableData: state.tableData,
   };
 };
 

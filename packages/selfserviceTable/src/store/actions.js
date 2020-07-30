@@ -290,16 +290,33 @@ export const getTableHeader = (apiUrl, reportId) => {
   };
 };
 
-export const uploadFile = (apiUrl, data) => {
-  return (dispatch) => {
+export const uploadFile = (
+  apiUrl,
+  reportId,
+  rowId,
+  data,
+  newKey,
+  isSuccess
+) => {
+  return (dispatch, getState) => {
     dispatch(getUploadFileStart());
+    const currentState = getState().snackbarStatus || {};
+    console.log("is updating state", currentState.isUpdating);
+    if (currentState.isUpdating) {
+      setTimeout(() => isSuccess(false), 100);
+      return;
+    }
+
     axios
       .post(`${"/vbeta"}/uploads`, data, config)
       .then((response) => {
-        if (response) dispatch(getUploadFileSuccess(response.data));
-        else dispatch(getUploadFileFailed());
+        if (response) {
+          dispatch(getUploadFileSuccess(response.data));
+          isSuccess(true);
+        } else dispatch(getUploadFileFailed());
       })
       .catch((error) => {
+        isSuccess(false);
         dispatch(getUploadFileFailed());
       });
   };

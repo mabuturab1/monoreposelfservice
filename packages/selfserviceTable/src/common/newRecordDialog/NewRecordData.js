@@ -77,7 +77,7 @@ const NewRecordData = (props) => {
   };
   let headerSpecs = createHeaderSpecs(tableHeader);
   let validationSchema = createValidationSchema();
-  console.log("header specs are", headerSpecs);
+
   const isNestedDropdown = (el) => {
     return el.data && el.data.fields && el.type === "NESTED_DROPDOWN";
   };
@@ -104,6 +104,10 @@ const NewRecordData = (props) => {
         </div>
       </React.Fragment>
     );
+  };
+  const submitData = (handleSubmit, errors, touched) => {
+    handleSubmit();
+    console.log(errors, touched);
   };
   return (
     <Formik
@@ -145,7 +149,7 @@ const NewRecordData = (props) => {
           {headerSpecs.map((el, index) => {
             let { data } = el;
             if (!data) data = {};
-            console.log("el type is", el.type, { ...el, ...el.data });
+
             return (
               <React.Fragment key={index}>
                 {isNestedDropdown(el) ? (
@@ -221,7 +225,7 @@ const NewRecordData = (props) => {
               Cancel
             </Button>
             <Button
-              onClick={handleSubmit}
+              onClick={() => submitData(handleSubmit, errors, touched)}
               variant="contained"
               color="primary"
               style={{ fontSize: "12px" }}

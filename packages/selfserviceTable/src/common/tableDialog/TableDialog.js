@@ -1,6 +1,7 @@
 import React from "react";
 import { Dialog, makeStyles } from "@material-ui/core";
 import TableCreator from "../../table/tableCreator/TableCreator";
+
 const useStyles = makeStyles(() => ({
   paper: {
     borderRadius: "10px",
@@ -9,6 +10,7 @@ const useStyles = makeStyles(() => ({
 const TableData = ({ value: mValue, fields }) => {
   let value = mValue || {};
   let items = value.items || [];
+  console.log("value is", value, "fields is", fields);
   const tableData = items.map((el, index) => {
     return {
       id: index,
@@ -38,6 +40,7 @@ const TableDialog = (props) => {
 
   const handleClick = (event) => {
     console.log("setting open to true");
+    if (!props.editAllowed) return;
     setOpen(true);
   };
 

@@ -79,7 +79,7 @@ const MyTableCell = (props) => {
   };
   if (item && item.type && item.type.toUpperCase() === "NESTED_DROPDOWN")
     return <NestedDropdown {...props} />;
-  const submitData = (rowDataContent, dataToSubmit) => {
+  const submitData = (rowDataContent, dataToSubmit, updateType) => {
     console.log("submitting data", rowDataContent, dataToSubmit);
     if (props.updateFieldData)
       props.updateFieldData(
@@ -89,21 +89,30 @@ const MyTableCell = (props) => {
           [props.cellOriginalKey]: dataToSubmit,
         },
         props.cellOriginalKey,
-        (isSuccess) => {
+        (isSuccess, afterUpdate = null) => {
           let { name, fallbackValue } = { ...props.item };
 
-          if (!isSuccess && fallbackValue && name) {
+          if (!isSuccess && name) {
             console.log("FALLBACK VALUE IS", fallbackValue);
-            setFieldValue(name, fallbackValue);
+            if (fallbackValue) setFieldValue(name, fallbackValue);
+            else
+              setFieldValue(
+                name,
+                DummyInitValues[item.type.toUpperCase()] || ""
+              );
           }
-          if (!fallbackValue)
-            setFieldValue(name, DummyInitValues[item.type.toUpperCase()] || "");
-        }
+
+          if (isSuccess && afterUpdate && updateType !== "KEYUPDATE") {
+            console.log(isSuccess, afterUpdate, updateType);
+            updateFieldData(afterUpdate, "KEYUPDATE");
+          }
+        },
+        updateType
       );
   };
 
   const SelectedComponent = fieldMap[item.type.toUpperCase()];
-  let updateFieldData = (obtainedData) => {
+  let updateFieldData = (obtainedData, updateType = "KEYUPDATE") => {
     let { rowData } = { ...props };
     console.log("obtained data", obtainedData, "row data", rowData);
     if (!rowData) return;
@@ -117,9 +126,9 @@ const MyTableCell = (props) => {
       });
 
       schema.isValid({ [name]: obtainedData }).then(function (val) {
-        if (val) submitData(rowDataContent, obtainedData);
+        if (val) submitData(rowDataContent, obtainedData, updateType);
       });
-    } else submitData(rowDataContent, obtainedData);
+    } else submitData(rowDataContent, obtainedData, updateType);
   };
   if (item.type && SelectedComponent) {
     const componentData = {

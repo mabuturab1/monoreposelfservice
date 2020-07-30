@@ -225,15 +225,50 @@ const TableCreator = (props) => {
   useEffect(() => {
     if (!staticData) fetchTableHeader(apiUrl, currentReportId);
   }, [fetchTableHeader, apiUrl, currentReportId, staticData]);
-  const updateFieldData = (rowId, data, newKey, isSuccess) => {
-    props.updateFieldData(
-      apiUrl,
-      props.currentReportId,
-      rowId,
-      data,
-      newKey,
-      isSuccess
-    );
+  const updateFieldData = async (
+    rowId,
+    data,
+    newKey,
+    isSuccess,
+    req = "KEYUPDATE"
+  ) => {
+    console.log(rowId, data, newKey);
+
+    switch (req) {
+      case "IMAGEUPDATE":
+        let localData = data[newKey];
+        console.log("local image file url is", localData);
+
+        if (!localData) return;
+        let blob = await fetch(localData).then((r) => r.blob());
+        let file = new File([blob], "test", { type: "image/png" });
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("type", "image");
+
+        let fileData = {
+          data: blob,
+          type: "image",
+        };
+        props.uploadFile(
+          apiUrl,
+          props.currentReportId,
+          rowId,
+          formData,
+          newKey,
+          isSuccess
+        );
+        break;
+      default:
+        props.updateFieldData(
+          apiUrl,
+          props.currentReportId,
+          rowId,
+          data,
+          newKey,
+          isSuccess
+        );
+    }
   };
   let columnsWidth = {};
   tableHeader.forEach((el) => {
@@ -293,7 +328,7 @@ const TableCreator = (props) => {
             display: "flex",
             flexFlow: "column",
             height: "100vh",
-            width: "100vw",
+            maxWidth: "100vw",
             minHeight: "600px",
           }}
         >

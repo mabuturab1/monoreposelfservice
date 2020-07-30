@@ -29,7 +29,7 @@ const DocumentUpload = (props) => {
 
   const onLoad = (event) => {
     if (!selectedFile.updated) {
-      setFieldValue(name, selectedFile.image);
+      setFieldValue(name, selectedFile.tempFilePath);
 
       const newFile = { ...selectedFile };
       setTimeout(() => setFieldTouched(name, true), 10);
@@ -60,20 +60,22 @@ const DocumentUpload = (props) => {
             style={{ display: "none" }}
             type={props.editAllowed ? "file" : "text"}
             disabled={!props.editAllowed}
-            value={selectedFile.tempFilePath}
             onBlur={(e) => {}}
             {...{ name, disabled, label, onBlur, placeholder }}
             onChange={(event) => {
-              if (setFieldValue) {
-                setSelectedFile({
-                  ...selectedFile,
-                  tempFilePath: URL.createObjectURL(
-                    event.currentTarget.files[0]
-                  ),
-                  document: event.currentTarget.files[0],
-                  updated: false,
-                });
-              }
+              console.log(
+                "on changed in doc upload",
+                event,
+                event.currentTarget.files[0]
+              );
+
+              setSelectedFile({
+                ...selectedFile,
+                tempFilePath: URL.createObjectURL(event.currentTarget.files[0]),
+                document: event.currentTarget.files[0],
+                updated: false,
+              });
+              onLoad();
             }}
             placeholder="Kindly select to upload a file"
             accept="/*"

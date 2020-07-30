@@ -16,6 +16,7 @@ const Image = (props) => {
     touched,
     value,
     setFieldTouched,
+    updateFieldData,
   } = { ...props };
   const [selectedFile, setSelectedFile] = useState({
     image: value,
@@ -26,7 +27,9 @@ const Image = (props) => {
   if (selectedFile.image) src = selectedFile.image;
   const onLoad = (event) => {
     if (!selectedFile.updated) {
-      setFieldValue(name, selectedFile.image);
+      if (updateFieldData) updateFieldData(selectedFile.image, "IMAGEUPDATE");
+
+      setTimeout(() => setFieldValue(name, selectedFile.image), 10);
 
       const newFile = { ...selectedFile };
       setTimeout(() => setFieldTouched(name, true), 10);

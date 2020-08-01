@@ -53,8 +53,9 @@ const FilterHeader = (props) => {
   const [filterData, setFilterData] = useState(filterDataState);
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
-  const [dateRange, setDateRange] = useState({});
+  const [dateRange, setDateRange] = useState(props.initDateRange || {});
   const [searchValue, setSearchValue] = useState("");
+
   let updateReduxState = (filter) => {
     props.storeFilterData(filter);
     if (props.handleNewFilterData) props.handleNewFilterData(filter);
@@ -167,6 +168,7 @@ const FilterHeader = (props) => {
   if (tableContext.editAllowed) editLockedClasses.push(styles.lockDisabled);
   const onDateRangeSelect = (mDateRange) => {
     setDateRange(mDateRange);
+    if (props.handleDateRange) props.handleDateRange(mDateRange);
   };
   let dateRangeClasses = [
     styles.dateRangeItem,

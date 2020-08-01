@@ -19,14 +19,15 @@ const SwitchButton = (props) => {
     touched,
     updateFieldData,
   } = { ...props };
+  console.log("in switch button value is", value);
   const [inputValue, setInputValue] = useState({
-    originalState: value || false,
-    tempState: value || false,
+    originalState: value != null ? value : false,
+    tempState: value != null ? value : false,
   });
   if (value != null && value !== inputValue.originalState) {
     setInputValue({
-      originalState: value || false,
-      tempState: value || false,
+      originalState: value,
+      tempState: value,
     });
   }
   const switchUI = (

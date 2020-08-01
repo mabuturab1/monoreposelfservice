@@ -15,7 +15,9 @@ const RangePicker = (props) => {
   };
   const handleClose = () => {
     setOpen(false);
-    if (props.onDateRangeChanged) props.onDateRangeChanged(dateRange);
+    setTimeout(() => {
+      if (props.onDateRangeChanged) props.onDateRangeChanged(dateRange);
+    });
   };
   return (
     <React.Fragment>

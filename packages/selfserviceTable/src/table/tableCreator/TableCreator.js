@@ -13,7 +13,7 @@ import styles from "./TableCreator.module.scss";
 import InfiniteLoader from "../infiniteLoader/InfiniteLoader";
 import { Paper } from "@material-ui/core";
 import InfoDialog from "../infoDialog/InfoDialog";
-
+import * as moment from "moment";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import Loader from "react-loader-spinner";
 import { CellTypes } from "../utility/cellTypes";
@@ -55,6 +55,8 @@ const TableCreator = (props) => {
     isNewKey: false,
     filters: new URLSearchParams(),
     search: "",
+    end: new Date(moment.now()),
+    start: new Date(moment().subtract(1, "months")),
   });
   const createHeaderSpecs = useCallback(() => {
     let cellSpecs = [];
@@ -146,10 +148,25 @@ const TableCreator = (props) => {
       });
     }
     if (queryParams.search !== "") params.append("search", queryParams.search);
+    if (queryParams.start != null)
+      params.append("start", getFormattedDate(queryParams.start));
+    if (queryParams.end != null)
+      params.append("end", getFormattedDate(queryParams.end));
 
     mFetchTableData(apiUrl, currentReportId, params, queryParams.isNewKey);
   }, [mFetchTableData, apiUrl, currentReportId, queryParams]);
+  const getFormattedDate = (dateObj, fallback = "") => {
+    if (!dateObj) return fallback;
+    if (!(dateObj instanceof Date)) return fallback;
 
+    var month = dateObj.getMonth() + 1; //months from 1-12
+    var day = dateObj.getDate();
+    var year = dateObj.getFullYear();
+
+    return (
+      year + "-" + getTwoDigitsNumber(month) + "-" + getTwoDigitsNumber(day)
+    );
+  };
   const updateApiUrl = useCallback(() => {
     mUpdateApiUrl(apiUrl);
   }, [mUpdateApiUrl, apiUrl]);
@@ -305,6 +322,18 @@ const TableCreator = (props) => {
       search: searchValue || "",
     });
   };
+  let getTwoDigitsNumber = (val) => {
+    return ("0" + val.toString()).trim().slice(-2);
+  };
+  const handleDateRange = (dateRange) => {
+    setQueryParams({
+      ...queryParams,
+      pageNumber: 0,
+      isNewKey: true,
+      start: dateRange.startDate,
+      end: dateRange.endDate,
+    });
+  };
   let tableWidth = Object.keys(columnsWidth)
     .map((el) => columnsWidth[el])
     .reduce((a, b) => a + b, 0);
@@ -340,8 +369,13 @@ const TableCreator = (props) => {
                 }}
               >
                 <FilterHeader
+                  initDateRange={{
+                    endDate: queryParams.end,
+                    startDate: queryParams.start,
+                  }}
                   handleNewFilterData={handleNewFilterData}
                   handleSearch={handleSearch}
+                  handleDateRange={handleDateRange}
                 />
               </div>
             </div>

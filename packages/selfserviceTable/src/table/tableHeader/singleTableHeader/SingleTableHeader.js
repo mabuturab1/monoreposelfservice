@@ -112,8 +112,8 @@ const SingleTableHeader = (props) => {
         sortOrder={props.sortOrder}
         cellSpecs={
           cellSpecs && cellSpecs.dataKey === "%OPEN_NEW_FIELD_DIALOG%"
-            ? { ...props.cellSpecs }
-            : {}
+            ? {}
+            : { ...props.cellSpecs }
         }
       >
         {tableHeader}

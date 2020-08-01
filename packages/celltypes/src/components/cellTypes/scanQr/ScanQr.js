@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { Dialog, makeStyles } from "@material-ui/core";
 import InputIcon from "../../common/HOC/inputIcon/InputIcon";
+import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 const useStyles = makeStyles(() => ({
   paper: {
     borderRadius: "10px",
@@ -46,8 +47,8 @@ const ScanQr = (props) => {
     setOpen(false);
   };
   const [inputValue, setInputValue] = useState({
-    originalState: value,
-    tempState: value,
+    originalState: value || DummyInitValues["SCAN_QR"],
+    tempState: value || DummyInitValues["SCAN_QR"],
   });
 
   const inputChanged = (value) => {
@@ -85,7 +86,7 @@ const ScanQr = (props) => {
     // setTimeout(() => handleBlur(e), 10);
   };
 
-  if (value !== inputValue.originalState) {
+  if (value && value !== inputValue.originalState) {
     setInputValue({ originalState: value, tempState: value });
   }
   const id = open ? "simple-popover" : undefined;

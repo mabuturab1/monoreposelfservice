@@ -19,6 +19,21 @@ import * as actions from "../../store/actions";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import NewRecordDialog from "../../common/newRecordDialog/NewRecordDialog";
+import DateRangePicker from "@selfservicetable/celltypes/src/components/cellTypes/dateRangePicker/DateRangePicker";
+const Card = (props) => {
+  return (
+    <div
+      className={[
+        styles.topHeaderItemWrapper,
+        styles.mediumPadding,
+
+        styles.applyElevation,
+      ].join(" ")}
+    >
+      {props.children}
+    </div>
+  );
+};
 const FilterHeader = (props) => {
   const searchConditions = [
     "less than (<)",
@@ -38,6 +53,7 @@ const FilterHeader = (props) => {
   const [filterData, setFilterData] = useState(filterDataState);
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
+  const [dateRange, setDateRange] = useState({});
   const [searchValue, setSearchValue] = useState("");
   let updateReduxState = (filter) => {
     props.storeFilterData(filter);
@@ -149,7 +165,30 @@ const FilterHeader = (props) => {
     tableContext.setEditAllowed(!val);
   };
   if (tableContext.editAllowed) editLockedClasses.push(styles.lockDisabled);
+  const onDateRangeSelect = (mDateRange) => {
+    setDateRange(mDateRange);
+  };
+  let dateRangeClasses = [
+    styles.dateRangeItem,
+    styles.label,
+    styles.topHeaderItemWrapper,
+    styles.applyElevation,
+  ].join(" ");
+  const getFormattedDate = (dateObj, fallback = "") => {
+    if (!dateObj) return fallback;
+    if (!(dateObj instanceof Date)) return fallback;
 
+    var month = dateObj.getMonth() + 1; //months from 1-12
+    var day = dateObj.getDate();
+    var year = dateObj.getFullYear();
+
+    return (
+      year + "-" + getTwoDigitsNumber(month) + "-" + getTwoDigitsNumber(day)
+    );
+  };
+  let getTwoDigitsNumber = (val) => {
+    return ("0" + val.toString()).trim().slice(-2);
+  };
   return (
     <div className={styles.wrapper}>
       <div className={styles.filterButtonWrapper}>
@@ -162,11 +201,16 @@ const FilterHeader = (props) => {
             styles.applyElevation,
           ].join(" ")}
         >
-          <FontAwesomeIcon icon={faFilter} className={styles.icon} />
+          <FontAwesomeIcon
+            icon={faFilter}
+            size={"lg"}
+            className={styles.icon}
+          />
           <span className={styles.label}>Filter</span>
         </div>
         <div className={editLockedClasses.join(" ")} onClick={toggleEditLocked}>
           <FontAwesomeIcon
+            size={"lg"}
             icon={tableContext.editAllowed ? faUnlock : faLock}
             className={styles.icon}
           />
@@ -182,14 +226,41 @@ const FilterHeader = (props) => {
             styles.applyElevation,
           ].join(" ")}
         >
-          <FontAwesomeIcon icon={faFileExport} className={styles.icon} />
+          <FontAwesomeIcon
+            size={"lg"}
+            icon={faFileExport}
+            className={styles.icon}
+          />
           <span className={styles.label}>Export</span>
+        </div>
+        <div>
+          <DateRangePicker onDateRangeChanged={onDateRangeSelect}>
+            <div className={styles.dateRangeWrapper}>
+              <div className={dateRangeClasses} style={{ flex: 2 }}>
+                {getFormattedDate(dateRange.startDate, "From")}
+              </div>
+
+              <div
+                style={{
+                  margin: "0px 5px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <span className={styles.text}>-</span>
+              </div>
+
+              <div className={dateRangeClasses} style={{ flex: 2 }}>
+                {getFormattedDate(dateRange.endDate, "To")}
+              </div>
+            </div>
+          </DateRangePicker>
         </div>
       </div>
       <div className={styles.recordWrapper}>
         <div className={styles.totalRecords}>
           <span className={styles.label}>Total Records:{tableData.length}</span>
-          <NewRecordDialog tableHeader={tableHeader}>
+          <NewRecordDialog>
             <div
               className={[
                 styles.topHeaderItemWrapper,
@@ -218,7 +289,11 @@ const FilterHeader = (props) => {
             styles.applyElevation,
           ].join(" ")}
         >
-          <FontAwesomeIcon icon={faSearch} className={styles.icon} />
+          <FontAwesomeIcon
+            size={"lg"}
+            icon={faSearch}
+            className={styles.icon}
+          />
           <input
             className={styles.input}
             placeholder="Search"

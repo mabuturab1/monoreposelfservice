@@ -7,6 +7,7 @@ import DateFnsUtils from "@date-io/moment";
 import TimePicker from "./timePicker/TimePicker";
 import moment from "moment";
 import { Popover } from "@material-ui/core";
+import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 
 const DateTime = (props) => {
   const {
@@ -29,7 +30,7 @@ const DateTime = (props) => {
   let decodeFormat = mDecodeFormat;
   let showFormat = mShowFormat;
   let value = null;
-  let dateValid = moment(mValue);
+  let dateValid = moment(mValue || DummyInitValues["DATETIME"]);
   if (dateValid.isValid()) value = mValue;
   if (submitFormat)
     submitFormat = mSubmitFormat.replace("yyyy", "YYYY").replace("dd", "DD");

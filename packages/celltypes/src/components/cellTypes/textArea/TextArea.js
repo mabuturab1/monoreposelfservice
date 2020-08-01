@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import styles from "./TextArea.module.scss";
 import Tooltip from "../../tooltip/Tooltip";
+import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 
 const TextArea = (props) => {
   const {
@@ -21,8 +22,8 @@ const TextArea = (props) => {
   // console.log("in textArea", name, error, touched);
   const [readOnly, setReadOnly] = useState(true);
   const [inputValue, setInputValue] = useState({
-    originalState: value,
-    tempState: value,
+    originalState: value || DummyInitValues["TEXT_AREA"],
+    tempState: value || DummyInitValues["TEXT_AREA"],
   });
   const inputChanged = (e) => {
     setInputValue({
@@ -31,25 +32,17 @@ const TextArea = (props) => {
     });
   };
   const updateInput = () => {
-    if (
-      inputValue.tempState === inputValue.originalState ||
-      (error && touched) === true
-    )
-      return;
+    if (inputValue.tempState === inputValue.originalState) return;
     updateFieldData(inputValue.tempState);
   };
   const inputBlurred = (e) => {
-    if (
-      inputValue.tempState === inputValue.originalState ||
-      (error && touched) === true
-    )
-      return;
+    if (inputValue.tempState === inputValue.originalState) return;
     setInputValue({ ...inputValue });
     setFieldValue(name, inputValue.tempState);
 
     setTimeout(() => handleBlur(e), 10);
   };
-  if (value !== inputValue.originalState) {
+  if (value && value !== inputValue.originalState) {
     setInputValue({ originalState: value, tempState: value });
   }
   const inputUI = (

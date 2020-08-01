@@ -83,7 +83,7 @@ const OfficerSelect = (props) => {
     valuesList = mOptions.map((el) => el.i);
   }
   const currentValue =
-    valuesList && valuesList.includes(mValue.i) ? mValue.i : "";
+    mValue && valuesList && valuesList.includes(mValue.i) ? mValue.i : "";
   const [selectValue, setSelectValue] = useState({
     originalState: currentValue,
     tempState: currentValue,
@@ -106,7 +106,7 @@ const OfficerSelect = (props) => {
       );
     }
   }
-  if (currentValue !== selectValue.originalState)
+  if (mValue && currentValue !== selectValue.originalState)
     setSelectValue({
       originalState: currentValue,
       tempState: currentValue,

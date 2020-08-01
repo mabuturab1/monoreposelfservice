@@ -1,17 +1,22 @@
 import * as yup from "yup";
 
-const schemaCreator = (headerCellSpecs) => {
+const schemaCreator = (headerCellSpecs, nullable = false) => {
   let { type, data } = headerCellSpecs;
   if (!yup[toYup(type)]) return {};
   let validator = yup[toYup(type)]();
+
   const { yupType, params } = localAssignments(type);
   if (yupType && validator[yupType]) validator = validator[yupType](...params);
-
+  if (nullable) {
+    validator = validator["nullable"]();
+  }
   if (!data || data["isDisabled"]) return validator;
+
   Object.keys(data).forEach((el) => {
     if (data[el]) {
       const { yupType, params } = getYupData(type, el, data);
       if (!validator[yupType] || !yupType) return;
+
       validator = validator[yupType](...params);
     }
   });

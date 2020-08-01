@@ -23,7 +23,7 @@ const SwitchButton = (props) => {
     originalState: value || false,
     tempState: value || false,
   });
-  if (value > 0 && value !== inputValue.originalState) {
+  if (value != null && value !== inputValue.originalState) {
     setInputValue({
       originalState: value || false,
       tempState: value || false,

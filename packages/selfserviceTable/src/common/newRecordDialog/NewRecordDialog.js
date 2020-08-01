@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import NewRecordData from "./NewRecordData";
-
+import * as actions from "../../store/actions";
 import { Dialog, makeStyles, Button } from "@material-ui/core";
+import { connect } from "react-redux";
+import { DataUpdateStatus } from "../../table/constants/Constants";
+import { object } from "yup";
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -11,8 +14,11 @@ const useStyles = makeStyles(() => ({
 
 const NewRecordDialog = (props) => {
   const classes = useStyles();
+  const tableHeader = props.tableHeader || [];
   const [open, setOpen] = useState(false);
-
+  const [dataUpdateStatus, setDataUpdateStatus] = useState(
+    DataUpdateStatus.idle
+  );
   const handleClick = (event) => {
     setOpen(true);
   };
@@ -22,7 +28,71 @@ const NewRecordDialog = (props) => {
   };
 
   const id = open ? "simple-popover" : undefined;
+  const getFormData = async (localData, type) => {
+    console.log("local image file url is", localData);
 
+    if (!localData) return;
+    let blob = await fetch(localData).then((r) => r.blob());
+    let file = new File([blob], "test");
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("type", type);
+    return formData;
+  };
+  const getTableHeaderCell = (key) => {
+    return tableHeader.find((el) => el.key == key);
+  };
+  const uploadDocs = (docValues, uploadComplete) => {
+    if (!docValues || Object.keys(docValues).length < 1) return;
+    let updatedDocValues = {};
+    let numDocKeys = Object.keys(docValues).length;
+    let currIndex = 0;
+    let isWaitForData = false;
+    setDataUpdateStatus(DataUpdateStatus.updating);
+    Object.keys(docValues).forEach(async (el) => {
+      let myCell = getTableHeaderCell(el);
+      let type = "file";
+      if (myCell && myCell.type.toUpperCase() === "IMAGE") type = "image";
+      let formData = await getFormData(docValues[el], type);
+      isWaitForData = true;
+      console.log("uploading file", el);
+      props.uploadFile(
+        props.apiUrl,
+        props.reportId,
+        null,
+        formData,
+        el,
+        (isSuccess, result) => {
+          if (isSuccess) currIndex++;
+          if (isSuccess && result) updatedDocValues[el] = result;
+          if (currIndex >= numDocKeys) uploadComplete(updatedDocValues);
+        }
+      );
+    });
+    if (isWaitForData) uploadComplete({});
+  };
+  const onSubmit = (values, docValues) => {
+    console.log("ON SUBMIT DATA IS", values, docValues);
+    if (!docValues || Object.keys(docValues).length < 1) {
+      submitStaticData(values);
+      return;
+    }
+    uploadDocs(docValues, (uploadResult) => {
+      console.log("upload result is", uploadResult);
+      submitStaticData({ ...values, ...uploadResult });
+    });
+  };
+  const submitStaticData = (values) => {
+    if (!values || Object.keys(values).length < 1) return;
+    setDataUpdateStatus(DataUpdateStatus.updating);
+    props.addTableContent(props.apiUrl, props.reportId, values, (isSuccess) => {
+      console.log("NEW DATA SUBMIT IS", isSuccess);
+      if (isSuccess) handleClose();
+      setDataUpdateStatus(
+        isSuccess ? DataUpdateStatus.updated : DataUpdateStatus.error
+      );
+    });
+  };
   return (
     <React.Fragment>
       <div onClick={handleClick}>{props.children}</div>
@@ -35,9 +105,36 @@ const NewRecordDialog = (props) => {
         open={open}
         onClose={handleClose}
       >
-        <NewRecordData {...props} handleClose={handleClose} />
+        <NewRecordData
+          {...props}
+          dataUpdateStatus={dataUpdateStatus}
+          handleClose={handleClose}
+          onSubmit={onSubmit}
+        />
       </Dialog>
     </React.Fragment>
   );
 };
-export default NewRecordDialog;
+const mapStateToProps = (state) => {
+  return {
+    tableHeader: state.tableHeader,
+    reportId: state.currentReportId,
+    apiUrl: state.apiAddress,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    uploadFile: (apiUrl, reportId, rowId, data, newKey, isSuccess) =>
+      dispatch(
+        actions.uploadFile(apiUrl, reportId, rowId, data, newKey, isSuccess)
+      ),
+    addTableContent: (apiUrl, reportId, data, isSuccess) =>
+      dispatch(actions.addTableContent(apiUrl, reportId, data, isSuccess)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(React.memo(NewRecordDialog));

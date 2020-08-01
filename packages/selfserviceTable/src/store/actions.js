@@ -237,6 +237,7 @@ export const updateFieldData = (
             newKey: newKey,
           })
         );
+        isSuccess(true);
       })
       .catch((error) => {
         if (isSuccess) isSuccess(false);
@@ -312,8 +313,12 @@ export const uploadFile = (
       .then((response) => {
         if (response) {
           dispatch(getUploadFileSuccess(response.data));
-          isSuccess(true);
-        } else dispatch(getUploadFileFailed());
+          isSuccess(true, response.data);
+        } else {
+          dispatch(getUploadFileFailed());
+
+          isSuccess(false);
+        }
       })
       .catch((error) => {
         isSuccess(false);
@@ -322,17 +327,36 @@ export const uploadFile = (
   };
 };
 
-export const addTableContent = (apiUrl, reportId, data) => {
+export const addTableContent = (apiUrl, reportId, data, isSuccess) => {
   return (dispatch) => {
+    console.log("STARTING ADD TABLE CONTENT");
     dispatch(getAddContentStart());
     axios
       .post(`${"/vbeta"}/reports/${reportId}/contents`, data, config)
       .then((response) => {
-        if (response) dispatch(getAddContentSuccess(response.data));
-        else dispatch(getTableHeaderFailed());
+        if (response && response.data) {
+          dispatch(
+            getAddContentSuccess({
+              tableData: [
+                {
+                  id: new Date().getTime().toString(),
+                  data: response.data,
+                },
+              ],
+              totalReportItems: 1,
+            })
+          );
+          isSuccess(true);
+        } else {
+          dispatch(getTableHeaderFailed());
+          isSuccess(false);
+        }
       })
       .catch((error) => {
-        dispatch(getTableHeaderFailed());
+        {
+          dispatch(getTableHeaderFailed());
+          isSuccess(false);
+        }
       });
   };
 };

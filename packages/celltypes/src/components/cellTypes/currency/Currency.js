@@ -3,6 +3,7 @@ import styles from "./Currency.module.scss";
 
 import Tooltip from "../../tooltip/Tooltip";
 import { currencyFormatter } from "../../common/utility";
+import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 
 const Currency = (props) => {
   const {
@@ -29,8 +30,8 @@ const Currency = (props) => {
   const [readOnly, setReadOnly] = useState(true);
 
   const [inputValue, setInputValue] = useState({
-    originalState: value,
-    tempState: value,
+    originalState: value || DummyInitValues["CURRENCY"],
+    tempState: value || DummyInitValues["CURRENCY"],
   });
   const checkForDecimalCount = (value) => {
     let myVal = value;
@@ -67,7 +68,7 @@ const Currency = (props) => {
     setTimeout(() => handleBlur(e), 10);
   };
 
-  if (value !== inputValue.originalState) {
+  if (value && value !== inputValue.originalState) {
     setInputValue({ originalState: value, tempState: value });
   }
 

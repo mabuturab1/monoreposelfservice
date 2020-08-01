@@ -4,12 +4,13 @@ export const currencyFormatter = (
   mThouSep,
   mDecSep,
   mAllowedDecimals,
-  unit
+  mUnit
 ) => {
   let thouSep = mThouSep ? mThouSep : "";
   let decSep = mDecSep ? mDecSep : ".";
   let currencySymbol = mCurrencySymbol ? mCurrencySymbol : "";
   let allowedDecimals = mAllowedDecimals ? mAllowedDecimals : 0;
+  let unit = mUnit ? mUnit : "";
   let numPart = "";
   let decPart = "";
   let finalNumPart = "";
@@ -21,7 +22,10 @@ export const currencyFormatter = (
   if (arr[0]) numPart = arr[0];
   if (arr[1]) decPart = arr[1];
 
-  if (numPart.length < 4) return currencySymbol + numPart + decSep + decPart;
+  if (numPart.length < 4)
+    return currencySymbol + numPart + decPart && decPart.length > 0
+      ? decSep + decPart
+      : "";
 
   for (let i = 0; i < numPart.length; i++) {
     finalNumPart += numPart[i];
@@ -30,7 +34,12 @@ export const currencyFormatter = (
       finalNumPart = finalNumPart + thouSep;
   }
 
-  return currencySymbol + finalNumPart + decSep + decPart + unit;
+  return (
+    currencySymbol +
+    finalNumPart +
+    (decPart && decPart.length > 0 ? decSep + decPart : "") +
+    unit
+  );
 };
 
 export const checkArrEqual = (arr1, arr2) => {

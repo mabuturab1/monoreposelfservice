@@ -3,8 +3,12 @@
   background-color: transparent;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   .lockDisabled {
     background-color: yellow;
+  }
+  * {
+    box-sizing: border-box;
   }
 }
 .filterWrapper {
@@ -16,7 +20,8 @@
 }
 .topHeaderItemWrapper {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   background-color: white;
   padding: 8px;
@@ -31,6 +36,7 @@
   font-size: 0.8rem;
   background-color: transparent;
   font-family: "Roboto", "sans-serif";
+  cursor: pointer;
 }
 .searchWrapper {
   border: none;
@@ -84,10 +90,12 @@
 .buttonWrapper {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 .recordWrapper {
   display: flex;
   flex-flow: column;
+  margin: 0 5px;
 }
 .totalRecords {
   display: flex;
@@ -95,4 +103,21 @@
 }
 .filterButtonWrapper {
   display: flex;
+  flex-wrap: wrap;
+}
+.dateRangeWrapper {
+  width: 250px;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+}
+.dateRangeItem {
+  height: 100%;
+  flex: 1;
+}
+.text {
+  color: #4a4a4a;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-align: center;
 }

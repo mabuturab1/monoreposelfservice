@@ -14,10 +14,12 @@ const Image = (props) => {
     setFieldValue,
     error,
     touched,
-    value,
+    value: mValue,
     setFieldTouched,
     updateFieldData,
   } = { ...props };
+  let value = (mValue || {}).f;
+
   const [selectedFile, setSelectedFile] = useState({
     image: value,
     updated: true,
@@ -27,7 +29,7 @@ const Image = (props) => {
   if (selectedFile.image) src = selectedFile.image;
   const onLoad = (event) => {
     if (!selectedFile.updated) {
-      if (updateFieldData) updateFieldData(selectedFile.image, "IMAGEUPDATE");
+      if (updateFieldData) updateFieldData(selectedFile.image, "IMAGE_UPDATE");
 
       setTimeout(() => setFieldValue(name, selectedFile.image), 10);
 

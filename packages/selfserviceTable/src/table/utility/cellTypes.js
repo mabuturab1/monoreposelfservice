@@ -35,3 +35,4 @@ export const DummyInitValues = {
   ITEM_LIST: "",
   NETSTED_DROPDOWN: {},
 };
+export const DocCells = ["IMAGE", "DOCUMENT"];

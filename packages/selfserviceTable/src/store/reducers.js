@@ -54,6 +54,7 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.START_FETCHING_TABLE_DATA:
       return updateObject(state, { tableDataPending: true });
+    case actionTypes.ADD_CONTENT_SUCCESS:
     case actionTypes.FETCHING_TABLE_DATA_SUCCESS:
       let tableDataUpdate = updateObject(
         state,
@@ -80,6 +81,7 @@ const reducer = (state = initialState, action) => {
       });
     case actionTypes.START_FETCHING_TABLE_HEADER:
       return updateObject(state, { tableHeaderPending: true });
+
     case actionTypes.FETCHING_TABLE_HEADER_SUCCESS:
       return updateObject(state, {
         tableHeaderPending: false,

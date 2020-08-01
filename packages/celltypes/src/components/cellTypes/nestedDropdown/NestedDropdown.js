@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import TableCell from "../../TableCell";
 const NestedDropdown = ({
   editAllowed,
@@ -17,6 +17,7 @@ const NestedDropdown = ({
   appTouchedObj,
   item,
 }) => {
+  let dropdownData = useRef(item && item.value ? item.value : {});
   // console.log("STARTING NEW PRINT");
   // console.log(
   //   "edit allowed",
@@ -48,6 +49,22 @@ const NestedDropdown = ({
   //   "item",
   //   item
   // );
+  const mUpdateFieldData = (rowId, data, key, isSuccess, updateKey) => {
+    dropdownData.current = {
+      ...dropdownData.current,
+      ...data,
+    };
+    updateFieldData(
+      rowId,
+      {
+        ...rowData.data,
+        [cellOriginalKey]: { ...dropdownData.current },
+      },
+      cellOriginalKey,
+      isSuccess,
+      updateKey
+    );
+  };
   const getKey = (tableDataId, fieldKey) => {
     return tableDataId + fieldKey;
   };
@@ -65,14 +82,15 @@ const NestedDropdown = ({
               rowWidth,
               rowHeight,
               handlerFunctions,
-              rowData,
-              cellOriginalKey,
-              updateFieldData,
+
               appSchemaObj,
               appErrorObj,
               appTouchedObj,
               className,
             }}
+            cellOriginalKey={el.key}
+            rowData={{ data: {} }}
+            updateFieldData={mUpdateFieldData}
             serverData={{ ...el }}
             myKey={localKey}
             item={{

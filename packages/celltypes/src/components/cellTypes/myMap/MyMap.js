@@ -8,6 +8,7 @@ import MapDialog from "./mapDialog/MapDialog";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { Dialog, makeStyles } from "@material-ui/core";
 import InputIcon from "../../common/HOC/inputIcon/InputIcon";
+import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -48,8 +49,8 @@ const Map = (props) => {
     setOpen(false);
   };
   const [inputValue, setInputValue] = useState({
-    originalState: value,
-    tempState: value,
+    originalState: value || DummyInitValues["MAP"],
+    tempState: value || DummyInitValues["MAP"],
   });
 
   const inputChanged = (value) => {
@@ -92,7 +93,7 @@ const Map = (props) => {
     // setTimeout(() => handleBlur(e), 10);
   };
 
-  if (value !== inputValue.originalState) {
+  if (value && value !== inputValue.originalState) {
     setInputValue({ originalState: value, tempState: value });
   }
   const getFormattedValue = (location) => {

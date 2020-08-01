@@ -235,7 +235,8 @@ const TableCreator = (props) => {
     console.log(rowId, data, newKey);
 
     switch (req) {
-      case "IMAGEUPDATE":
+      case "FILE_UPDATE":
+      case "IMAGE_UPDATE":
         let localData = data[newKey];
         console.log("local image file url is", localData);
 
@@ -244,12 +245,8 @@ const TableCreator = (props) => {
         let file = new File([blob], "test", { type: "image/png" });
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("type", "image");
+        formData.append("type", req === "IMAGE_UPDATE" ? "image" : "file");
 
-        let fileData = {
-          data: blob,
-          type: "image",
-        };
         props.uploadFile(
           apiUrl,
           props.currentReportId,

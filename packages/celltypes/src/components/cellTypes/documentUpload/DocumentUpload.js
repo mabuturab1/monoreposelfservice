@@ -3,6 +3,7 @@ import styles from "./DocumentUpload.module.scss";
 import InputIcon from "../../common/HOC/inputIcon/InputIcon";
 import Tooltip from "../../tooltip/Tooltip";
 import { faFile } from "@fortawesome/free-solid-svg-icons";
+import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 
 const DocumentUpload = (props) => {
   const {
@@ -16,10 +17,11 @@ const DocumentUpload = (props) => {
     touched,
     value,
     setFieldTouched,
+    updateFieldData,
   } = { ...props };
   const [selectedFile, setSelectedFile] = useState({
-    filePath: value,
-    tempFilePath: value,
+    filePath: value || DummyInitValues["DOCUMENT"],
+    tempFilePath: value || DummyInitValues["DOCUMENT"],
     document: null,
     updated: true,
   });
@@ -27,15 +29,13 @@ const DocumentUpload = (props) => {
 
   if (selectedFile.document) src = URL.createObjectURL(selectedFile.document);
 
-  const onLoad = (event) => {
-    if (!selectedFile.updated) {
-      setFieldValue(name, selectedFile.tempFilePath);
+  const onLoad = (updatedValue) => {
+    setFieldValue(name, updatedValue);
 
-      const newFile = { ...selectedFile };
-      setTimeout(() => setFieldTouched(name, true), 10);
-      newFile.updated = true;
-      setSelectedFile(newFile);
-    }
+    const newFile = { ...selectedFile };
+    setTimeout(() => setFieldTouched(name, true), 10);
+    newFile.updated = true;
+    setSelectedFile(newFile);
   };
   const onError = (event) => {
     if (!selectedFile.updated) {
@@ -46,7 +46,7 @@ const DocumentUpload = (props) => {
       setFieldValue(name, null);
     }
   };
-  if (selectedFile.filePath != value)
+  if (value && selectedFile.filePath != value)
     setSelectedFile({
       ...selectedFile,
       filePath: value,
@@ -63,24 +63,32 @@ const DocumentUpload = (props) => {
             onBlur={(e) => {}}
             {...{ name, disabled, label, onBlur, placeholder }}
             onChange={(event) => {
+              if (
+                !event.currentTarget.files ||
+                event.currentTarget.files.length < 1
+              )
+                return;
               console.log(
                 "on changed in doc upload",
                 event,
                 event.currentTarget.files[0]
               );
-
+              let tempPath = URL.createObjectURL(event.currentTarget.files[0]);
               setSelectedFile({
                 ...selectedFile,
-                tempFilePath: URL.createObjectURL(event.currentTarget.files[0]),
+                tempFilePath: tempPath,
                 document: event.currentTarget.files[0],
                 updated: false,
               });
-              onLoad();
+              updateFieldData(tempPath, "FILE_UPDATE");
+              setTimeout(() => onLoad(tempPath), 10);
             }}
             placeholder="Kindly select to upload a file"
             accept="/*"
           />
-          Kindly select a file to upload
+          {selectedFile.tempFilePath && selectedFile.tempFilePath != ""
+            ? "Change Selected file"
+            : " Kindly select a file to upload"}
         </label>
       </InputIcon>
     </div>

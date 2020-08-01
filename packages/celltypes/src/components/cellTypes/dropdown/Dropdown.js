@@ -79,8 +79,9 @@ const Dropdown = (props) => {
   };
 
   const currentValue =
-    (valuesList && valuesList.includes(value)) ||
-    (!valuesList && options && options.includes(value))
+    value &&
+    ((valuesList && valuesList.includes(value)) ||
+      (!valuesList && options && options.includes(value)))
       ? value
       : "";
   const [selectValue, setSelectValue] = useState({
@@ -105,7 +106,7 @@ const Dropdown = (props) => {
       );
     }
   }
-  if (currentValue !== selectValue.originalState)
+  if (value && currentValue !== selectValue.originalState)
     setSelectValue({
       originalState: currentValue,
       tempState: currentValue,

@@ -124,7 +124,6 @@ const MyTableCell = (props) => {
       let schema = Yup.object().shape({
         [name]: validationSchema,
       });
-
       schema.isValid({ [name]: obtainedData }).then(function (val) {
         if (val) submitData(rowDataContent, obtainedData, updateType);
       });

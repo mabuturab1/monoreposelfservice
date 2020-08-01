@@ -25,8 +25,8 @@ const Text = (props) => {
   const [readOnly, setReadOnly] = useState(true);
 
   const [inputValue, setInputValue] = useState({
-    originalState: value,
-    tempState: value,
+    originalState: value || "",
+    tempState: value || "",
   });
   const checkForDecimalCount = (value) => {
     let myVal = value;
@@ -62,7 +62,7 @@ const Text = (props) => {
     setTimeout(() => handleBlur(e), 10);
   };
 
-  if (value !== inputValue.originalState) {
+  if (value && value !== inputValue.originalState) {
     setInputValue({ originalState: value, tempState: value });
   }
 

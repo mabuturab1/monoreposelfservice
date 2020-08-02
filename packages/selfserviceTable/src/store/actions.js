@@ -221,7 +221,7 @@ export const updateFieldData = (
     }
 
     dispatch(updateFieldDataStart());
-    let sendData = { ...data, indexIdNumber: undefined };
+    let sendData = { ...data, indexIdNumber: undefined, actions: undefined };
 
     axios
       .put(
@@ -380,14 +380,19 @@ export const editTableContent = (apiUrl, reportId, fieldId, data) => {
   };
 };
 
-export const deleteTableContent = (apiUrl, reportId, fieldId) => {
+export const deleteTableContent = (apiUrl, reportId, fieldId, isSuccess) => {
   return (dispatch) => {
     dispatch(getDeleteContentStart());
     axios
       .delete(`${"/vbeta"}/reports/${reportId}/contents/${fieldId}`, config)
       .then((response) => {
-        if (response) dispatch(getDeleteContentSuccess(response.data));
-        else dispatch(getDeleteContentFailed());
+        if (response) {
+          dispatch(getDeleteContentSuccess(fieldId));
+          if (isSuccess) isSuccess(true);
+        } else {
+          dispatch(getDeleteContentFailed());
+          if (isSuccess) isSuccess(false);
+        }
       })
       .catch((error) => {
         dispatch(getDeleteContentFailed());
@@ -395,47 +400,65 @@ export const deleteTableContent = (apiUrl, reportId, fieldId) => {
   };
 };
 
-export const addTableField = (apiUrl, reportId, data) => {
+export const addTableField = (apiUrl, reportId, data, isSuccess) => {
   return (dispatch) => {
     dispatch(getAddFieldStart());
     axios
       .post(`${"/vbeta"}/reports/${reportId}/fields`, data, config)
       .then((response) => {
-        if (response) dispatch(getAddFieldSuccess(response.data));
-        else dispatch(getAddFieldFailed());
+        if (response) {
+          dispatch(getAddFieldSuccess(response.data));
+          if (isSuccess) isSuccess(true);
+        } else {
+          dispatch(getAddFieldFailed());
+          if (isSuccess) isSuccess(false);
+        }
       })
       .catch((error) => {
         dispatch(getAddFieldFailed());
+        isSuccess(false);
       });
   };
 };
 
-export const editTableField = (apiUrl, reportId, fieldKey, data) => {
+export const editTableField = (apiUrl, reportId, fieldKey, data, isSuccess) => {
   return (dispatch) => {
     dispatch(getEditFieldStart());
     axios
       .put(`${"/vbeta"}/reports/${reportId}/fields/${fieldKey}`, data, config)
       .then((response) => {
-        if (response) dispatch(getEditFieldSuccess(response.data));
-        else dispatch(getEditFieldFailed());
+        if (response) {
+          dispatch(getEditFieldSuccess(response.data));
+          if (isSuccess) isSuccess(true);
+        } else {
+          dispatch(getEditFieldFailed());
+          if (isSuccess) isSuccess(false);
+        }
       })
       .catch((error) => {
         dispatch(getEditFieldFailed());
+        if (isSuccess) isSuccess(false);
       });
   };
 };
 
-export const deleteTableField = (apiUrl, reportId, fieldKey) => {
+export const deleteTableField = (apiUrl, reportId, fieldKey, isSuccess) => {
   return (dispatch) => {
     dispatch(getDeleteFieldStart());
     axios
       .delete(`${"/vbeta"}/reports/${reportId}/fields/${fieldKey}`, config)
       .then((response) => {
-        if (response) dispatch(getDeleteFieldSuccess(response.data));
-        else dispatch(getDeleteFieldFailed());
+        if (response) {
+          dispatch(getDeleteFieldSuccess(fieldKey));
+          if (isSuccess) isSuccess(true);
+        } else {
+          dispatch(getDeleteFieldFailed());
+          if (isSuccess) isSuccess(false);
+        }
       })
       .catch((error) => {
         dispatch(getDeleteFieldFailed());
+        if (isSuccess) isSuccess(false);
       });
   };
 };

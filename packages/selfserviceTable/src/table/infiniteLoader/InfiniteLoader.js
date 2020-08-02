@@ -20,6 +20,7 @@ const InfiniteLoaderWrapper = ({
   onHeaderClicked,
   sortByColumn,
   validationSchema,
+  tableActionsClicked,
 }) => {
   const isItemLoaded = ({ index }) => {
     return !!tableData[index];
@@ -53,6 +54,7 @@ const InfiniteLoaderWrapper = ({
               onHeaderClicked,
               sortByColumn,
               updateFieldData,
+              tableActionsClicked,
             }}
             showCircularIndicator={isNextPageLoading}
             rowCount={tableData.length}

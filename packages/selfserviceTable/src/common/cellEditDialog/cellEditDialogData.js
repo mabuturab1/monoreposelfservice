@@ -22,13 +22,28 @@ const CellEditDialogData = React.forwardRef(
       children,
       handleClick,
       handleClose,
+      onSubmitData,
     },
     ref
   ) => {
     const [editData, setEditData] = useState({});
     const cellTypeContext = useContext(CellTypesContext);
-    const isNewFeild = !cellSpecs || Object.keys(cellSpecs).length < 1;
-
+    const isNewField = !cellSpecs || Object.keys(cellSpecs).length < 1;
+    const getInitCellSpecs = (cellSpecs) => {
+      const newField = !cellSpecs || Object.keys(cellSpecs).length < 1;
+      if (newField) return {};
+      let updatedSpecs = {
+        ...cellSpecs,
+      };
+      delete updatedSpecs.data;
+      delete updatedSpecs.key;
+      delete updatedSpecs.label;
+      delete updatedSpecs.type;
+      delete updatedSpecs.isDisabled;
+      delete updatedSpecs.isRequired;
+      return updatedSpecs;
+    };
+    let additionalSettings = useRef(getInitCellSpecs(cellSpecs));
     const fieldsData = useRef([
       {
         title: "Type",
@@ -102,7 +117,10 @@ const CellEditDialogData = React.forwardRef(
       if (type === "SWITCH") return "0px 16px";
       return "5px 15px";
     };
-
+    let updateAdditionalSettings = (settings) => {
+      additionalSettings.current = JSON.parse(settings);
+      console.log("obtained additional settings", additionalSettings.current);
+    };
     return (
       <React.Fragment>
         <div onClick={handleClick}>{children}</div>
@@ -112,6 +130,15 @@ const CellEditDialogData = React.forwardRef(
           onSubmit={(values, actions) => {
             console.log("values", values);
             handleClose();
+            setTimeout(() => {
+              if (onSubmitData)
+                onSubmitData(
+                  { ...values, ...additionalSettings.current },
+                  (isSuccess) => {
+                    console.log("success response is", isSuccess);
+                  }
+                );
+            });
           }}
         >
           {({
@@ -126,14 +153,14 @@ const CellEditDialogData = React.forwardRef(
           }) => (
             <div className={styles.wrapper}>
               <div className={styles.headerTitle}>
-                {isNewFeild ? null : (
+                {isNewField ? null : (
                   <EditIcon style={{ color: "#4A4A4A" }} fontSize="small" />
                 )}
                 <h5
                   className={styles.labelText}
                   style={{ textAlign: "center", marginLeft: "4px" }}
                 >
-                  {isNewFeild ? "Add" : "Edit"}
+                  {isNewField ? "Add" : "Edit"}
                 </h5>
               </div>
               {fieldsData.current.map((el, index) => {
@@ -181,19 +208,8 @@ const CellEditDialogData = React.forwardRef(
               <div className={styles.codeEditor}>
                 <p className={styles.labelText}>Additional Settings:</p>
                 <CodeEditor
-                  code={JSON.stringify(
-                    {
-                      ...cellSpecs,
-                      data: undefined,
-                      key: undefined,
-                      label: undefined,
-                      type: undefined,
-                      isDisabled: undefined,
-                      isRequired: undefined,
-                    },
-                    null,
-                    2
-                  )}
+                  updateAdditionalSettings={updateAdditionalSettings}
+                  code={JSON.stringify(getInitCellSpecs(cellSpecs), null, 2)}
                   width={"19rem"}
                 />
               </div>

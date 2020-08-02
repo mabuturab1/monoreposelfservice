@@ -3,7 +3,7 @@ import TableCreator from "./TableCreator";
 import { connect } from "react-redux";
 import * as actions from "../../store/actions";
 const TableWrapper = (props) => {
-  return <TableCreator {...props} newDataAllowed={true} />;
+  return <TableCreator {...props} newDataAllowed={true} deleteAble={true} />;
 };
 const mapStateToProps = (state) => {
   return {
@@ -28,6 +28,8 @@ const mapDispatchToProps = (dispatch) => {
     updateApiUrl: (apiAddress) => dispatch(actions.updateApiUrl(apiAddress)),
     updateCurrentReportId: (currentReportId) =>
       dispatch(actions.updateCurrentReportId(currentReportId)),
+    deleteTableContent: (apiUrl, reportId, rowId) =>
+      dispatch(actions.deleteTableContent(apiUrl, reportId, rowId)),
     uploadFile: (apiUrl, reportId, rowId, data, newKey, isSuccess) =>
       dispatch(
         actions.uploadFile(apiUrl, reportId, rowId, data, newKey, isSuccess)

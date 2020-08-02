@@ -102,22 +102,26 @@ const SingleTableHeader = (props) => {
       <div></div>
     </TableCell>
   );
-
-  return (
-    <React.Fragment>
+  const getWrapper = (child) => {
+    return (
       <TableHeaderSettings
         defaultSelection={getDefaultSelection()}
         currentTarget={tableHeaderRef}
         onItemSelect={props.onItemSelect}
         sortOrder={props.sortOrder}
         cellSpecs={
-          cellSpecs && cellSpecs.dataKey === "%OPEN_NEW_FIELD_DIALOG%"
+          cellSpecs && cellSpecs.key === "%OPEN_NEW_FIELD_DIALOG%"
             ? {}
             : { ...props.cellSpecs }
         }
       >
-        {tableHeader}
+        {child}
       </TableHeaderSettings>
+    );
+  };
+  return (
+    <React.Fragment>
+      {!props.onlyView ? getWrapper(tableHeader) : tableHeader}
     </React.Fragment>
   );
 };

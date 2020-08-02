@@ -34,7 +34,11 @@ let addIndexNumber = (data, indexStart) => {
   if (!data || data.length < 1) return [];
   return data.map((el, index) => ({
     ...el,
-    data: { ...el.data, indexIdNumber: index + 1 + preLoadedItems },
+    data: {
+      ...el.data,
+      indexIdNumber: index + 1 + preLoadedItems,
+      actions: true,
+    },
   }));
 };
 const getUpdatedTableData = (tableData, payload) => {
@@ -46,9 +50,36 @@ const getUpdatedTableData = (tableData, payload) => {
   }));
   newTableData[index] = {
     id: payload.id,
-    data: { ...payload.data },
+    data: { ...payload.data, actions: true },
   };
   return newTableData;
+};
+const getUpdatedTableHeader = (tableHeader, payload) => {
+  let index = tableHeader.findIndex((el) => el.key === payload);
+  console.log("index is", index, payload);
+  if (index < 0) return tableHeader;
+  let updatedTableHeader = tableHeader.map((el) => ({ ...el }));
+  updatedTableHeader[index] = payload;
+  console.log("updatedTableHeader is", updatedTableHeader.slice());
+  return updatedTableHeader;
+};
+const deleteTableHeader = (tableHeader, payload) => {
+  let index = tableHeader.findIndex((el) => el.key === payload);
+
+  if (index < 0) return tableHeader;
+  let updatedTableHeader = tableHeader.map((el) => ({ ...el }));
+  updatedTableHeader.splice(index, 1);
+  console.log("updatedTableHeader is", updatedTableHeader.slice());
+  return updatedTableHeader;
+};
+const deleteTableContent = (tableData, payload) => {
+  let index = tableData.findIndex((el) => el.key === payload);
+
+  if (index < 0) return tableData;
+  let updatedTableData = tableData.map((el) => ({ ...el }));
+  updatedTableData.splice(index, 1);
+  console.log("updatedTableData is", updatedTableData.slice());
+  return updatedTableData;
 };
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -72,6 +103,10 @@ const reducer = (state = initialState, action) => {
         tableDataPending: false,
         totalReportItems: action.payload.totalReportItems,
       });
+    case actionTypes.DELETE_CONTENT_SUCCESS:
+      return updateObject(state, {
+        tableData: deleteTableContent(state.tableData, action.payload),
+      });
     case actionTypes.CLEAR_TABLE_DATA:
       return updateObject(state, { tableData: [] });
     case actionTypes.FETCHING_TABLE_DATA_FAILED:
@@ -91,6 +126,28 @@ const reducer = (state = initialState, action) => {
       return updateObject(state, {
         tableHeaderPending: false,
         serverError: errorMessage,
+      });
+    case actionTypes.ADD_FIELD_SUCCESS:
+      return updateObject(state, {
+        tableHeader: addIndexHeader(state.tableHeader || []).concat(
+          action.payload
+        ),
+      });
+    case actionTypes.EDIT_FIELD_SUCCESS:
+      let updatedTableHeader = getUpdatedTableHeader(
+        state.tableHeader,
+        action.payload
+      );
+      return updateObject(state, {
+        tableHeader: addIndexHeader(updatedTableHeader),
+      });
+    case actionTypes.DELETE_FIELD_SUCCESS:
+      let modifiedTableHeader = deleteTableHeader(
+        state.tableHeader,
+        action.payload
+      );
+      return updateObject(state, {
+        tableHeader: addIndexHeader(modifiedTableHeader),
       });
     case actionTypes.UPDATE_FILTER_DATA:
       return updateObject(state, { filterData: action.payload });
@@ -123,6 +180,7 @@ const reducer = (state = initialState, action) => {
           updated: true,
         },
       });
+
     case actionTypes.UPDATING_FIELD_DATA_FAILED:
       return updateObject(state, {
         totalUpdateFieldErrors: state.totalUpdateFieldErrors + 1,

@@ -23,6 +23,7 @@ import MyMap from "./cellTypes/myMap/MyMap";
 import ItemList from "./cellTypes/itemList/ItemList";
 import NestedDropdown from "./cellTypes/nestedDropdown/NestedDropdown";
 import { DummyInitValues } from "./common/constants/cellTypesDefaultValues";
+import IconList from "./cellTypes/iconList/IconList";
 const useStyles = makeStyles(() => ({
   smallPadding: {
     padding: "8px 16px",
@@ -58,6 +59,7 @@ const MyTableCell = (props) => {
     MAP: MyMap,
     ITEM_LIST: ItemList,
     NETSTED_DROPDOWN: NestedDropdown,
+    ICON: IconList,
   };
   let getType = (val) => {
     switch (val) {
@@ -134,6 +136,8 @@ const MyTableCell = (props) => {
       ...props.serverData,
       ...props.item,
       ...props.handlerFunctions,
+      rowData: props.rowData,
+      tableActionsClicked: props.tableActionsClicked,
       customStyles: props.customStyles,
       disableReadOnlyMode: props.disableReadOnlyMode,
       editAllowed: props.editAllowed != null ? props.editAllowed : true,

@@ -88,7 +88,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
       ...props.formData,
     };
 
-    let { validationSchema } = { ...props };
+    let { validationSchema, tableActionsClicked } = { ...props };
     if (!validationSchema) validationSchema = {};
 
     const { cellSpecs, updateFieldData } = { ...props };
@@ -109,6 +109,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
         rowWidth={columnItem && columnItem.width ? columnItem.width : 150}
         rowHeight={rowHeight}
         serverData={{ ...myCell.data }}
+        tableActionsClicked={tableActionsClicked}
         handlerFunctions={{
           handleChange,
           handleSubmit,
@@ -168,6 +169,9 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
         )}
         style={
           sortByColumn.key === dataKey ? { backgroundColor: "yellow" } : {}
+        }
+        onlyView={
+          myCell && (myCell.key === "indexIdNumber" || myCell.key === "actions")
         }
         cellSpecs={{ ...myCell, ...myCell.data }}
         label={label}

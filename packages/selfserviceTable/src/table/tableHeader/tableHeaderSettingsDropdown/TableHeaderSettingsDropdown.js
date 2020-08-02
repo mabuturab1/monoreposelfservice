@@ -7,9 +7,12 @@ import CheckIcon from "@material-ui/icons/Check";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import EditIcon from "@material-ui/icons/Edit";
 import CellEditDialog from "../../../common/cellEditDialog/cellEditDialog";
+import ConfirmationDialog from "../../../common/confirmationDialog/ConfirmationDialog";
 import { connect } from "react-redux";
 const TableHeaderSettings = (props) => {
-  const { apiAddress, currentReportId } = props;
+  const isNewField = Object.keys(props.cellSpecs).length < 1;
+
+  const { apiUrl, currentReportId } = props;
   const [currentSelection, setCurrentSelection] = useState("");
   const [currentSortOrder, setCurrentSortOrder] = useState(props.sortOrder);
   const headerData = [
@@ -103,13 +106,35 @@ const TableHeaderSettings = (props) => {
     const section = headerData[i];
     let item = null;
     if (section) item = section.options[j];
-    if (item != null) setCurrentSelection(item.id);
+    if (!item || !item.id) return;
+    setCurrentSelection(item.id);
     if (i === 0 && item && isSortOrder(item.id)) setCurrentSortOrder(item.id);
-
     setTimeout(() => props.onItemSelect(item.id));
   };
-  const handleSubmitData = (values) => {
-    console.log("changed values are");
+  const handleSubmitData = (values, isSuccess) => {
+    console.log("changed values are", values);
+    if (isNewField && props.addTableField) {
+      props.addTableField(apiUrl, currentReportId, values, isSuccess);
+      return;
+    }
+    if (!isNewField && props.editTableField && props.cellSpecs.key)
+      props.editTableField(
+        apiUrl,
+        currentReportId,
+        props.cellSpecs.key,
+        values,
+        isSuccess
+      );
+  };
+  const handleConfirmationResult = (response, currentSelection) => {
+    let selection = currentSelection;
+    if (
+      response &&
+      selection === "delete" &&
+      props.deleteTableField &&
+      props.cellSpecs.key
+    )
+      props.deleteTableField(apiUrl, currentReportId, props.cellSpecs.key);
   };
   return (
     <React.Fragment>
@@ -133,21 +158,47 @@ const TableHeaderSettings = (props) => {
         openAllowed={currentSelection === "edit"}
         cellSpecs={{ ...props.cellSpecs, ...props.cellSpecs.data }}
       />
+      <ConfirmationDialog
+        onDialogClosed={() => setCurrentSelection("")}
+        handleResponse={(response) =>
+          handleConfirmationResult(response, currentSelection)
+        }
+        title={"Delete Field"}
+        summary={`Are you sure you want to delete ${
+          props.cellSpecs ? props.cellSpecs.label : ""
+        }`}
+        open={currentSelection === "delete"}
+        cellSpecs={{ ...props.cellSpecs, ...props.cellSpecs.data }}
+      />
     </React.Fragment>
   );
 };
 const mapStateToProps = (state) => {
   return {
     currentReportId: state.currentReportId,
-    apiAddress: state.apiAddress,
+    apiUrl: state.apiAddress,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
+    deleteTableField: (apiUrl, currentReportId, fieldKey) =>
+      dispatch(actions.deleteTableField(apiUrl, currentReportId, fieldKey)),
     updateFieldData: (apiUrl, currentReportId, fieldKey, data) =>
       dispatch(
         actions.updateFieldData(apiUrl, currentReportId, fieldKey, data)
       ),
+    editTableField: (apiUrl, currentReportId, fieldKey, data, isSuccess) =>
+      dispatch(
+        actions.editTableField(
+          apiUrl,
+          currentReportId,
+          fieldKey,
+          data,
+          isSuccess
+        )
+      ),
+    addTableField: (apiUrl, currentReportId, data, isSuccess) =>
+      dispatch(actions.addTableField(apiUrl, currentReportId, data, isSuccess)),
   };
 };
 export default connect(

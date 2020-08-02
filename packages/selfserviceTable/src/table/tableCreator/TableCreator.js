@@ -30,6 +30,12 @@ const TableCreator = (props) => {
         isIcon: true,
       },
     ];
+  if (props.deleteAble)
+    concatArr.push({
+      key: "actions",
+      type: "ICON",
+      label: "Actions",
+    });
   const tableHeader = (props.tableHeader || []).concat(...concatArr);
 
   const [editAllowed, setEditAllowed] = useState(
@@ -334,6 +340,12 @@ const TableCreator = (props) => {
       end: dateRange.endDate,
     });
   };
+  const tableActionsClicked = (id, rowId) => {
+    console.log("table actions clicked", id, rowId);
+    if (id === "delete")
+      if (props.deleteTableContent)
+        props.deleteTableContent(apiUrl, currentReportId, rowId);
+  };
   let tableWidth = Object.keys(columnsWidth)
     .map((el) => columnsWidth[el])
     .reduce((a, b) => a + b, 0);
@@ -448,6 +460,7 @@ const TableCreator = (props) => {
                       sortByColumn={queryParams}
                       onHeaderClicked={onHeaderClicked}
                       updateFieldData={updateFieldData}
+                      tableActionsClicked={tableActionsClicked}
                     />
                   )
                 }

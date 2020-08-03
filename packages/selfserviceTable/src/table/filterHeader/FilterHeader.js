@@ -12,7 +12,7 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import styles from "./FilterHeader.module.scss";
 import TableContext from "../context/TableContext";
 import TableFilter from "../tableFilter/TableFilter";
-import { Popover, Button } from "@material-ui/core";
+import { Popover } from "@material-ui/core";
 import { connect } from "react-redux";
 import schemaCreator from "../utility/schemaCreator";
 import * as actions from "../../store/actions";
@@ -20,20 +20,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import NewRecordDialog from "../../common/newRecordDialog/NewRecordDialog";
 import DateRangePicker from "@selfservicetable/celltypes/src/components/cellTypes/dateRangePicker/DateRangePicker";
-const Card = (props) => {
-  return (
-    <div
-      className={[
-        styles.topHeaderItemWrapper,
-        styles.mediumPadding,
 
-        styles.applyElevation,
-      ].join(" ")}
-    >
-      {props.children}
-    </div>
-  );
-};
 const FilterHeader = (props) => {
   const searchConditions = [
     "less than (<)",
@@ -210,7 +197,7 @@ const FilterHeader = (props) => {
           />
           <span className={styles.label}>Filter</span>
         </div>
-        {props.contentEditAble != false ? (
+        {props.contentEditAble !== false ? (
           <div
             className={editLockedClasses.join(" ")}
             onClick={toggleEditLocked}
@@ -269,7 +256,7 @@ const FilterHeader = (props) => {
       <div className={styles.recordWrapper}>
         <div className={styles.totalRecords}>
           <span className={styles.label}>Total Records:{tableData.length}</span>
-          {props.contentAddAble != false ? (
+          {props.contentAddAble !== false ? (
             <NewRecordDialog>
               <div
                 className={[

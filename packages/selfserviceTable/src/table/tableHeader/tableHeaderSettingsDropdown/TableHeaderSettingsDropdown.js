@@ -87,7 +87,7 @@ const TableHeaderSettings = (props) => {
       ],
     },
   ];
-  if (fieldEditAble != false) {
+  if (fieldEditAble !== false) {
     headerData[1].options.push({
       id: "edit",
       text: "Edit",
@@ -95,7 +95,7 @@ const TableHeaderSettings = (props) => {
       closeRequired: true,
     });
   }
-  if (fieldDeleteAble != false)
+  if (fieldDeleteAble !== false)
     headerData[1].options.push({
       id: "delete",
       text: "Delete",

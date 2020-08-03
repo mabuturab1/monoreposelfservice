@@ -165,6 +165,7 @@ const reducer = (state = initialState, action) => {
       return updateObject(state, { currentReportId: action.payload });
     case actionTypes.UPDATE_API_URL:
       return updateObject(state, { apiAddress: action.payload });
+    case actionTypes.START_UPLOAD_FILE:
     case actionTypes.START_UPDATING_FIELD:
       return updateObject(state, {
         snackbarStatus: {
@@ -184,18 +185,24 @@ const reducer = (state = initialState, action) => {
         snackbarStatus: {
           isUpdating: false,
           error: false,
-          cellKey: action.payload.newKey,
+          cellKey:
+            action.payload && action.payload.newKey
+              ? action.payload.newKey
+              : "",
           updated: true,
         },
       });
-
+    case actionTypes.UPLOAD_FILE_FAILED:
     case actionTypes.UPDATING_FIELD_DATA_FAILED:
       return updateObject(state, {
         totalUpdateFieldErrors: state.totalUpdateFieldErrors + 1,
         snackbarStatus: {
           isUpdating: false,
           error: true,
-          cellKey: action.payload.newKey,
+          cellKey:
+            action.payload && action.payload.newKey
+              ? action.payload.newKey
+              : "",
           updated: false,
         },
       });

@@ -1,3 +1,4 @@
+import BlankImage from "../../../assets/images/blankImage.png";
 export const CellTypes = [
   { label: "Text", value: "TEXT" },
   { label: "Text Area", value: "TEXT_AREA" },
@@ -19,7 +20,7 @@ export const DummyInitValues = {
   NUMBER: "",
   DECIMAL: "",
   RATE: 0,
-  IMAGE: "",
+  IMAGE: BlankImage,
   DATETIME: "",
   DROPDOWN: "",
   READONLY_TEXT: "",

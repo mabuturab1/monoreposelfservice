@@ -158,7 +158,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
   };
 
   const headerRenderer = (headerData) => {
-    const { label, onHeaderClicked, dataKey, sortByColumn, data } = headerData;
+    const { label, onHeaderClicked, dataKey, sortByColumn } = headerData;
     const { classes, cellSpecs, tableStatus } = props;
     let myCell = cellSpecs.find((el) => el.key === dataKey);
     return (

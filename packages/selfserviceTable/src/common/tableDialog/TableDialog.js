@@ -1,13 +1,15 @@
 import React from "react";
 import { Dialog, makeStyles } from "@material-ui/core";
 import TableCreator from "../../table/tableCreator/TableCreator";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles(() => ({
   paper: {
     borderRadius: "10px",
   },
 }));
-const TableData = ({ value: mValue, fields }) => {
+const TableData = ({ value: mValue, fields, onClose }) => {
   let value = mValue || {};
   let items = value.items || [];
   console.log("value is", value, "fields is", fields);
@@ -17,7 +19,7 @@ const TableData = ({ value: mValue, fields }) => {
       data: { ...el },
     };
   });
-  const tableHeader = fields;
+
   console.log(
     "In dialog : table data is",
     tableData,
@@ -25,13 +27,35 @@ const TableData = ({ value: mValue, fields }) => {
     fields
   );
   return (
-    <TableCreator
-      tableHeader={fields}
-      tableData={tableData}
-      tableHeader={tableHeader}
-      editAllowed={false}
-      staticData={true}
-    />
+    <React.Fragment>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          padding: "10px 20px",
+        }}
+      >
+        <FontAwesomeIcon
+          style={{ cursor: "pointer" }}
+          icon={faTimes}
+          onClick={onClose}
+        />
+      </div>
+
+      <TableCreator
+        tableHeader={fields}
+        tableData={tableData}
+        editAllowed={false}
+        staticData={true}
+        editAllowed={false}
+        contentAddAble={false}
+        contentEditAble={false}
+        contentDeleteAble={false}
+        fieldAddAble={false}
+        fieldEditAble={false}
+        fieldDeleteAble={false}
+      />
+    </React.Fragment>
   );
 };
 const TableDialog = (props) => {
@@ -60,7 +84,7 @@ const TableDialog = (props) => {
         open={open}
         onClose={handleClose}
       >
-        <TableData {...props} />
+        <TableData {...props} onClose={handleClose} />
       </Dialog>
     </React.Fragment>
   );

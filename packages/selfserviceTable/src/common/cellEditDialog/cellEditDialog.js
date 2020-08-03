@@ -1,6 +1,6 @@
-import React, { useRef, useCallback, useState, useContext } from "react";
+import React from "react";
 
-import { Popover, makeStyles, Button } from "@material-ui/core";
+import { Popover, makeStyles } from "@material-ui/core";
 import CellEditDialogData from "./cellEditDialogData";
 
 const useStyles = makeStyles(() => ({
@@ -10,14 +10,10 @@ const useStyles = makeStyles(() => ({
 }));
 const CellEditDialog = React.forwardRef((props, ref) => {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const handleClick = (event) => {};
 
   const handleClose = () => {
-    setAnchorEl(null);
     if (props.onDialogClosed) props.onDialogClosed();
   };
   const open = props.openAllowed;

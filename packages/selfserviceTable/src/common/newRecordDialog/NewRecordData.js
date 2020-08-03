@@ -1,17 +1,12 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import MyTableCell from "@selfservicetable/celltypes/src/App";
 import schemaCreator from "../../table/utility/schemaCreator";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { DummyInitValues, DocCells } from "../../table/utility/cellTypes";
+import { DocCells } from "../../table/utility/cellTypes";
 import styles from "./NewRecordDialog.module.scss";
 
-import {
-  Dialog,
-  makeStyles,
-  Button,
-  CircularProgress,
-} from "@material-ui/core";
+import { Button, CircularProgress } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTimes,
@@ -26,7 +21,7 @@ const NewRecordData = (props) => {
   if (!dataUpdateStatus) dataUpdateStatus = DataUpdateStatus.idle;
   const { handleClose } = props;
   const tableHeader = (props.tableHeader || []).filter(
-    (el) => el.key !== "indexIdNumber"
+    (el) => el.key !== "indexIdNumber" && el.key !== "actions"
   );
   const resultData = useRef({});
   const createHeaderSpecs = useCallback(() => {
@@ -74,7 +69,7 @@ const NewRecordData = (props) => {
     return schemaObj;
   }, [createHeaderSpecs]);
   const getPadding = (type) => {
-    if (type == "DROPDOWN") return undefined;
+    if (type === "DROPDOWN") return undefined;
     if (type === "SWITCH") return "0px 16px";
     return "5px 15px";
   };
@@ -118,7 +113,7 @@ const NewRecordData = (props) => {
     );
   };
   const getTableHeaderCell = (key) => {
-    return tableHeader.find((el) => el.key == key);
+    return tableHeader.find((el) => el.key === key);
   };
 
   const submitData = () => {
@@ -151,7 +146,11 @@ const NewRecordData = (props) => {
       default:
         return (
           <React.Fragment>
-            <FontAwesomeIcon icon={faSave} className={styles.icon} />
+            <FontAwesomeIcon
+              icon={faSave}
+              size={"lg"}
+              className={styles.icon}
+            />
             Save
           </React.Fragment>
         );

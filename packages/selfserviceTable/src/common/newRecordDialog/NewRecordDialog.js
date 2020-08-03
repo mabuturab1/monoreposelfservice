@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import NewRecordData from "./NewRecordData";
 import * as actions from "../../store/actions";
-import { Dialog, makeStyles, Button } from "@material-ui/core";
+import { Dialog, makeStyles } from "@material-ui/core";
 import { connect } from "react-redux";
 import { DataUpdateStatus } from "../../table/constants/Constants";
-import { object } from "yup";
-
 const useStyles = makeStyles(() => ({
   paper: {
     borderRadius: "10px",
@@ -40,7 +38,7 @@ const NewRecordDialog = (props) => {
     return formData;
   };
   const getTableHeaderCell = (key) => {
-    return tableHeader.find((el) => el.key == key);
+    return tableHeader.find((el) => el.key === key);
   };
   const uploadDocs = (docValues, uploadComplete) => {
     if (!docValues || Object.keys(docValues).length < 1) return;
@@ -51,8 +49,8 @@ const NewRecordDialog = (props) => {
     setDataUpdateStatus(DataUpdateStatus.updating);
     Object.keys(docValues).forEach(async (el) => {
       let myCell = getTableHeaderCell(el);
-      let type = "file";
-      if (myCell && myCell.type.toUpperCase() === "IMAGE") type = "image";
+      let type = "FILE";
+      if (myCell && myCell.type.toUpperCase() === "IMAGE") type = "IMAGE";
       let formData = await getFormData(docValues[el], type);
       isWaitForData = true;
       console.log("uploading file", el);
@@ -63,6 +61,7 @@ const NewRecordDialog = (props) => {
         formData,
         el,
         (isSuccess, result) => {
+          if (!isSuccess) setDataUpdateStatus(DataUpdateStatus.error);
           if (isSuccess) currIndex++;
           if (isSuccess && result) updatedDocValues[el] = result;
           if (currIndex >= numDocKeys) uploadComplete(updatedDocValues);

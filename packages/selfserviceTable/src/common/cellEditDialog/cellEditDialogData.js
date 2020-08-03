@@ -1,18 +1,14 @@
-import React, { useRef, useCallback, useState, useContext } from "react";
+import React, { useRef, useCallback, useContext } from "react";
 import MyTableCell from "@selfservicetable/celltypes/src/App";
 import schemaCreator from "../../table/utility/schemaCreator";
 import { Formik } from "formik";
 import styles from "./cellEditDialog.module.scss";
 import * as Yup from "yup";
 import CodeEditor from "../codeEditor/CodeEditor";
-import { Popover, makeStyles, Button } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import CellTypesContext from "../../table/context/CellTypeContext";
-const useStyles = makeStyles(() => ({
-  paper: {
-    borderRadius: "10px",
-  },
-}));
+
 const CellEditDialogData = React.forwardRef(
   (
     {
@@ -26,7 +22,6 @@ const CellEditDialogData = React.forwardRef(
     },
     ref
   ) => {
-    const [editData, setEditData] = useState({});
     const cellTypeContext = useContext(CellTypesContext);
     const isNewField = !cellSpecs || Object.keys(cellSpecs).length < 1;
     const getInitCellSpecs = (cellSpecs) => {
@@ -113,7 +108,7 @@ const CellEditDialogData = React.forwardRef(
 
     let validationSchema = createValidationSchema();
     const getPadding = (type) => {
-      if (type == "DROPDOWN") return undefined;
+      if (type === "DROPDOWN") return undefined;
       if (type === "SWITCH") return "0px 16px";
       return "5px 15px";
     };

@@ -141,6 +141,7 @@ const CheckboxList = (props) => {
           className={[styles.input, styles.text].join(" ")}
           readOnly={true}
           onClick={handleClick}
+          value={selectValue.tempState.join(", ")}
         />
         <FontAwesomeIcon
           icon={open ? faSortUp : faSortDown}

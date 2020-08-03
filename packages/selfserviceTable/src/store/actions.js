@@ -204,49 +204,6 @@ export const updateFieldDataFailed = (data) => {
     payload: data,
   };
 };
-export const updateFieldData = (
-  apiUrl,
-  reportId,
-  rowId,
-  data,
-  newKey,
-  isSuccess
-) => {
-  return (dispatch, getState) => {
-    const currentState = getState().snackbarStatus || {};
-    console.log("is updating state", currentState.isUpdating);
-    if (currentState.isUpdating) {
-      setTimeout(() => isSuccess(false), 100);
-      return;
-    }
-
-    dispatch(updateFieldDataStart());
-    let sendData = { ...data, indexIdNumber: undefined, actions: undefined };
-
-    axios
-      .put(
-        `${"/vbeta"}/reports/${reportId}/contents/${rowId}`,
-        sendData,
-        config
-      )
-      .then((response) => {
-        dispatch(
-          updateFieldDataSuccess({
-            id: rowId,
-            data: { ...data },
-            newKey: newKey,
-          })
-        );
-        isSuccess(true);
-      })
-      .catch((error) => {
-        if (isSuccess) isSuccess(false);
-        dispatch(
-          updateFieldDataFailed({ newKey: newKey ? newKey : undefined })
-        );
-      });
-  };
-};
 
 export const getTableData = (apiUrl, reportId, params, isNewData = false) => {
   return (dispatch) => {
@@ -300,14 +257,13 @@ export const uploadFile = (
   isSuccess
 ) => {
   return (dispatch, getState) => {
-    dispatch(getUploadFileStart());
     const currentState = getState().snackbarStatus || {};
     console.log("is updating state", currentState.isUpdating);
     if (currentState.isUpdating) {
       setTimeout(() => isSuccess(false), 100);
       return;
     }
-
+    dispatch(getUploadFileStart());
     axios
       .post(`${"/vbeta"}/uploads`, data, config)
       .then((response) => {
@@ -353,29 +309,52 @@ export const addTableContent = (apiUrl, reportId, data, isSuccess) => {
         }
       })
       .catch((error) => {
-        {
-          dispatch(getTableHeaderFailed());
-          isSuccess(false);
-        }
+        dispatch(getTableHeaderFailed());
+        isSuccess(false);
       });
   };
 };
 
-export const editTableContent = (apiUrl, reportId, fieldId, data) => {
-  return (dispatch) => {
-    dispatch(getEditContentStart());
+export const updateFieldData = (
+  apiUrl,
+  reportId,
+  rowId,
+  data,
+  newKey,
+  isSuccess
+) => {
+  return (dispatch, getState) => {
+    const currentState = getState().snackbarStatus || {};
+    console.log("is updating state", currentState.isUpdating);
+    if (currentState.isUpdating) {
+      setTimeout(() => isSuccess(false), 100);
+      return;
+    }
+
+    dispatch(updateFieldDataStart());
+    let sendData = { ...data, indexIdNumber: undefined, actions: undefined };
+
     axios
       .put(
-        `${"/vbeta"}/reports/${reportId}/contents/${fieldId}/data`,
-        data,
+        `${"/vbeta"}/reports/${reportId}/contents/${rowId}`,
+        sendData,
         config
       )
       .then((response) => {
-        if (response) dispatch(getEditContentSuccess(response.data));
-        else dispatch(getEditContentFailed());
+        dispatch(
+          updateFieldDataSuccess({
+            id: rowId,
+            data: { ...data },
+            newKey: newKey,
+          })
+        );
+        isSuccess(true);
       })
       .catch((error) => {
-        dispatch(getEditContentFailed());
+        if (isSuccess) isSuccess(false);
+        dispatch(
+          updateFieldDataFailed({ newKey: newKey ? newKey : undefined })
+        );
       });
   };
 };

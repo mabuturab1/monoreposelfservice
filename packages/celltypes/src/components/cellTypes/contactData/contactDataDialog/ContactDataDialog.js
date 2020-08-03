@@ -45,7 +45,9 @@ const ContactDataDialog = ({ items, onClose, sum }) => {
   return (
     <React.Fragment>
       <div className={styles.dialogHeaderWrapper}>
-        <h6 className={styles.text}>Contact Details</h6>
+        <h6 className={[styles.text, styles.title].join(" ")}>
+          Contact Details
+        </h6>
         <FontAwesomeIcon icon={faTimes} onClick={onClose} />
       </div>
       <div className={styles.contactDialogWrapper}>
@@ -53,7 +55,7 @@ const ContactDataDialog = ({ items, onClose, sum }) => {
         {tableData}
       </div>
       <div className={styles.summaryWrapper}>
-        <h4 className={styles.title}>Summary</h4>
+        <h4 className={[styles.text, styles.title].join(" ")}>Summary</h4>
         <div className={styles.summary}>
           <div className={styles.singleDetailWrapper}>
             <div className={styles.labelWrapper}>

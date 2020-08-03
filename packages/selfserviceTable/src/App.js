@@ -3,9 +3,6 @@ import React from "react";
 import "./App.scss";
 import Table from "./table/Table";
 
-import StyledMenuList from "../src/common/menuList/MenuList";
-import CellEditDialog from "../src/common/cellEditDialog/cellEditDialog";
-
 function App() {
   return (
     <div className="App">

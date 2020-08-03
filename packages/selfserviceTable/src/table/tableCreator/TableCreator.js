@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 
-import { connect } from "react-redux";
-
 import * as Yup from "yup";
 import schemaCreator from "../utility/schemaCreator";
 import { Formik } from "formik";
@@ -17,7 +15,7 @@ import * as moment from "moment";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import Loader from "react-loader-spinner";
 import { CellTypes } from "../utility/cellTypes";
-
+import { getFormattedDate } from "../utility/objectsFunctions";
 const TableCreator = (props) => {
   let {
     contentAddAble,
@@ -30,7 +28,7 @@ const TableCreator = (props) => {
   } = { ...props };
   const tableData = props.tableData || [];
   let concatArr = [];
-  if (fieldAddAble != false)
+  if (fieldAddAble !== false)
     concatArr = [
       {
         key: "%OPEN_NEW_FIELD_DIALOG%",
@@ -39,12 +37,13 @@ const TableCreator = (props) => {
         isIcon: true,
       },
     ];
-  if (contentDeleteAble != false)
+  if (contentDeleteAble !== false)
     concatArr.push({
       key: "actions",
       type: "ICON",
       label: "Actions",
     });
+  if (!props.tableHeader || props.tableHeader.length < 1) concatArr = [];
   const tableHeader = (props.tableHeader || []).concat(...concatArr);
 
   const [editAllowed, setEditAllowed] = useState(
@@ -170,18 +169,7 @@ const TableCreator = (props) => {
 
     mFetchTableData(apiUrl, currentReportId, params, queryParams.isNewKey);
   }, [mFetchTableData, apiUrl, currentReportId, queryParams]);
-  const getFormattedDate = (dateObj, fallback = "") => {
-    if (!dateObj) return fallback;
-    if (!(dateObj instanceof Date)) return fallback;
 
-    var month = dateObj.getMonth() + 1; //months from 1-12
-    var day = dateObj.getDate();
-    var year = dateObj.getFullYear();
-
-    return (
-      year + "-" + getTwoDigitsNumber(month) + "-" + getTwoDigitsNumber(day)
-    );
-  };
   const updateApiUrl = useCallback(() => {
     mUpdateApiUrl(apiUrl);
   }, [mUpdateApiUrl, apiUrl]);
@@ -225,7 +213,7 @@ const TableCreator = (props) => {
       newQueryParams = {
         ...queryParams,
         key: selectedOption !== "unsorted" ? key : "",
-        order: selectedOption != "unsorted" ? selectedOption : "",
+        order: selectedOption !== "unsorted" ? selectedOption : "",
         isNewKey:
           key !== queryParams.key || selectedOption !== queryParams.order,
       };
@@ -277,7 +265,7 @@ const TableCreator = (props) => {
         let file = new File([blob], "test", { type: "image/png" });
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("type", req === "IMAGE_UPDATE" ? "image" : "file");
+        formData.append("type", req === "IMAGE_UPDATE" ? "IMAGE" : "FILE");
 
         props.uploadFile(
           apiUrl,
@@ -337,9 +325,7 @@ const TableCreator = (props) => {
       search: searchValue || "",
     });
   };
-  let getTwoDigitsNumber = (val) => {
-    return ("0" + val.toString()).trim().slice(-2);
-  };
+
   const handleDateRange = (dateRange) => {
     setQueryParams({
       ...queryParams,
@@ -408,10 +394,15 @@ const TableCreator = (props) => {
               style={{
                 margin: "0 auto",
                 flex: 1,
-                width: tableData.length > 0 ? tableWidth : "100vw",
+                width:
+                  tableData.length > 0
+                    ? tableWidth
+                    : staticData
+                    ? "500px"
+                    : "100vw",
               }}
             >
-              {props.serverError && props.serverError.length > 0 === true ? (
+              {(props.serverError && props.serverError.length > 0) === true ? (
                 <InfoDialog
                   open={
                     (props.serverError && props.serverError.length > 0) === true
@@ -437,7 +428,7 @@ const TableCreator = (props) => {
                   props.tableHeaderPending || tableData.length < 1 ? (
                     <div
                       style={{
-                        width: "100vw",
+                        width: staticData ? "500px" : "100vw",
                         height: "100%",
 
                         display: "flex",

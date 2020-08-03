@@ -16,7 +16,7 @@ const InfiniteLoaderWrapper = ({
   formData,
   updateFieldData,
   columnsWidth,
-
+  tableStatus,
   onHeaderClicked,
   sortByColumn,
   validationSchema,
@@ -55,6 +55,7 @@ const InfiniteLoaderWrapper = ({
               sortByColumn,
               updateFieldData,
               tableActionsClicked,
+              tableStatus,
             }}
             showCircularIndicator={isNextPageLoading}
             rowCount={tableData.length}

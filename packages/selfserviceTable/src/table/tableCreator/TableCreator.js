@@ -19,9 +19,18 @@ import Loader from "react-loader-spinner";
 import { CellTypes } from "../utility/cellTypes";
 
 const TableCreator = (props) => {
+  let {
+    contentAddAble,
+
+    contentEditAble,
+    contentDeleteAble,
+    fieldAddAble,
+    fieldEditAble,
+    fieldDeleteAble,
+  } = { ...props };
   const tableData = props.tableData || [];
   let concatArr = [];
-  if (props.newDataAllowed)
+  if (fieldAddAble != false)
     concatArr = [
       {
         key: "%OPEN_NEW_FIELD_DIALOG%",
@@ -30,7 +39,7 @@ const TableCreator = (props) => {
         isIcon: true,
       },
     ];
-  if (props.deleteAble)
+  if (contentDeleteAble != false)
     concatArr.push({
       key: "actions",
       type: "ICON",
@@ -381,6 +390,8 @@ const TableCreator = (props) => {
                 }}
               >
                 <FilterHeader
+                  contentAddAble={contentAddAble}
+                  contentEditAble={contentEditAble}
                   initDateRange={{
                     endDate: queryParams.end,
                     startDate: queryParams.start,
@@ -461,6 +472,14 @@ const TableCreator = (props) => {
                       onHeaderClicked={onHeaderClicked}
                       updateFieldData={updateFieldData}
                       tableActionsClicked={tableActionsClicked}
+                      tableStatus={{
+                        contentAddAble,
+                        contentEditAble,
+                        contentDeleteAble,
+                        fieldAddAble,
+                        fieldEditAble,
+                        fieldDeleteAble,
+                      }}
                     />
                   )
                 }

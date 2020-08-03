@@ -24,6 +24,7 @@ import ItemList from "./cellTypes/itemList/ItemList";
 import NestedDropdown from "./cellTypes/nestedDropdown/NestedDropdown";
 import { DummyInitValues } from "./common/constants/cellTypesDefaultValues";
 import IconList from "./cellTypes/iconList/IconList";
+import Audit from "./cellTypes/audit/Audit";
 const useStyles = makeStyles(() => ({
   smallPadding: {
     padding: "8px 16px",
@@ -60,6 +61,7 @@ const MyTableCell = (props) => {
     ITEM_LIST: ItemList,
     NETSTED_DROPDOWN: NestedDropdown,
     ICON: IconList,
+    AUDIT: Audit,
   };
   let getType = (val) => {
     switch (val) {

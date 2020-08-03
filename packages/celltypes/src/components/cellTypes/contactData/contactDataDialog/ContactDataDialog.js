@@ -4,7 +4,7 @@ import styles from "./ContactDataDialog.module.scss";
 import StyledInput from "../../../common/styledInput/StyledInput";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-const ContactDataDialog = ({ items, onClose }) => {
+const ContactDataDialog = ({ items, onClose, sum }) => {
   const cellTypes = [
     { key: "name", label: "Name.", type: "READONLY_TEXT" },
     { key: "msisdn", label: "MSISDN.", type: "READONLY_TEXT" },
@@ -51,6 +51,39 @@ const ContactDataDialog = ({ items, onClose }) => {
       <div className={styles.contactDialogWrapper}>
         <div className={styles.headerWrapper}>{tableHeader}</div>
         {tableData}
+      </div>
+      <div className={styles.summaryWrapper}>
+        <h4 className={styles.title}>Summary</h4>
+        <div className={styles.summary}>
+          <div className={styles.singleDetailWrapper}>
+            <div className={styles.labelWrapper}>
+              <span className={styles.text}>{"Date"}</span>
+              <span className={styles.text}>:</span>
+            </div>
+            <span className={styles.text}>{sum.date}</span>
+          </div>
+          <div className={styles.singleDetailWrapper}>
+            <div className={styles.labelWrapper}>
+              <span className={styles.text}>{"Call Duration"}</span>
+              <span className={styles.text}>:</span>
+            </div>
+            <span className={styles.text}>{sum.duration}</span>
+          </div>
+          <div className={styles.singleDetailWrapper}>
+            <div className={styles.labelWrapper}>
+              <span className={styles.text}>{"Total Call"}</span>
+              <span className={styles.text}>:</span>
+            </div>
+            <span className={styles.text}>{sum.call}</span>
+          </div>
+          <div className={styles.singleDetailWrapper}>
+            <div className={styles.labelWrapper}>
+              <span className={styles.text}>{"Total whatsapp"}</span>
+              <span className={styles.text}>:</span>
+            </div>
+            <span className={styles.text}>{sum.whatsapp}</span>
+          </div>
+        </div>
       </div>
     </React.Fragment>
   );

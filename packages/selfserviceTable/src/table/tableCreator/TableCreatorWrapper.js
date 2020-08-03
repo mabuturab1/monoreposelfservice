@@ -3,7 +3,7 @@ import TableCreator from "./TableCreator";
 import { connect } from "react-redux";
 import * as actions from "../../store/actions";
 const TableWrapper = (props) => {
-  return <TableCreator {...props} newDataAllowed={true} deleteAble={true} />;
+  return <TableCreator {...props} />;
 };
 const mapStateToProps = (state) => {
   return {

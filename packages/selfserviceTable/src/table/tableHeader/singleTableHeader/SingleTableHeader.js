@@ -105,6 +105,7 @@ const SingleTableHeader = (props) => {
   const getWrapper = (child) => {
     return (
       <TableHeaderSettings
+        tableStatus={props.tableStatus}
         defaultSelection={getDefaultSelection()}
         currentTarget={tableHeaderRef}
         onItemSelect={props.onItemSelect}

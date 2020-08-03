@@ -63,6 +63,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     onHeaderClicked,
     sortByColumn,
     formData,
+
     ...tableProps
   } = props;
   const getKey = (tableDataId, fieldKey) => {
@@ -158,7 +159,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
 
   const headerRenderer = (headerData) => {
     const { label, onHeaderClicked, dataKey, sortByColumn, data } = headerData;
-    const { classes, cellSpecs } = props;
+    const { classes, cellSpecs, tableStatus } = props;
     let myCell = cellSpecs.find((el) => el.key === dataKey);
     return (
       <SingleTableHeader
@@ -173,6 +174,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
         onlyView={
           myCell && (myCell.key === "indexIdNumber" || myCell.key === "actions")
         }
+        tableStatus={tableStatus}
         cellSpecs={{ ...myCell, ...myCell.data }}
         label={label}
         sortOrder={sortByColumn.key === dataKey ? sortByColumn.order : null}

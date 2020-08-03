@@ -11,7 +11,12 @@ import ConfirmationDialog from "../../../common/confirmationDialog/ConfirmationD
 import { connect } from "react-redux";
 const TableHeaderSettings = (props) => {
   const isNewField = Object.keys(props.cellSpecs).length < 1;
-
+  let fieldDeleteAble = false;
+  let fieldEditAble = false;
+  if (props.tableStatus) {
+    fieldEditAble = props.tableStatus.fieldEditAble;
+    fieldDeleteAble = props.tableStatus.fieldDeleteAble;
+  }
   const { apiUrl, currentReportId } = props;
   const [currentSelection, setCurrentSelection] = useState("");
   const [currentSortOrder, setCurrentSortOrder] = useState(props.sortOrder);
@@ -79,24 +84,24 @@ const TableHeaderSettings = (props) => {
             </div>
           ),
         },
-        {
-          id: "edit",
-          text: "Edit",
-          icon: <EditIcon style={{ color: "#4A4A4A" }} fontSize="small" />,
-          closeRequired: true,
-        },
-        {
-          id: "delete",
-          text: "Delete",
-          type: "red",
-          icon: (
-            <DeleteOutlineIcon style={{ color: "#FF6060" }} fontSize="small" />
-          ),
-        },
       ],
     },
   ];
-
+  if (fieldEditAble != false) {
+    headerData[1].options.push({
+      id: "edit",
+      text: "Edit",
+      icon: <EditIcon style={{ color: "#4A4A4A" }} fontSize="small" />,
+      closeRequired: true,
+    });
+  }
+  if (fieldDeleteAble != false)
+    headerData[1].options.push({
+      id: "delete",
+      text: "Delete",
+      type: "red",
+      icon: <DeleteOutlineIcon style={{ color: "#FF6060" }} fontSize="small" />,
+    });
   const isSortOrder = (data) => {
     if (data === "unsorted" || data === "ASC" || data === "DESC") return true;
     else return false;

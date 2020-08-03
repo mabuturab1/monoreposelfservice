@@ -73,7 +73,7 @@ const deleteTableHeader = (tableHeader, payload) => {
   return updatedTableHeader;
 };
 const deleteTableContent = (tableData, payload) => {
-  let index = tableData.findIndex((el) => el.key === payload);
+  let index = tableData.findIndex((el) => el.id === payload);
 
   if (index < 0) return tableData;
   let updatedTableData = tableData.map((el) => ({ ...el }));
@@ -104,6 +104,12 @@ const reducer = (state = initialState, action) => {
         totalReportItems: action.payload.totalReportItems,
       });
     case actionTypes.DELETE_CONTENT_SUCCESS:
+      console.log(
+        "delete",
+        action.type,
+        action.payload,
+        deleteTableContent(state.tableData, action.payload)
+      );
       return updateObject(state, {
         tableData: deleteTableContent(state.tableData, action.payload),
       });
@@ -142,10 +148,12 @@ const reducer = (state = initialState, action) => {
         tableHeader: addIndexHeader(updatedTableHeader),
       });
     case actionTypes.DELETE_FIELD_SUCCESS:
+      console.log(action.type, action.payload);
       let modifiedTableHeader = deleteTableHeader(
         state.tableHeader,
         action.payload
       );
+      console.log("modified table header", modifiedTableHeader);
       return updateObject(state, {
         tableHeader: addIndexHeader(modifiedTableHeader),
       });

@@ -63,3 +63,17 @@
   padding: 0;
   margin: 0;
 }
+.title {
+  color: #2f84be;
+  font-size: 2.5rem;
+  font-family: "Roboto", "Open Sans", sans-serif;
+}
+
+.singleDetailWrapper {
+  display: flex;
+}
+.labelWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 3rem;
+}

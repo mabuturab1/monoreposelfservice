@@ -210,16 +210,23 @@ const FilterHeader = (props) => {
           />
           <span className={styles.label}>Filter</span>
         </div>
-        <div className={editLockedClasses.join(" ")} onClick={toggleEditLocked}>
-          <FontAwesomeIcon
-            size={"lg"}
-            icon={tableContext.editAllowed ? faUnlock : faLock}
-            className={styles.icon}
-          />
-          <span className={styles.label}>
-            {tableContext.editAllowed ? "Edit Unlocked" : "Edit Locked"}
-          </span>
-        </div>
+        {props.contentEditAble != false ? (
+          <div
+            className={editLockedClasses.join(" ")}
+            onClick={toggleEditLocked}
+          >
+            <FontAwesomeIcon
+              size={"lg"}
+              icon={tableContext.editAllowed ? faUnlock : faLock}
+              className={styles.icon}
+            />
+            <span className={styles.label}>
+              {tableContext.editAllowed ? "Edit Unlocked" : "Edit Locked"}
+            </span>
+          </div>
+        ) : (
+          false
+        )}
         <div
           className={[
             styles.topHeaderItemWrapper,
@@ -262,27 +269,29 @@ const FilterHeader = (props) => {
       <div className={styles.recordWrapper}>
         <div className={styles.totalRecords}>
           <span className={styles.label}>Total Records:{tableData.length}</span>
-          <NewRecordDialog>
-            <div
-              className={[
-                styles.topHeaderItemWrapper,
-                styles.mediumPadding,
-
-                styles.applyElevation,
-              ].join(" ")}
-            >
-              <AddIcon fontSize="small" />
+          {props.contentAddAble != false ? (
+            <NewRecordDialog>
               <div
-                style={{
-                  marginLeft: "8px",
-                  display: "flex",
-                  alignItems: "center",
-                }}
+                className={[
+                  styles.topHeaderItemWrapper,
+                  styles.mediumPadding,
+
+                  styles.applyElevation,
+                ].join(" ")}
               >
-                <span className={styles.label}>Add Record</span>
+                <AddIcon fontSize="small" />
+                <div
+                  style={{
+                    marginLeft: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <span className={styles.label}>Add Record</span>
+                </div>
               </div>
-            </div>
-          </NewRecordDialog>
+            </NewRecordDialog>
+          ) : null}
         </div>
         <div
           className={[

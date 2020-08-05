@@ -19,7 +19,6 @@ import { getFormattedDate } from "../utility/objectsFunctions";
 const TableCreator = (props) => {
   let {
     contentAddAble,
-
     contentEditAble,
     contentDeleteAble,
     fieldAddAble,

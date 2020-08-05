@@ -47,7 +47,6 @@ const TableData = ({ value: mValue, fields, onClose }) => {
         tableData={tableData}
         editAllowed={false}
         staticData={true}
-        editAllowed={false}
         contentAddAble={false}
         contentEditAble={false}
         contentDeleteAble={false}

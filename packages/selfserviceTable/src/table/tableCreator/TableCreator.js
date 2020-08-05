@@ -24,18 +24,24 @@ const TableCreator = (props) => {
     fieldAddAble,
     fieldEditAble,
     fieldDeleteAble,
+    createAt,
   } = { ...props };
   const tableData = props.tableData || [];
   let concatArr = [];
+  if (createAt)
+    concatArr.push({
+      key: "createAt",
+      label: "Create At",
+      type: "READONLY_TEXT",
+    });
+
   if (fieldAddAble !== false)
-    concatArr = [
-      {
-        key: "%OPEN_NEW_FIELD_DIALOG%",
-        icon: "Add",
-        label: "Add",
-        isIcon: true,
-      },
-    ];
+    concatArr.push({
+      key: "%OPEN_NEW_FIELD_DIALOG%",
+      icon: "Add",
+      label: "Add",
+      isIcon: true,
+    });
 
   if (!props.tableHeader || props.tableHeader.length < 1) concatArr = [];
 

@@ -62,7 +62,7 @@ const CodeEditor = (props) => {
           border: "1px solid #707070",
           width: props.width ? props.width : "20rem",
           backgroundColor: "#F9FAFF",
-          borderRadius: "10px",
+          borderRadius: "0.6rem",
           borderColor: error ? "red" : undefined,
         }}
       />

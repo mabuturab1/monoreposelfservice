@@ -238,7 +238,7 @@ const FilterHeader = (props) => {
 
               <div
                 style={{
-                  margin: "0px 5px",
+                  margin: "0px 0.3rem",
                   display: "flex",
                   alignItems: "center",
                 }}
@@ -269,7 +269,7 @@ const FilterHeader = (props) => {
                 <AddIcon fontSize="small" />
                 <div
                   style={{
-                    marginLeft: "8px",
+                    marginLeft: "0.5rem",
                     display: "flex",
                     alignItems: "center",
                   }}

@@ -70,7 +70,7 @@ const SingleTableHeader = (props) => {
             <AddIcon
               fontSize="small"
               color="inherit"
-              style={{ fontSize: "18px", verticalAlign: "middle" }}
+              style={{ fontSize: "1.2rem", verticalAlign: "middle" }}
             />
           </div>
         );

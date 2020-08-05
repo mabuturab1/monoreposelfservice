@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { DataUpdateStatus } from "../../table/constants/Constants";
 const useStyles = makeStyles(() => ({
   paper: {
-    borderRadius: "10px",
+    borderRadius: "0.6rem",
   },
 }));
 

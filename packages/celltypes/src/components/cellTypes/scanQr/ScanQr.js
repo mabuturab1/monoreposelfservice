@@ -11,7 +11,7 @@ import InputIcon from "../../common/HOC/inputIcon/InputIcon";
 import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 const useStyles = makeStyles(() => ({
   paper: {
-    borderRadius: "10px",
+    borderRadius: "0.6rem",
   },
 }));
 const ScanQr = (props) => {

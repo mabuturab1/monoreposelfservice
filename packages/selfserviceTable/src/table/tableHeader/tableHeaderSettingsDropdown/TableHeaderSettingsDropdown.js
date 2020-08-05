@@ -64,9 +64,9 @@ const TableHeaderSettings = (props) => {
                   backgroundColor: "white",
                   top: 0,
                   left: "-4px",
-                  width: "11px",
-                  height: "11px",
-                  fontSize: "12px",
+                  width: "0.55rem",
+                  height: "0.55rem",
+                  fontSize: "0.75rem",
                 }}
               >
                 <AcUnitIcon
@@ -156,7 +156,7 @@ const TableHeaderSettings = (props) => {
           itemActiveStatus={isMenuOpened}
           itemClicked={handleItemClicked}
           trigger={props.children}
-          headerStyle={{ color: "#D6D6D6", fontSize: "22px" }}
+          headerStyle={{ color: "#D6D6D6", fontSize: "1.5rem" }}
           data={headerData}
         />
       ) : null}

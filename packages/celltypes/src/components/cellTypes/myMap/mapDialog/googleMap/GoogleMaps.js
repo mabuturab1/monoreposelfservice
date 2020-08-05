@@ -115,7 +115,7 @@ const GoogleMaps = ({
     <div>
       <div className={styles.buttonWrapper}>
         <Button
-          style={{ fontSize: "12px" }}
+          style={{ fontSize: "0.75rem" }}
           color="primary"
           onClick={handleSave}
         >

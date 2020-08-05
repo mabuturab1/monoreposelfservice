@@ -109,8 +109,8 @@ const CellEditDialogData = React.forwardRef(
     let validationSchema = createValidationSchema();
     const getPadding = (type) => {
       if (type === "DROPDOWN") return undefined;
-      if (type === "SWITCH") return "0px 16px";
-      return "5px 15px";
+      if (type === "SWITCH") return "0px 1rem";
+      return "0.3rem 1rem";
     };
     let updateAdditionalSettings = (settings) => {
       additionalSettings.current = JSON.parse(settings);
@@ -183,7 +183,7 @@ const CellEditDialogData = React.forwardRef(
                       serverData={{ ...el }}
                       customStyles={{
                         border: "1px solid #707070",
-                        borderRadius: "10px",
+                        borderRadius: "0.6rem",
                         padding: getPadding(el.type),
                         width: "12rem",
                         boxSizing: "border-box",
@@ -210,7 +210,7 @@ const CellEditDialogData = React.forwardRef(
               </div>
               <div className={styles.buttonWrapper}>
                 <Button
-                  style={{ marginRight: "20px" }}
+                  style={{ marginRight: "1.4rem" }}
                   onClick={handleClose}
                   color="secondary"
                 >

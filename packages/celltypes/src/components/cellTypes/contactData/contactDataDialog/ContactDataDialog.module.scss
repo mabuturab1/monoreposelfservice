@@ -14,8 +14,8 @@
   justify-content: center;
   cursor: pointer;
   background-color: transparent;
-  padding: 8px;
-  border-radius: 7px;
+  padding: 0.5rem;
+  border-radius: 0.45rem;
 
   width: 7rem;
   border: 1px solid rgba($color: #4a4a4a, $alpha: 0.05);
@@ -31,13 +31,13 @@
     font-weight: 500;
   }
   .sort {
-    font-size: 7px;
-    line-height: 10px;
-    right: 20px;
+    font-size: 0.45rem;
+    line-height: 0.6rem;
+    right: 1.4rem;
     position: absolute;
-    padding-left: "7px";
+    padding-left: "0.45rem";
     bottom: 0px;
-    right: 20px;
+    right: 1.4rem;
     text-transform: "capitalize";
   }
 }
@@ -52,7 +52,7 @@
 .dialogHeaderWrapper {
   display: flex;
   justify-content: space-between;
-  padding: 10px 15px;
+  padding: 0.6rem 1rem;
 }
 .text {
   color: #4a4a4a;
@@ -76,8 +76,8 @@
   display: flex;
   justify-content: space-between;
   width: 9rem;
-  margin: 0 10px;
+  margin: 0 0.6rem;
 }
 .summaryWrapper {
-  padding: 10px 15px;
+  padding: 0.6rem 1rem;
 }

@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Dropdown = (props) => {
+const RadioList = (props) => {
   const {
     name,
     // label,
@@ -41,12 +41,14 @@ const Dropdown = (props) => {
     setFieldValue,
     setFieldTouched,
     updateFieldData,
+    editAllowed,
   } = {
     ...props,
   };
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
+    if (!editAllowed) return;
     setAnchorEl(event.currentTarget);
   };
 
@@ -157,8 +159,8 @@ const Dropdown = (props) => {
     </React.Fragment>
   );
 };
-Dropdown.propTypes = {
+RadioList.propTypes = {
   value: PropTypes.string,
   options: PropTypes.array,
 };
-export default Dropdown;
+export default RadioList;

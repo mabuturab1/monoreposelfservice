@@ -12,7 +12,7 @@ import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 
 const useStyles = makeStyles(() => ({
   paper: {
-    borderRadius: "10px",
+    borderRadius: "0.6rem",
   },
 }));
 const Map = (props) => {

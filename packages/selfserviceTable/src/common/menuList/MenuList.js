@@ -31,7 +31,7 @@ const StyledMenu = withStyles({
 const StyledMenuItem = withStyles((theme) => ({
   root: {
     "& .MuiListItemIcon-root": {
-      minWidth: "30px",
+      minWidth: "1.9rem",
     },
     "& .MuiListItemText-root": {
       margin: 0,
@@ -56,7 +56,7 @@ const useStyles = makeStyles(() => ({
     fontWeight: 500,
   },
   body1Header: {
-    fontSize: "17px",
+    fontSize: "1.1rem",
     textTransform: "uppercase",
     lineHeight: 1,
     color: "#D6D6D6",
@@ -121,7 +121,7 @@ export const StyledMenuList = (props) => {
             </StyledMenuItem>
           ))}
           {i < props.data.length - 1 ? (
-            <div style={{ margin: "10px 0px 15px 0px" }}>
+            <div style={{ margin: "0.6rem 0px 1rem 0px" }}>
               <Divider />
             </div>
           ) : null}

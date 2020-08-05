@@ -16,7 +16,7 @@
   flex-flow: column;
 }
 .icon {
-  padding-right: 10px;
+  padding-right: 0.6rem;
 }
 .topHeaderItemWrapper {
   display: flex;
@@ -24,9 +24,9 @@
   align-items: center;
   cursor: pointer;
   background-color: white;
-  padding: 8px;
-  border-radius: 7px;
-  margin: 5px 10px;
+  padding: 0.5rem;
+  border-radius: 0.45rem;
+  margin: 0.3rem 0.6rem;
 
   //   padding: 0.4rem 1rem;
 }
@@ -47,7 +47,7 @@
 }
 
 .mediumPadding {
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
 }
 .input {
   color: #939393;
@@ -80,7 +80,7 @@
   border: none;
   font-size: 0.8rem;
   cursor: pointer;
-  padding: 10px;
+  padding: 0.6rem;
   font-weight: 600;
 }
 
@@ -95,7 +95,7 @@
 .recordWrapper {
   display: flex;
   flex-flow: column;
-  margin: 0 5px;
+  margin: 0 0.3rem;
 }
 .totalRecords {
   display: flex;

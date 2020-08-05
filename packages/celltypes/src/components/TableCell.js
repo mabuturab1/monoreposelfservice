@@ -27,10 +27,10 @@ import IconList from "./cellTypes/iconList/IconList";
 import Audit from "./cellTypes/audit/Audit";
 const useStyles = makeStyles(() => ({
   smallPadding: {
-    padding: "8px 16px",
+    padding: "0.5rem 1rem",
   },
   onlySidePadding: {
-    padding: "0px 16px",
+    padding: "0rem 1rem",
   },
 }));
 const MyTableCell = (props) => {

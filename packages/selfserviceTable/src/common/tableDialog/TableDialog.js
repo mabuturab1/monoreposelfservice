@@ -6,7 +6,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles(() => ({
   paper: {
-    borderRadius: "10px",
+    borderRadius: "0.6rem",
   },
 }));
 const TableData = ({ value: mValue, fields, onClose }) => {
@@ -32,7 +32,7 @@ const TableData = ({ value: mValue, fields, onClose }) => {
         style={{
           display: "flex",
           justifyContent: "flex-end",
-          padding: "10px 20px",
+          padding: "0.6rem 1.4rem",
         }}
       >
         <FontAwesomeIcon

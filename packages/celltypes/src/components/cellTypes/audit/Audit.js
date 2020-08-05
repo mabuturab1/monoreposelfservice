@@ -8,7 +8,7 @@ import { faAddressBook } from "@fortawesome/free-solid-svg-icons";
 import { styles } from "@material-ui/pickers/views/Calendar/Calendar";
 const useStyles = makeStyles(() => ({
   paper: {
-    borderRadius: "10px",
+    borderRadius: "0.6rem",
   },
 }));
 const Audit = ({ value: mValue, editAllowed }) => {
@@ -41,7 +41,7 @@ const Audit = ({ value: mValue, editAllowed }) => {
         open={open && editAllowed}
         onClose={handleClose}
       >
-        <div style={{ width: "100px", height: "100px" }}>
+        <div style={{ width: "6.2rem", height: "6.2rem" }}>
           <p className={styles.text}>Coming Soon</p>
         </div>
       </Dialog>

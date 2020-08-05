@@ -7,7 +7,7 @@ import StyledInput from "../../common/styledInput/StyledInput";
 import { faAddressBook } from "@fortawesome/free-solid-svg-icons";
 const useStyles = makeStyles(() => ({
   paper: {
-    borderRadius: "10px",
+    borderRadius: "0.6rem",
   },
 }));
 const ContactData = ({ value: mValue, editAllowed }) => {

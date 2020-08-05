@@ -3,8 +3,8 @@
   justify-content: space-between;
 
   background-color: white;
-  padding: 8px;
-  border-radius: 7px;
+  padding: 0.5rem;
+  border-radius: 0.45rem;
   cursor: pointer;
 
   //   padding: 0.4rem 1rem;
@@ -18,7 +18,7 @@
   }
 }
 .icon {
-  padding-right: 10px;
+  padding-right: 0.6rem;
 }
 .optionWrapper {
   width: 100%;
@@ -28,7 +28,7 @@
 }
 .optionsWrapper {
   width: 100%;
-  padding: 10px;
+  padding: 0.6rem;
 }
 .text {
   color: #4a4a4a;
@@ -45,7 +45,7 @@
   &:focus {
     border: 1px solid rgba(0, 0, 50, 0.4);
     outline: none;
-    border-radius: 5px;
+    border-radius: 0.3rem;
   }
   &:read-only {
     border: 1px solid transparent;

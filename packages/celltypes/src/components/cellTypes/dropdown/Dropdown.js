@@ -31,9 +31,9 @@ const BootstrapInput = withStyles((theme) => ({
     fontSize: "0.8rem",
     backgroundColor: "transparent",
 
-    MozBorderRadius: "10px",
-    WebkitBorderRadius: "10px",
-    padding: "3px 26px 3px 12px",
+    MozBorderRadius: "0.6rem",
+    WebkitBorderRadius: "0.6rem",
+    padding: "3px 1.6rem 3px 0.75rem",
     transition: theme.transitions.create(["border-color", "box-shadow"]),
     // Use the system font instead of the default Roboto font.
     fontFamily: ["Roboto", "sans-serif"].join(","),

@@ -70,8 +70,8 @@ const NewRecordData = (props) => {
   }, [createHeaderSpecs]);
   const getPadding = (type) => {
     if (type === "DROPDOWN") return undefined;
-    if (type === "SWITCH") return "0px 16px";
-    return "5px 15px";
+    if (type === "SWITCH") return "0px 1rem";
+    return "0.3rem 1rem";
   };
   let getInitValues = () => {
     let data = {};
@@ -258,7 +258,7 @@ const NewRecordData = (props) => {
                     disableReadOnlyMode={true}
                     customStyles={{
                       border: "1px solid rgba(112,112,112,0.2)",
-                      borderRadius: "10px",
+                      borderRadius: "0.6rem",
                       padding: getPadding(el.type),
                       width: "12rem",
                       boxSizing: "border-box",
@@ -279,7 +279,7 @@ const NewRecordData = (props) => {
 
           <div className={styles.buttonWrapper}>
             <Button
-              style={{ marginRight: "20px" }}
+              style={{ marginRight: "1.4rem" }}
               onClick={handleClose}
               color="secondary"
             >
@@ -289,7 +289,7 @@ const NewRecordData = (props) => {
               onClick={submitData}
               variant="contained"
               color="primary"
-              style={{ fontSize: "12px" }}
+              style={{ fontSize: "0.75rem" }}
             >
               {getSaveButtonStatus()}
             </Button>

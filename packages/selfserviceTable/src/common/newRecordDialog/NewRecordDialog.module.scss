@@ -1,5 +1,5 @@
 .wrapper {
-  padding: 10px 20px;
+  padding: 0.6rem 1.4rem;
   //   height: 60vw;
   //   overflow: auto;
 }
@@ -32,13 +32,13 @@
   color: #4a4a4a;
   font-weight: 500;
   font-family: "Roboto", "sans-serif";
-  font-size: 16px;
+  font-size: 0.85rem;
 }
 .subFieldItem {
   flex: 1;
   display: flex;
   align-items: center;
-  padding-left: 10px;
+  padding-left: 0.6rem;
 }
 .label {
   width: 6rem;
@@ -46,20 +46,20 @@
 .headerWrapper {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 6px;
+  padding-bottom: 0.35rem;
 }
 .icon {
-  padding-right: 10px;
+  padding-right: 0.6rem;
   cursor: pointer;
 }
 .closeIcon {
   cursor: pointer;
 }
 .buttonWrapper {
-  margin-top: 10px;
+  margin-top: 0.6rem;
   display: flex;
   justify-content: center;
 }
 .codeEditor {
-  margin-top: 10px;
+  margin-top: 0.6rem;
 }

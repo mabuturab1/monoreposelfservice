@@ -99,7 +99,7 @@ const QrReader = ({ onClose, onSubmit }) => {
       <div className={styles.buttonWrapper}>
         {anError ? (
           <Button
-            style={{ margin: "0px 10px" }}
+            style={{ margin: "0px 0.6rem" }}
             onClick={resetError}
             variant="contained"
             color="secondary"
@@ -109,7 +109,7 @@ const QrReader = ({ onClose, onSubmit }) => {
         ) : null}
         <Button
           disabled={!result || result === ""}
-          style={{ margin: "0px 10px", fontSize: "12px" }}
+          style={{ margin: "0px 0.6rem", fontSize: "0.75rem" }}
           onClick={() => onSubmit(result.data)}
           variant="contained"
           color="primary"
@@ -117,7 +117,7 @@ const QrReader = ({ onClose, onSubmit }) => {
           Save Result
         </Button>
         <Button
-          style={{ margin: "0px 10px", fontSize: "12px" }}
+          style={{ margin: "0px 0.6rem", fontSize: "0.75rem" }}
           onClick={handleClose}
           variant="contained"
           color="secondary"

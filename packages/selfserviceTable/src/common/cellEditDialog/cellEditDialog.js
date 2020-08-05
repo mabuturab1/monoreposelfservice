@@ -5,7 +5,7 @@ import CellEditDialogData from "./cellEditDialogData";
 
 const useStyles = makeStyles(() => ({
   paper: {
-    borderRadius: "10px",
+    borderRadius: "0.6rem",
   },
 }));
 const CellEditDialog = React.forwardRef((props, ref) => {

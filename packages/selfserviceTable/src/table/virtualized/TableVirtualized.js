@@ -172,7 +172,8 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
           sortByColumn.key === dataKey ? { backgroundColor: "yellow" } : {}
         }
         onlyView={
-          myCell && (myCell.key === "indexIdNumber" || myCell.key === "actions")
+          myCell &&
+          (myCell.key === "indexIdNumber" || myCell.key === "createAt")
         }
         tableStatus={tableStatus}
         cellSpecs={{ ...myCell, ...myCell.data }}

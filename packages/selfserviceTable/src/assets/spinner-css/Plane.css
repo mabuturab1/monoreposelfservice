@@ -1,13 +1,11 @@
-
 .react-spinner-loader-svg-calLoader {
-  width: 230px;
-  height: 230px;
+  width: 21.9rem;
+  height: 21.9rem;
   transform-origin: 115px 115px;
   animation: 1.4s linear infinite loader-spin;
 }
 
 .react-spinner-loader-svg-cal-loader__path {
-
   animation: 1.4s ease-in-out infinite loader-path;
 }
 

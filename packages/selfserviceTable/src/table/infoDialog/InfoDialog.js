@@ -20,7 +20,7 @@ const InfoDialog = (props) => {
       >
         <DialogTitle id="alert-dialog-title">
           {icon && (
-            <FontAwesomeIcon icon={icon} style={{ paddingRight: "10px" }} />
+            <FontAwesomeIcon icon={icon} style={{ paddingRight: "0.6rem" }} />
           )}
           {title || "Info"}
         </DialogTitle>

@@ -133,6 +133,7 @@ const MyTableCell = (props) => {
       });
     } else submitData(rowDataContent, obtainedData, updateType);
   };
+
   if (item.type && SelectedComponent) {
     const componentData = {
       ...props.serverData,

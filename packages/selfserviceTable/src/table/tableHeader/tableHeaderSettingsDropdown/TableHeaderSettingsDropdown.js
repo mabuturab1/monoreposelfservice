@@ -141,10 +141,19 @@ const TableHeaderSettings = (props) => {
     )
       props.deleteTableField(apiUrl, currentReportId, props.cellSpecs.key);
   };
+  const isMenuOpened = (status) => {
+    if (props.isMenuOpened)
+      props.isMenuOpened(status || currentSelection === "edit");
+  };
+  const closeEditDialog = () => {
+    setCurrentSelection("");
+    isMenuOpened(false);
+  };
   return (
     <React.Fragment>
       {!props.defaultSelection ? (
         <StyledMenuList
+          itemActiveStatus={isMenuOpened}
           itemClicked={handleItemClicked}
           trigger={props.children}
           headerStyle={{ color: "#D6D6D6", fontSize: "22px" }}
@@ -158,7 +167,7 @@ const TableHeaderSettings = (props) => {
       ) : null}
       <CellEditDialog
         ref={props.currentTarget}
-        onDialogClosed={() => setCurrentSelection("")}
+        onDialogClosed={closeEditDialog}
         onSubmitData={handleSubmitData}
         openAllowed={currentSelection === "edit"}
         cellSpecs={{ ...props.cellSpecs, ...props.cellSpecs.data }}

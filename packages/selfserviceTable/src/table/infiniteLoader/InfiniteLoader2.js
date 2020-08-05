@@ -49,6 +49,7 @@ const InfiniteLoaderWrapper = ({
         showCircularIndicator={isNextPageLoading}
         rowCount={tableData.length}
         rowGetter={({ index }) => tableData[index]}
+        onlyDiv={scrollTop != null}
         columns={tableHeader.slice(start, end).map((el) => ({
           ...el,
           dataKey: el.key,

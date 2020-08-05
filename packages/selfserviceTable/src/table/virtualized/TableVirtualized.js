@@ -92,12 +92,12 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     let { validationSchema, tableActionsClicked } = { ...props };
     if (!validationSchema) validationSchema = {};
 
-    const { cellSpecs, updateFieldData } = { ...props };
+    const { cellSpecs, updateFieldData, onlyDiv } = { ...props };
     const formData = props.formData;
     const { classes, rowHeight, onRowClick } = props;
     const myCell = cellSpecs.find((el) => el.key === dataKey);
     const columnItem = columns.find((el) => el.key === dataKey);
-    if (myCell.isIcon || !myCell.type)
+    if (myCell.isIcon || !myCell.type || onlyDiv)
       return <div style={{ width: "100%", height: "100%" }}></div>;
 
     const tableCell = (

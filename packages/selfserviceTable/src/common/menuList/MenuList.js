@@ -67,6 +67,7 @@ export const StyledMenuList = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const classes = useStyles();
   const handleClick = (event) => {
+    if (props.itemActiveStatus) props.itemActiveStatus(true);
     setAnchorEl(event.currentTarget);
   };
   const getClassOfTypography = (data = "") => {
@@ -78,6 +79,7 @@ export const StyledMenuList = (props) => {
     }
   };
   const handleClose = () => {
+    if (props.itemActiveStatus) props.itemActiveStatus(false);
     setAnchorEl(null);
   };
   const handleItemSelect = (i, j, itemClose) => {

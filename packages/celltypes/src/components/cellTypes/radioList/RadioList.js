@@ -12,7 +12,8 @@ import Tooltip from "../../tooltip/Tooltip";
 import { Popover, Radio } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
-
+import RadioButtonCheckedIcon from "@material-ui/icons/RadioButtonChecked";
+import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 const useStyles = makeStyles((theme) => ({
   margin: {
     margin: theme.spacing(1),
@@ -81,6 +82,16 @@ const Dropdown = (props) => {
           <p className={styles.text}>{options[i]}</p>
           <Radio
             key={i}
+            icon={
+              <RadioButtonUncheckedIcon
+                style={{ fontSize: 17, color: "#3F45D9" }}
+              />
+            }
+            checkedIcon={
+              <RadioButtonCheckedIcon
+                style={{ fontSize: 17, color: "#3F45D9" }}
+              />
+            }
             checked={selectValue.tempState === localValue}
             onChange={(e) =>
               setSelectValue({ ...selectValue, tempState: e.target.value })

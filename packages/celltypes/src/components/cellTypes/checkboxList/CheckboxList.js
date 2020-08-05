@@ -15,6 +15,8 @@ import { Checkbox, Popover } from "@material-ui/core";
 import { faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { checkArrEqual } from "../../common/utility";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -111,6 +113,10 @@ const CheckboxList = (props) => {
         <div key={i} className={styles.optionWrapper}>
           <p className={styles.text}>{options[i]}</p>
           <Checkbox
+            icon={<CheckBoxOutlineBlankIcon style={{ fontSize: 17 }} />}
+            checkedIcon={
+              <CheckBoxIcon style={{ fontSize: 17, color: "#3F45D9" }} />
+            }
             key={i}
             checked={getCurrentValueStatus(currValue)}
             onChange={(event) => checkboxValueChanged(event, currValue)}

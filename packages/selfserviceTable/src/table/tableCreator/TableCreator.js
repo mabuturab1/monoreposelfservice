@@ -36,14 +36,19 @@ const TableCreator = (props) => {
         isIcon: true,
       },
     ];
-  if (contentDeleteAble !== false)
-    concatArr.push({
-      key: "actions",
-      type: "ICON",
-      label: "Actions",
-    });
+
   if (!props.tableHeader || props.tableHeader.length < 1) concatArr = [];
-  const tableHeader = (props.tableHeader || []).concat(...concatArr);
+
+  const tableHeader = (props.tableHeader || [])
+    .concat(...concatArr)
+    .map((el) => {
+      if (el.key === "indexIdNumber" && contentDeleteAble)
+        return {
+          ...el,
+          iconsArr: ["delete"],
+        };
+      else return { ...el };
+    });
 
   const [editAllowed, setEditAllowed] = useState(
     props.editAllowed != null ? props.editAllowed : true

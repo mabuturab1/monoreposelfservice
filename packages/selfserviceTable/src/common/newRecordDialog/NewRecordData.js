@@ -191,7 +191,6 @@ const NewRecordData = (props) => {
           <div className={styles.headerWrapper}>
             <span></span>
             <div style={{ display: "flex" }}>
-              <FontAwesomeIcon icon={faPlusCircle} className={styles.icon} />
               <h5
                 className={styles.labelText}
                 style={{ textAlign: "center", marginLeft: "4px" }}

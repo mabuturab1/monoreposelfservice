@@ -1,19 +1,27 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import styles from "./SingleTableHeader.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSort } from "@fortawesome/free-solid-svg-icons";
+import { faSort, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import TableCell from "@material-ui/core/TableCell";
 import TableHeaderSettings from "../tableHeaderSettingsDropdown/TableHeaderSettingsDropdown";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 const SingleTableHeader = (props) => {
   const { cellSpecs } = props;
+  const [hoverActive, setHoverActive] = useState(false);
+  const [isMenuOpened, setIsMenuOpened] = useState(false);
+
   const isNestedDropdown = () => {
     return cellSpecs && cellSpecs.type === "NESTED_DROPDOWN";
   };
   const tableHeaderRef = useRef(null);
   let columnLabel = (
     <React.Fragment>
-      <div className={styles.headerItemWrapper} style={props.style}>
+      <div
+        className={styles.headerItemWrapper}
+        style={props.style}
+        onMouseEnter={() => setHoverActive(true)}
+        onMouseLeave={() => setHoverActive(false)}
+      >
         <div
           className={
             isNestedDropdown()
@@ -30,12 +38,13 @@ const SingleTableHeader = (props) => {
               >{`(Sorted in ${props.sortOrder})`}</span>
             ) : null}
           </div>
-          <span>
-            <FontAwesomeIcon
-              style={{ color: "rgba(0, 0, 50, 0.21) " }}
-              icon={faSort}
-            />
-          </span>
+          {hoverActive || isMenuOpened ? (
+            <span>
+              <FontAwesomeIcon icon={faChevronDown} />
+            </span>
+          ) : (
+            <span></span>
+          )}
         </div>
 
         {isNestedDropdown() ? (
@@ -57,8 +66,12 @@ const SingleTableHeader = (props) => {
     switch (icon.toLowerCase()) {
       case "add":
         return (
-          <div>
-            <AddIcon fontSize="small" />
+          <div style={{ color: "#5CAEE5", textAlign: "center" }}>
+            <AddIcon
+              fontSize="small"
+              color="inherit"
+              style={{ fontSize: "18px", verticalAlign: "middle" }}
+            />
           </div>
         );
       default:
@@ -104,20 +117,23 @@ const SingleTableHeader = (props) => {
   );
   const getWrapper = (child) => {
     return (
-      <TableHeaderSettings
-        tableStatus={props.tableStatus}
-        defaultSelection={getDefaultSelection()}
-        currentTarget={tableHeaderRef}
-        onItemSelect={props.onItemSelect}
-        sortOrder={props.sortOrder}
-        cellSpecs={
-          cellSpecs && cellSpecs.key === "%OPEN_NEW_FIELD_DIALOG%"
-            ? {}
-            : { ...props.cellSpecs }
-        }
-      >
-        {child}
-      </TableHeaderSettings>
+      <div>
+        <TableHeaderSettings
+          tableStatus={props.tableStatus}
+          defaultSelection={getDefaultSelection()}
+          currentTarget={tableHeaderRef}
+          onItemSelect={props.onItemSelect}
+          sortOrder={props.sortOrder}
+          isMenuOpened={(status) => setIsMenuOpened(status)}
+          cellSpecs={
+            cellSpecs && cellSpecs.key === "%OPEN_NEW_FIELD_DIALOG%"
+              ? {}
+              : { ...props.cellSpecs }
+          }
+        >
+          {child}
+        </TableHeaderSettings>
+      </div>
     );
   };
   return (

@@ -13,7 +13,7 @@ const initialState = {
   currentReportId: "",
   apiAddress: "",
   fieldUpdateStatus: { success: false, error: false },
-  totalReportItems: 1,
+  totalReportItems: 0,
   totalUpdateFieldErrors: 0,
   snackbarStatus: {
     updated: false,
@@ -37,7 +37,7 @@ let addIndexNumber = (data, indexStart) => {
     data: {
       ...el.data,
       indexIdNumber: index + 1 + preLoadedItems,
-      actions: true,
+      createAt: el.createAt,
     },
   }));
 };

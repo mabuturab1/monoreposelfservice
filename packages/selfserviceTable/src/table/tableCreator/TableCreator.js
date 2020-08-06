@@ -85,11 +85,9 @@ const TableCreator = (props) => {
   const createHeaderSpecs = useCallback(() => {
     let cellSpecs = [];
     let updateTableHeaderProps = (type, data) => {
-      return type !== "EMAIL"
-        ? {
-            ...data,
-          }
-        : { ...data, email: true };
+      return {
+        ...data,
+      };
     };
 
     for (let i = 0; i < tableHeader.length; i++) {
@@ -114,7 +112,10 @@ const TableCreator = (props) => {
     let cellSpecs = createHeaderSpecs(tableHeader);
     let schemaObj = {};
     cellSpecs.forEach((el) => {
-      schemaObj[el.key] = schemaCreator(el);
+      let updatedEl = { ...el, data: { ...el.data } };
+      if (el.type === "EMAIL")
+        updatedEl = { ...updatedEl, data: { ...updatedEl.data, email: true } };
+      schemaObj[el.key] = schemaCreator(updatedEl);
     });
     let nestedDropdownItems = cellSpecs.filter(
       (el) => el.type === "NESTED_DROPDOWN"
@@ -386,6 +387,7 @@ const TableCreator = (props) => {
                 }}
               >
                 <FilterHeader
+                  totalReportItems={props.totalReportItems}
                   contentAddAble={contentAddAble}
                   contentEditAble={contentEditAble}
                   initDateRange={{

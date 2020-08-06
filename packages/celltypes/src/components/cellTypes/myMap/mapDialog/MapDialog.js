@@ -24,7 +24,7 @@ const MapDialog = ({
   };
   const containerStyles = {
     width: "650px",
-    height: "600px",
+    height: "550px",
   };
   const decryptKey = (apiKey) => {
     if (!apiKey) {

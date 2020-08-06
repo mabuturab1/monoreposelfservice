@@ -4,6 +4,7 @@ import styles from "./Currency.module.scss";
 import Tooltip from "../../tooltip/Tooltip";
 import { currencyFormatter } from "../../common/utility";
 import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
+import InputIcon from "../../common/HOC/inputIcon/InputIcon";
 
 const Currency = (props) => {
   const {
@@ -73,39 +74,47 @@ const Currency = (props) => {
   }
 
   const inputUI = (
-    <input
-      style={customStyles}
-      autoComplete="off"
-      className={styles.input}
-      {...{
-        name,
-        disabled,
-        label,
-        type,
-        value:
-          readOnly && !disableReadOnlyMode
-            ? currencyFormatter(
-                inputValue.tempState,
-                currency,
-                thousandSep,
-                decimalSep,
-                decimalCount,
-                unit
-              )
-            : inputValue.tempState,
-      }}
-      placeholder={props.editAllowed ? placeholder : ""}
-      readOnly={readOnly && !disableReadOnlyMode}
-      onDoubleClick={() => setReadOnly(false || !props.editAllowed)}
-      onChange={inputChanged}
-      onBlur={(e) => {
-        // onBlur(e);
-        if (!props.editAllowed) return;
-        setReadOnly(true);
-        updateInput();
-        setTimeout(() => inputBlurred(e));
-      }}
-    />
+    <div>
+      <InputIcon
+        startAdorment={currency}
+        endAdorment={unit}
+        readOnly={readOnly}
+      >
+        <input
+          style={customStyles}
+          autoComplete="off"
+          className={styles.input}
+          {...{
+            name,
+            disabled,
+            label,
+            type,
+            value:
+              readOnly && !disableReadOnlyMode
+                ? currencyFormatter(
+                    inputValue.tempState,
+                    currency,
+                    thousandSep,
+                    decimalSep,
+                    decimalCount,
+                    unit
+                  )
+                : inputValue.tempState,
+          }}
+          placeholder={props.editAllowed ? placeholder : ""}
+          readOnly={readOnly && !disableReadOnlyMode}
+          onDoubleClick={() => setReadOnly(false || !props.editAllowed)}
+          onChange={inputChanged}
+          onBlur={(e) => {
+            // onBlur(e);
+            if (!props.editAllowed) return;
+            setReadOnly(true);
+            updateInput();
+            setTimeout(() => inputBlurred(e));
+          }}
+        />
+      </InputIcon>
+    </div>
   );
 
   return (

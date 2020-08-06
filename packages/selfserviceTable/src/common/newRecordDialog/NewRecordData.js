@@ -27,12 +27,10 @@ const NewRecordData = (props) => {
   const createHeaderSpecs = useCallback(() => {
     let cellSpecs = [];
     let updateTableHeaderProps = (type, data) => {
-      return type !== "EMAIL"
-        ? {
-            ...data,
-            isRequired: false,
-          }
-        : { ...data, email: true, isRequired: false };
+      return {
+        ...data,
+        isRequired: false,
+      };
     };
 
     for (let i = 0; i < tableHeader.length; i++) {
@@ -52,7 +50,11 @@ const NewRecordData = (props) => {
     let schemaObj = {};
     let specs = createHeaderSpecs();
     specs.forEach((el) => {
-      schemaObj[el.key] = schemaCreator(el, true);
+      let updatedEl = { ...el, data: { ...el.data } };
+      if (el.type === "EMAIL")
+        updatedEl = { ...updatedEl, data: { ...updatedEl.data, email: true } };
+
+      schemaObj[el.key] = schemaCreator(updatedEl, true);
     });
     let nestedDropdownItems = specs.filter(
       (el) => el.type === "NESTED_DROPDOWN"
@@ -257,8 +259,8 @@ const NewRecordData = (props) => {
                     }}
                     disableReadOnlyMode={true}
                     customStyles={{
-                      border: "1px solid rgba(112,112,112,0.2)",
-                      borderRadius: "0.6rem",
+                      // border: "1px solid rgba(112,112,112,0.2)",
+                      // borderRadius: "0.6rem",
                       padding: getPadding(el.type),
                       width: "12rem",
                       boxSizing: "border-box",

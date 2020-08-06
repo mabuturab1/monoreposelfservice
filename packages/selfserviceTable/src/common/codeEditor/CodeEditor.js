@@ -71,10 +71,7 @@ const CodeEditor = (props) => {
           className={styles.errorText}
           style={{ width: props.width ? props.width : "20rem" }}
         >
-          Invalid JSON Code. Kindly follow JSON pattern as follows
-          <strong>("key":value,)</strong> Please ensure that you have declared
-          keys in inverted commas and also used single comma after each value
-          except last one
+          Invalid JSON Error
         </p>
       ) : null}
       {inValidKey ? (

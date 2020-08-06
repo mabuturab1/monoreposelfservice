@@ -182,7 +182,6 @@ const CellEditDialogData = React.forwardRef(
                       disableReadOnlyMode={true}
                       serverData={{ ...el }}
                       customStyles={{
-                        border: "1px solid #707070",
                         borderRadius: "0.6rem",
                         padding: getPadding(el.type),
                         width: "12rem",

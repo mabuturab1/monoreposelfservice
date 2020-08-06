@@ -68,12 +68,12 @@ const GoogleMaps = ({
   };
   const [mapData, setMapData] = useState({
     markerPosition: {
-      lat: value && value.lat ? value.lat : -1.2884,
-      lng: value && value.long ? value.long : 36.8233,
+      lat: value && value.lat ? value.lat : -6.175328,
+      lng: value && value.long ? value.long : 106.82711,
     },
     mapPosition: {
-      lat: value && value.lat ? value.lat : -1.2884,
-      lng: value && value.long ? value.long : 36.8233,
+      lat: value && value.lat ? value.lat : -6.175328,
+      lng: value && value.long ? value.long : 106.82711,
     },
   });
 
@@ -114,13 +114,14 @@ const GoogleMaps = ({
   return (
     <div>
       <div className={styles.buttonWrapper}>
-        <Button
-          style={{ fontSize: "0.75rem" }}
-          color="primary"
-          onClick={handleSave}
-        >
-          Save Location
-        </Button>
+        <div style={{ flex: 1 }}>
+          {mapsLoaded ? (
+            <InputIcon icon={faSearch} absolute={true}>
+              <GooglePlacesAutocomplete onSelect={(data) => getLatLng(data)} />
+            </InputIcon>
+          ) : null}
+        </div>
+
         <FontAwesomeIcon
           icon={faTimes}
           onClick={onClose}
@@ -129,13 +130,6 @@ const GoogleMaps = ({
       </div>
 
       <div className={styles.mapWrapper} style={containerStyles}>
-        <div>
-          {mapsLoaded ? (
-            <InputIcon icon={faSearch} absolute={true}>
-              <GooglePlacesAutocomplete onSelect={(data) => getLatLng(data)} />
-            </InputIcon>
-          ) : null}
-        </div>
         <Map
           google={google}
           zoom={14}
@@ -155,6 +149,30 @@ const GoogleMaps = ({
             </div>
           </InfoWindow>
         </Map>
+      </div>
+      <div
+        style={{
+          margin: "0.3rem 0",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Button
+          style={{ fontSize: "0.75rem" }}
+          color="secondary"
+          onClick={onClose}
+          variant="contained"
+        >
+          Cancel
+        </Button>
+        <Button
+          style={{ fontSize: "0.75rem", marginLeft: "1rem" }}
+          color="primary"
+          onClick={handleSave}
+          variant="contained"
+        >
+          Save Location
+        </Button>
       </div>
     </div>
   );

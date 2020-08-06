@@ -332,7 +332,12 @@ export const updateFieldData = (
     }
 
     dispatch(updateFieldDataStart());
-    let sendData = { ...data, indexIdNumber: undefined, actions: undefined };
+    let sendData = {
+      ...data,
+      indexIdNumber: undefined,
+      actions: undefined,
+      createAt: undefined,
+    };
 
     axios
       .put(
@@ -362,6 +367,7 @@ export const updateFieldData = (
 export const deleteTableContent = (apiUrl, reportId, fieldId, isSuccess) => {
   return (dispatch) => {
     dispatch(getDeleteContentStart());
+    dispatch(clearTableData());
     axios
       .delete(`${"/vbeta"}/reports/${reportId}/contents/${fieldId}`, config)
       .then((response) => {

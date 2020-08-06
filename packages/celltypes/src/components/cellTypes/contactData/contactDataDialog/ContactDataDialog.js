@@ -12,6 +12,12 @@ const ContactDataDialog = ({ items, onClose, sum }) => {
     { key: "end", label: "End", type: "READONLY_TEXT" },
     { key: "duration", label: "Duration", type: "READONLY_TEXT" },
   ];
+  const summaryData = [
+    { label: "Date", key: "date" },
+    { label: "Call Duration", key: "duration" },
+    { label: "Total Call", key: "call" },
+    { label: "Total whatsapp", key: "whatsapp" },
+  ];
   let tableHeader = [];
   tableHeader = cellTypes.map((el, i) => (
     <div key={i} className={styles.headerItemWrapper}>
@@ -57,34 +63,15 @@ const ContactDataDialog = ({ items, onClose, sum }) => {
       <div className={styles.summaryWrapper}>
         <h4 className={[styles.text, styles.title].join(" ")}>Summary</h4>
         <div className={styles.summary}>
-          <div className={styles.singleDetailWrapper}>
-            <div className={styles.labelWrapper}>
-              <span className={styles.text}>{"Date"}</span>
-              <span className={styles.text}>:</span>
+          {summaryData.map((el, i) => (
+            <div key={i} className={styles.singleDetailWrapper}>
+              <div className={styles.labelWrapper}>
+                <span className={styles.text}>{el.label}</span>
+                <span className={styles.text}>:</span>
+              </div>
+              <span className={styles.text}>{sum[el.key]}</span>
             </div>
-            <span className={styles.text}>{sum.date}</span>
-          </div>
-          <div className={styles.singleDetailWrapper}>
-            <div className={styles.labelWrapper}>
-              <span className={styles.text}>{"Call Duration"}</span>
-              <span className={styles.text}>:</span>
-            </div>
-            <span className={styles.text}>{sum.duration}</span>
-          </div>
-          <div className={styles.singleDetailWrapper}>
-            <div className={styles.labelWrapper}>
-              <span className={styles.text}>{"Total Call"}</span>
-              <span className={styles.text}>:</span>
-            </div>
-            <span className={styles.text}>{sum.call}</span>
-          </div>
-          <div className={styles.singleDetailWrapper}>
-            <div className={styles.labelWrapper}>
-              <span className={styles.text}>{"Total whatsapp"}</span>
-              <span className={styles.text}>:</span>
-            </div>
-            <span className={styles.text}>{sum.whatsapp}</span>
-          </div>
+          ))}
         </div>
       </div>
     </React.Fragment>

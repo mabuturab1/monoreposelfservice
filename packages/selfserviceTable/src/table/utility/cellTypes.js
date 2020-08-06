@@ -7,9 +7,19 @@ export const CellTypes = [
   { label: "Decimal", value: "DECIMAL" },
   { label: "Rate", value: "RATE" },
   { label: "Dropdown", value: "DROPDOWN" },
-
   { label: "Image", value: "IMAGE" },
   { label: "DateTime", value: "DATETIME" },
+  { label: "Currency", value: "CURRENCY" },
+  { label: "Checkbox", value: "CHECKBOX" },
+  { label: "Radio", value: "RADIO" },
+  { label: "Officer Select", value: "OFFICER_SELECT" },
+  { label: "Scan Qr", value: "SCAN_QR" },
+  { label: "Document", value: "DOCUMENT" },
+  { label: "Contact", value: "CONTACT" },
+  { label: "Map", value: "MAP" },
+  { label: "ITEM_LIST", value: "ITEM_LIST" },
+  { label: "Nested Dropdown", value: "NESTED_DROPDOWN" },
+  { label: "Audit", value: "AUDIT" },
 ];
 export const DummyInitValues = {
   TEXT: "",
@@ -33,6 +43,6 @@ export const DummyInitValues = {
   CONTACT: "",
   MAP: "",
   ITEM_LIST: "",
-  NETSTED_DROPDOWN: {},
+  NESTED_DROPDOWN: {},
 };
 export const DocCells = ["IMAGE", "DOCUMENT"];

@@ -2,6 +2,8 @@ import React, { useState, useContext } from "react";
 import styles from "./Image.module.scss";
 import BlankImage from "../../../assets/images/blankImage.png";
 import Tooltip from "../../tooltip/Tooltip";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 const Image = (props) => {
   const {
@@ -76,7 +78,21 @@ const Image = (props) => {
           placeholder="Kindly select to upload a file"
           accept="image/*"
         />
-        Kindly select an image file to upload
+        <FontAwesomeIcon
+          icon={faEdit}
+          size={"lg"}
+          style={{ color: "#4E88F5" }}
+        />
+        <span
+          style={{
+            marginLeft: "3px",
+            color: "#",
+            display: "inline-block",
+            fontFamily: "inherit",
+          }}
+        >
+          Click here to edit
+        </span>
       </label>
     </div>
   );

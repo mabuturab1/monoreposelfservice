@@ -2,7 +2,8 @@ import React, { useState, useContext } from "react";
 import styles from "./Text.module.scss";
 
 import Tooltip from "../../tooltip/Tooltip";
-import { currencyFormatter } from "../../common/utility";
+
+import InputIcon from "../../common/HOC/inputIcon/InputIcon";
 
 const Text = (props) => {
   const {
@@ -20,6 +21,7 @@ const Text = (props) => {
     decimalCount,
     disableReadOnlyMode,
     type,
+    unit,
   } = { ...props };
 
   const [readOnly, setReadOnly] = useState(true);
@@ -67,23 +69,27 @@ const Text = (props) => {
   }
 
   const inputUI = (
-    <input
-      style={customStyles}
-      autoComplete="off"
-      className={styles.input}
-      {...{ name, disabled, label, type, value: inputValue.tempState }}
-      placeholder={props.editAllowed ? placeholder : ""}
-      readOnly={readOnly && !disableReadOnlyMode}
-      onDoubleClick={() => setReadOnly(false || !props.editAllowed)}
-      onChange={inputChanged}
-      onBlur={(e) => {
-        // onBlur(e);
-        if (!props.editAllowed) return;
-        setReadOnly(true);
-        updateInput();
-        setTimeout(() => inputBlurred(e));
-      }}
-    />
+    <div>
+      <InputIcon endAdorment={unit} readOnly={readOnly && !disableReadOnlyMode}>
+        <input
+          style={customStyles}
+          autoComplete="off"
+          className={styles.input}
+          {...{ name, disabled, label, type, value: inputValue.tempState }}
+          placeholder={props.editAllowed ? placeholder : ""}
+          readOnly={readOnly && !disableReadOnlyMode}
+          onDoubleClick={() => setReadOnly(false || !props.editAllowed)}
+          onChange={inputChanged}
+          onBlur={(e) => {
+            // onBlur(e);
+            if (!props.editAllowed) return;
+            setReadOnly(true);
+            updateInput();
+            setTimeout(() => inputBlurred(e));
+          }}
+        />
+      </InputIcon>
+    </div>
   );
 
   return (

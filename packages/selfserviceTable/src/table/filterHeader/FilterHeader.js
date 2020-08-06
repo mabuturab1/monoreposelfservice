@@ -255,7 +255,9 @@ const FilterHeader = (props) => {
       </div>
       <div className={styles.recordWrapper}>
         <div className={styles.totalRecords}>
-          <span className={styles.label}>Total Records:{tableData.length}</span>
+          <span className={styles.label}>
+            Total Records:{props.totalReportItems ?? tableData.length}
+          </span>
           {props.contentAddAble !== false ? (
             <NewRecordDialog>
               <div

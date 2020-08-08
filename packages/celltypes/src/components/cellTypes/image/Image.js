@@ -60,6 +60,7 @@ const Image = (props) => {
         className={styles.imageStyle}
         alt="user"
       />
+
       <label className={styles.fileInput}>
         <input
           style={{ display: "none" }}

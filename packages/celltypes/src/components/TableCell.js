@@ -95,7 +95,7 @@ const MyTableCell = (props) => {
         props.cellOriginalKey,
         (isSuccess, afterUpdate = null) => {
           let { name, fallbackValue } = { ...props.item };
-
+          console.log("IS SUCCESS", isSuccess, afterUpdate);
           if (!isSuccess && name) {
             console.log("FALLBACK VALUE IS", fallbackValue);
             if (fallbackValue) setFieldValue(name, fallbackValue);
@@ -128,9 +128,15 @@ const MyTableCell = (props) => {
       let schema = Yup.object().shape({
         [name]: validationSchema,
       });
-      schema.isValid({ [name]: obtainedData }).then(function (val) {
-        if (val) submitData(rowDataContent, obtainedData, updateType);
-      });
+      schema
+        .isValid({ [name]: obtainedData })
+        .then(function (val) {
+          console.log("Schema is valid", val);
+          if (val) submitData(rowDataContent, obtainedData, updateType);
+        })
+        .catch((err) => {
+          console.log("SCHEMA NOT VALID", name, err);
+        });
     } else submitData(rowDataContent, obtainedData, updateType);
   };
 

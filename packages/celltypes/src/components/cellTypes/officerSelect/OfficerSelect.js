@@ -137,24 +137,13 @@ const OfficerSelect = (props) => {
   const inputUI = (
     <div className={[classes.margin].join(" ")}>
       <div className={styles.inputWrapper}>
-        <Tooltip
-          arrow
-          title={error || ""}
-          open={(error && touched) === true}
-          placement="bottom-start"
-          PopperProps={{
-            disablePortal: true,
-          }}
-        >
-          <div>
-            <input
-              className={[styles.text, styles.input].join(" ")}
-              readOnly={true}
-              onClick={handleClick}
-              value={selectValue.tempState}
-            />
-          </div>
-        </Tooltip>
+        <input
+          className={[styles.text, styles.input].join(" ")}
+          readOnly={true}
+          onClick={handleClick}
+          value={selectValue.tempState}
+        />
+
         <FontAwesomeIcon
           icon={open ? faSortUp : faSortDown}
           className={styles.icon}
@@ -179,7 +168,21 @@ const OfficerSelect = (props) => {
       </Popover>
     </div>
   );
-  return <React.Fragment>{inputUI}</React.Fragment>;
+  return (
+    <React.Fragment>
+      <Tooltip
+        arrow
+        title={error || ""}
+        open={(error && touched && !open) === true}
+        placement="bottom-start"
+        PopperProps={{
+          disablePortal: true,
+        }}
+      >
+        {inputUI}
+      </Tooltip>
+    </React.Fragment>
+  );
 };
 OfficerSelect.propTypes = {
   value: PropTypes.string,

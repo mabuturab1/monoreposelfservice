@@ -22,9 +22,10 @@ export const getTableDataSuccess = (data) => {
   };
 };
 
-export const getUploadFileStart = () => {
+export const getUploadFileStart = (content = null) => {
   return {
     type: actionTypes.START_UPLOAD_FILE,
+    payload: content ? content : "Kindly wait while file is uploading",
   };
 };
 export const getUploadFileFailed = () => {
@@ -380,7 +381,7 @@ export const updateFieldData = (
 export const deleteTableContent = (apiUrl, reportId, fieldId, isSuccess) => {
   return (dispatch) => {
     dispatch(getDeleteContentStart());
-    dispatch(clearTableData());
+
     axios
       .delete(`${"/vbeta"}/reports/${reportId}/contents/${fieldId}`, config)
       .then((response) => {

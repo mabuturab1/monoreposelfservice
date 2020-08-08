@@ -74,7 +74,6 @@ const TimePicker = (props) => {
           onClick={() => {
             if (onCancel) onCancel();
           }}
-          disabled={true}
           className={styles.button}
         >
           Cancel

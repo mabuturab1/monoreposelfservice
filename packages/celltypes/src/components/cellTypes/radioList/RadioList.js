@@ -151,7 +151,7 @@ const RadioList = (props) => {
       <Tooltip
         arrow
         title={error || ""}
-        open={(error && touched) === true}
+        open={(error && touched && !open) === true}
         placement="bottom-start"
         PopperProps={{
           disablePortal: true,

@@ -83,7 +83,7 @@ const Dropdown = (props) => {
     ...props,
   };
 
-  console.log("Rendering dropdown");
+  console.log("Rendering dropdown", touched, error);
   const currentValue =
     value &&
     ((valuesList && valuesList.includes(value)) ||
@@ -173,7 +173,7 @@ const Dropdown = (props) => {
     <Tooltip
       arrow
       title={error || ""}
-      open={(error && touched) === true}
+      open={(error && touched && !open) === true}
       placement="bottom-start"
       PopperProps={{
         disablePortal: true,

@@ -7,6 +7,7 @@ const LightTooltip = withStyles((theme) => ({
     color: "white",
     boxShadow: theme.shadows[1],
     fontSize: 11,
+    margin: "0px!important",
   },
 
   arrow: {

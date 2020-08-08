@@ -40,7 +40,7 @@ export const ReadOnlyText = (props) => {
   return (
     <div
       className={styles.text}
-      style={{ ...props.style }}
+      style={{ display: "flex", ...props.style }}
       onMouseEnter={() => setHoverActive(true)}
       onMouseLeave={() => setHoverActive(false)}
     >

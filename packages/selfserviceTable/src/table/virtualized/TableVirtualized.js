@@ -51,7 +51,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     headerHeight: Constants.tableHeaderHeight,
     rowHeight: Constants.tableRowHeight,
   };
-  console.log("In table virtualized", props.scrollTop, props.onScroll);
+
   const {
     classes,
     columns,
@@ -146,7 +146,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     );
     return myCell.type === "ITEM_LIST" ? (
       <TableDialog
-        editAllowed={tableContext.editAllowed}
+        editAllowed={tableContext.editAlloweD || true}
         {...{ ...myCell.data, value: undefined }}
         value={
           formData.values[getKey(rowData.id, myCell.key)] || getInitData(myCell)
@@ -255,14 +255,17 @@ const isFormDataEqual = (obj1, obj2) => {
   );
 };
 const equalObj = (val1, val2, id) => {
-  return Object.keys(val1).filter((el) => val1[el] !== val2[el]).length === 0;
+  let status =
+    Object.keys(val1).filter((el) => val1[el] !== val2[el]).length === 0;
+
+  return status;
 };
 const areEqual = (prevProps, nextProps) => {
   let status =
     prevProps["tableData"] === nextProps["tableData"] &&
     prevProps["tableHeader"] === nextProps["tableHeader"] &&
-    (!nextProps["scrollTop"] ||
-      nextProps["scrollTop"] === prevProps["scrollTop"]) &&
+    // (!nextProps["scrollTop"] ||
+    //   nextProps["scrollTop"] === prevProps["scrollTop"]) &&
     isFormDataEqual(prevProps["formData"], nextProps["formData"]);
 
   return status;

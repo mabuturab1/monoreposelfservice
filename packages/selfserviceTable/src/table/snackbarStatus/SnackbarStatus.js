@@ -13,6 +13,7 @@ const SnackbarStatus = (props) => {
     cellKey: "",
     error: false,
     updated: false,
+    content: null,
   });
   const updatingMessage = "Kindly wait while data is updating";
   const [severity, setSeverity] = useState("info");
@@ -43,7 +44,7 @@ const SnackbarStatus = (props) => {
       ? "error"
       : "success";
     let data = updateStatus.isUpdating
-      ? updatingMessage
+      ? snackbarData.content || updatingMessage
       : updateStatus.updated
       ? `${updateStatus.cellKey} updated successfully`
       : `An error occurred while updating ${updateStatus.cellKey}`;

@@ -43,8 +43,19 @@ const ScanQr = (props) => {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (isValueRecieved = false) => {
     setOpen(false);
+    if (
+      isValueRecieved ||
+      (inputValue.tempState && inputValue.tempState !== "")
+    ) {
+      return;
+    }
+    setTimeout(() => {
+      setFieldValue(name, inputValue.tempState);
+      setTimeout(() => setFieldTouched(name, true), 10);
+    });
+    if (selectValue.originalState === selectValue.tempState) return;
   };
   const [inputValue, setInputValue] = useState({
     originalState: value || DummyInitValues["SCAN_QR"],
@@ -57,7 +68,7 @@ const ScanQr = (props) => {
       ...inputValue,
       tempState: value || "",
     });
-    setOpen(false);
+    handleClose(true);
     console.log("edit allowed", props.editAllowed);
     if (!props.editAllowed) return;
     setReadOnly(true);

@@ -22,6 +22,7 @@ const initialState = {
     cellKey: "",
     error: false,
     isUpdating: false,
+    content: null,
   },
 };
 let addIndexHeader = (data) => {
@@ -113,7 +114,10 @@ const reducer = (state = initialState, action) => {
         deleteTableContent(state.tableData, action.payload)
       );
       return updateObject(state, {
-        tableData: deleteTableContent(state.tableData, action.payload),
+        tableData: addIndexNumber(
+          deleteTableContent(state.tableData, action.payload),
+          0
+        ),
       });
     case actionTypes.CLEAR_TABLE_DATA:
       return updateObject(state, { tableData: [] });
@@ -183,6 +187,27 @@ const reducer = (state = initialState, action) => {
           error: false,
           cellKey: "",
           updated: false,
+          content: action.payload,
+        },
+      });
+    case actionTypes.START_DELETE_CONTENT:
+      return updateObject(state, {
+        snackbarStatus: {
+          isUpdating: true,
+          error: false,
+          cellKey: "",
+          updated: false,
+          content: "Deleting Table Data",
+        },
+      });
+    case actionTypes.DELETE_CONTENT_SUCCESS:
+      return updateObject(state, {
+        snackbarStatus: {
+          isUpdating: false,
+          error: false,
+          cellKey: "",
+          updated: true,
+          content: "Data is deleted successfully",
         },
       });
     case actionTypes.UPDATING_FIELD_DATA_SUCCESS:
@@ -202,8 +227,19 @@ const reducer = (state = initialState, action) => {
           updated: true,
         },
       });
+    case actionTypes.UPLOAD_FILE_SUCCESS:
+      return updateObject(state, {
+        snackbarStatus: {
+          isUpdating: false,
+          error: false,
+          cellKey: "",
+          updated: true,
+          content: "File uploaded successfully",
+        },
+      });
     case actionTypes.UPLOAD_FILE_FAILED:
     case actionTypes.UPDATING_FIELD_DATA_FAILED:
+    case actionTypes.DELETE_CONTENT_FAILED:
       return updateObject(state, {
         totalUpdateFieldErrors: state.totalUpdateFieldErrors + 1,
         snackbarStatus: {

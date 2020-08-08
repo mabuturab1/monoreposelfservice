@@ -72,6 +72,9 @@ const SwitchButton = (props) => {
         title={error || ""}
         open={(error && touched) === true}
         placement="bottom-start"
+        PopperProps={{
+          disablePortal: true,
+        }}
       >
         {switchUI}
       </Tooltip>

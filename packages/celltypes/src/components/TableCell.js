@@ -162,6 +162,7 @@ const MyTableCell = (props) => {
         key={props.myKey}
         className={props.className}
         style={{
+          position: "relative",
           height: props.rowHeight,
           border: "none",
           fontFamily: "'Roboto', 'Open Sans', 'sans-serif'",

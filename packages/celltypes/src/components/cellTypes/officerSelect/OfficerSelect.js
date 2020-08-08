@@ -9,6 +9,9 @@ import styles from "./OfficerSelect.module.scss";
 import InputBase from "@material-ui/core/InputBase";
 
 import Tooltip from "../../tooltip/Tooltip";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
+import { Popover } from "@material-ui/core";
 const BootstrapInput = withStyles((theme) => ({
   root: {
     minWidth: "5rem",
@@ -88,21 +91,38 @@ const OfficerSelect = (props) => {
     originalState: currentValue,
     tempState: currentValue,
   });
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClick = (event) => {
+    if (!props.editAllowed) return;
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (value = null) => {
+    setAnchorEl(null);
+    if (value) setSelectValue({ ...selectValue, tempState: value });
+    setTimeout(() => {
+      setTimeout(() => setFieldTouched(name, true), 10);
+      setTimeout(() => setFieldValue(name, value || selectValue.tempState), 10);
+      if (value && selectValue.originalState === value) {
+        return;
+      } else if (value) updateFieldData(value);
+    });
+  };
   const classes = useStyles();
   let list = [];
 
   if (options && options.length > 0) {
     for (let i = 0; i < options.length; i++) {
+      let localValue =
+        valuesList && valuesList.length > i ? valuesList[i] : options[i];
+      let classesValues = [classes.menuItem];
+      if (currentValue === localValue) classesValues.push(styles.activeItem);
       list.push(
-        <MenuItem
-          key={i}
-          value={
-            valuesList && valuesList.length > i ? valuesList[i] : options[i]
-          }
-          className={classes.menuItem}
-        >
-          {options[i]}
-        </MenuItem>
+        <div key={i} onClick={() => handleClose(localValue)}>
+          <MenuItem value={localValue} className={classesValues.join(" ")}>
+            {options[i]}
+          </MenuItem>
+        </div>
       );
     }
   }
@@ -111,42 +131,55 @@ const OfficerSelect = (props) => {
       originalState: currentValue,
       tempState: currentValue,
     });
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
   const inputUI = (
     <div className={[classes.margin].join(" ")}>
-      {/* <InputLabel id="select-label">{label}</InputLabel> */}
-      <Select
-        labelId="select-label"
-        id="select"
-        className={styles.selectStyle}
-        value={selectValue.tempState}
-        readOnly={!props.editAllowed && !ignoreEditLocked}
-        onChange={(e) => {
-          setSelectValue({ ...selectValue, tempState: e.target.value });
-          console.log(selectValue.originalState, e.target.value);
+      <div className={styles.inputWrapper}>
+        <Tooltip
+          arrow
+          title={error || ""}
+          open={(error && touched) === true}
+          placement="bottom-start"
+          PopperProps={{
+            disablePortal: true,
+          }}
+        >
+          <div>
+            <input
+              className={[styles.text, styles.input].join(" ")}
+              readOnly={true}
+              onClick={handleClick}
+              value={selectValue.tempState}
+            />
+          </div>
+        </Tooltip>
+        <FontAwesomeIcon
+          icon={open ? faSortUp : faSortDown}
+          className={styles.icon}
+        />
+      </div>
 
-          setTimeout(() => setFieldValue(name, e.target.value));
-          setTimeout(() => setFieldTouched(name, true), 10);
-          if (selectValue.originalState === e.target.value) return;
-          if (updateFieldData) updateFieldData(e.target.value);
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={() => handleClose()}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
         }}
-        input={<BootstrapInput />}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
       >
-        {list}
-      </Select>
+        <div className={styles.optionsWrapper}>{list}</div>
+      </Popover>
     </div>
   );
-  return (
-    <React.Fragment>
-      <Tooltip
-        arrow
-        title={error || ""}
-        open={(error && touched) === true}
-        placement="bottom-start"
-      >
-        {inputUI}
-      </Tooltip>
-    </React.Fragment>
-  );
+  return <React.Fragment>{inputUI}</React.Fragment>;
 };
 OfficerSelect.propTypes = {
   value: PropTypes.string,

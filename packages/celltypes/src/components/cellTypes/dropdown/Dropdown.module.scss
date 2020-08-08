@@ -12,3 +12,69 @@
     background: none;
   }
 }
+.activeItem {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+.inputWrapper {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  //   padding: 0.4rem 1rem;
+
+  span {
+    color: #4a4a4a;
+    font-weight: 500;
+    font-size: 0.8rem;
+    background-color: transparent;
+    font-family: "Roboto", "sans-serif";
+  }
+}
+.icon {
+  padding-right: 0.6rem;
+}
+.optionWrapper {
+  width: 100%;
+  display: flex;
+  width: 8rem;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #dfdfdf;
+}
+.optionsWrapper {
+  width: 100%;
+  padding: 0.6rem 0;
+}
+.text {
+  color: #222222;
+  font-weight: 500;
+  font-size: 0.8rem;
+  background-color: transparent;
+  font-family: inherit;
+  margin: 5px 0;
+}
+.input {
+  width: 90%;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  //   padding: 0.4rem 1rem;
+  &,
+  &:focus {
+    border: 1px solid rgba(0, 0, 50, 0.4);
+    outline: none;
+    border-radius: 0.3rem;
+  }
+  &:read-only {
+    border: 1px solid transparent;
+    outline: none;
+  }
+  &::placeholder {
+    font-weight: 400;
+    opacity: 0.8;
+    color: #cacaca;
+  }
+}

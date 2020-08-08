@@ -10,6 +10,9 @@ import InputBase from "@material-ui/core/InputBase";
 import * as Yup from "yup";
 import Tooltip from "../../tooltip/Tooltip";
 import { DropdownState } from "../../common/utility";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
+import { Popover } from "@material-ui/core";
 const BootstrapInput = withStyles((theme) => ({
   root: {
     minWidth: "5rem",
@@ -55,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#4a4a4a",
     fontWeight: "500",
     fontSize: "0.8rem",
+    padding: "0.4rem 1.6rem",
     backgroundColor: "transparent",
     fontFamily: "'Roboto','sans-serif'",
   },
@@ -75,11 +79,10 @@ const Dropdown = (props) => {
     updateFieldData,
     customStyles,
     disableReadOnlyMode,
-    setFieldError,
-    validationSchema,
   } = {
     ...props,
   };
+
   console.log("Rendering dropdown");
   const currentValue =
     value &&
@@ -91,47 +94,38 @@ const Dropdown = (props) => {
     originalState: currentValue,
     tempState: currentValue,
   });
-  const [mError, setError] = useState(touched ? error : null);
-  const [tabClosed, setTabClosed] = useState(DropdownState.untouched);
-  const catchErrors = () => {
-    if (!validationSchema) return;
-    let schema = Yup.object().shape({
-      [name]: validationSchema,
-    });
-    schema
-      .validate({ [name]: selectValue.tempState })
-      .then((val) => {
-        if (mError) setError(null);
-      })
-      .catch(function (err) {
-        console.log(err, err.message);
-        if (!err || !err.message) return;
-        console.log("setting error message");
-        if (mError !== err.message) setError(err.message);
-      });
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClick = (event) => {
+    if (!props.editAllowed) return;
+    setAnchorEl(event.currentTarget);
   };
-  if (touched && error && mError !== error) {
-    setError(error);
-  } else if (
-    (!currentValue || currentValue === "") &&
-    tabClosed === DropdownState.closed
-  )
-    catchErrors(selectValue.tempState);
+
+  const handleClose = (value = null) => {
+    setAnchorEl(null);
+    if (value) setSelectValue({ ...selectValue, tempState: value });
+    setTimeout(() => {
+      setTimeout(() => setFieldTouched(name, true), 10);
+      setTimeout(() => setFieldValue(name, value || selectValue.tempState), 10);
+      if (value && selectValue.originalState === value) {
+        return;
+      } else if (value) updateFieldData(value);
+    });
+  };
   const classes = useStyles();
   let list = [];
 
   if (options && options.length > 0) {
     for (let i = 0; i < options.length; i++) {
+      let localValue =
+        valuesList && valuesList.length > i ? valuesList[i] : options[i];
+      let classesValues = [classes.menuItem];
+      if (value === localValue) classesValues.push(styles.activeItem);
       list.push(
-        <MenuItem
-          key={i}
-          value={
-            valuesList && valuesList.length > i ? valuesList[i] : options[i]
-          }
-          className={classes.menuItem}
-        >
-          {options[i]}
-        </MenuItem>
+        <div key={i} onClick={() => handleClose(localValue)}>
+          <MenuItem value={localValue} className={classesValues.join(" ")}>
+            {options[i]}
+          </MenuItem>
+        </div>
       );
     }
   }
@@ -140,43 +134,53 @@ const Dropdown = (props) => {
       originalState: currentValue,
       tempState: currentValue,
     });
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
   const inputUI = (
-    <div className={[classes.margin].join(" ")} style={{ margin: "0px" }}>
-      {/* <InputLabel id="select-label">{label}</InputLabel> */}
-      <Select
-        style={customStyles}
-        labelId="select-label"
-        id="select"
-        className={styles.selectStyle}
-        value={selectValue.tempState}
-        readOnly={
-          !props.editAllowed && !ignoreEditLocked && !disableReadOnlyMode
-        }
-        onOpen={() => setTabClosed(DropdownState.open)}
-        onClose={() => setTabClosed(DropdownState.closed)}
-        onChange={(e) => {
-          setSelectValue({ ...selectValue, tempState: e.target.value });
-          if (updateFieldData) updateFieldData(e.target.value);
-          setTimeout(() => setFieldValue(name, e.target.value));
-          setTimeout(() => setFieldTouched(name, true), 10);
+    <div className={[classes.margin].join(" ")}>
+      <div className={styles.inputWrapper}>
+        <input
+          className={[styles.text, styles.input].join(" ")}
+          readOnly={true}
+          onClick={handleClick}
+          value={selectValue.tempState}
+        />
+        <FontAwesomeIcon
+          icon={open ? faSortUp : faSortDown}
+          className={styles.icon}
+        />
+      </div>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={() => handleClose()}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
         }}
-        input={<BootstrapInput />}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
       >
-        {list}
-      </Select>
+        <div className={styles.optionsWrapper}>{list}</div>
+      </Popover>
     </div>
   );
   return (
-    <React.Fragment>
-      <Tooltip
-        arrow
-        title={error || ""}
-        open={(error && touched) === true}
-        placement="bottom-start"
-      >
-        {inputUI}
-      </Tooltip>
-    </React.Fragment>
+    <Tooltip
+      arrow
+      title={error || ""}
+      open={(error && touched) === true}
+      placement="bottom-start"
+      PopperProps={{
+        disablePortal: true,
+      }}
+    >
+      {inputUI}
+    </Tooltip>
   );
 };
 Dropdown.propTypes = {

@@ -71,6 +71,9 @@ const SingleFilter = (props) => {
           title={errors[name] || ""}
           open={(errors[name] && touched[name]) === true}
           placement="bottom-start"
+          PopperProps={{
+            disablePortal: true,
+          }}
         >
           <input
             className={styles.inputStyle}

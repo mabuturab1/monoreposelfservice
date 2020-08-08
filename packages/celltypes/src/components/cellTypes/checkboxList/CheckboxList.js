@@ -145,7 +145,6 @@ const CheckboxList = (props) => {
   const id = open ? "simple-popover" : undefined;
   const inputUI = (
     <div className={[classes.margin].join(" ")}>
-      {/* <InputLabel id="select-label">{label}</InputLabel> */}
       <div className={styles.inputWrapper}>
         <input
           className={[styles.text, styles.input].join(" ")}
@@ -183,6 +182,9 @@ const CheckboxList = (props) => {
         title={error || ""}
         open={(error && touched && !open) === true}
         placement="bottom-start"
+        PopperProps={{
+          disablePortal: true,
+        }}
       >
         {inputUI}
       </Tooltip>

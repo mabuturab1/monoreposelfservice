@@ -17,6 +17,8 @@
   flex-grow: 0 !important;
   flex-shrink: 0 !important;
   margin: 0;
+  overflow: visible !important;
+  position: relative !important;
 }
 .no-data {
   width: 100%;

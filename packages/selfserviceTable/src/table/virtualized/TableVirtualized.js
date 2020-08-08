@@ -85,6 +85,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
       handleBlur,
       setFieldValue,
       setFieldTouched,
+      setFieldError,
     } = {
       ...props.formData,
     };
@@ -117,6 +118,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
           handleBlur,
           setFieldValue,
           setFieldTouched,
+          setFieldError,
         }}
         rowData={rowData}
         cellOriginalKey={myCell.key}

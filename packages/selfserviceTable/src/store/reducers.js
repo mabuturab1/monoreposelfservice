@@ -14,6 +14,8 @@ const initialState = {
   apiAddress: "",
   fieldUpdateStatus: { success: false, error: false },
   totalReportItems: 0,
+  queryParams: {},
+  fetchData: 1,
   totalUpdateFieldErrors: 0,
   snackbarStatus: {
     updated: false,
@@ -133,11 +135,16 @@ const reducer = (state = initialState, action) => {
         tableHeaderPending: false,
         serverError: errorMessage,
       });
+    case actionTypes.FETCH_NEW_DATA:
+      return updateObject(state, { fetchData: state.fetchData + 1 });
     case actionTypes.ADD_FIELD_SUCCESS:
+      console.log("PREV TABLE HEADER", state.tableHeader);
+      console.log(
+        "new table header",
+        (state.tableHeader || []).concat(action.payload)
+      );
       return updateObject(state, {
-        tableHeader: addIndexHeader(state.tableHeader || []).concat(
-          action.payload
-        ),
+        tableHeader: (state.tableHeader || []).concat(action.payload),
       });
     case actionTypes.EDIT_FIELD_SUCCESS:
       let updatedTableHeader = getUpdatedTableHeader(
@@ -145,7 +152,7 @@ const reducer = (state = initialState, action) => {
         action.payload
       );
       return updateObject(state, {
-        tableHeader: addIndexHeader(updatedTableHeader),
+        tableHeader: updatedTableHeader,
       });
     case actionTypes.DELETE_FIELD_SUCCESS:
       console.log(action.type, action.payload);
@@ -155,8 +162,9 @@ const reducer = (state = initialState, action) => {
       );
       console.log("modified table header", modifiedTableHeader);
       return updateObject(state, {
-        tableHeader: addIndexHeader(modifiedTableHeader),
+        tableHeader: modifiedTableHeader,
       });
+
     case actionTypes.UPDATE_FILTER_DATA:
       return updateObject(state, { filterData: action.payload });
     case actionTypes.REMOVE_ERROR:
@@ -165,6 +173,8 @@ const reducer = (state = initialState, action) => {
       return updateObject(state, { currentReportId: action.payload });
     case actionTypes.UPDATE_API_URL:
       return updateObject(state, { apiAddress: action.payload });
+    case actionTypes.UPDATING_QUERY_PARAMS:
+      return updateObject(state, { queryParams: action.payload });
     case actionTypes.START_UPLOAD_FILE:
     case actionTypes.START_UPDATING_FIELD:
       return updateObject(state, {

@@ -67,12 +67,13 @@ const Text = (props) => {
   if (value && value !== inputValue.originalState) {
     setInputValue({ originalState: value, tempState: value });
   }
-
+  let localStyles = {};
+  if (unit) localStyles = { textAlign: "right", paddingRight: "8px" };
   const inputUI = (
     <div>
       <InputIcon endAdorment={unit} readOnly={readOnly && !disableReadOnlyMode}>
         <input
-          style={customStyles}
+          style={{ ...customStyles, ...localStyles }}
           autoComplete="off"
           className={styles.input}
           {...{ name, disabled, label, type, value: inputValue.tempState }}

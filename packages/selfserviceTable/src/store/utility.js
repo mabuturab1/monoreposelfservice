@@ -1,3 +1,5 @@
+import { getFormattedDate } from "../table/utility/objectsFunctions";
+
 export const updateObject = (
   oldObject,
   updatedProperties,
@@ -28,4 +30,23 @@ export const updateObject = (
       ...oldObject,
       ...updatedProperties,
     };
+};
+export const getParams = (queryParams) => {
+  const params = new URLSearchParams();
+  params.append("pageNumber", queryParams.pageNumber);
+  params.append("pageSize", queryParams.pageSize);
+  if (queryParams.key !== "") params.append("sortBy", queryParams.key);
+  if (queryParams.order !== "")
+    params.append("sortDirection", queryParams.order);
+  if (queryParams.filters.toString() !== "") {
+    queryParams.filters.forEach((value, key) => {
+      params.append(key, value);
+    });
+  }
+  if (queryParams.search !== "") params.append("search", queryParams.search);
+  if (queryParams.start != null)
+    params.append("start", getFormattedDate(queryParams.start));
+  if (queryParams.end != null)
+    params.append("end", getFormattedDate(queryParams.end));
+  return params;
 };

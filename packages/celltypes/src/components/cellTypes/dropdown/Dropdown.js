@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 
@@ -7,8 +7,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import styles from "./Dropdown.module.scss";
 import InputBase from "@material-ui/core/InputBase";
-
+import * as Yup from "yup";
 import Tooltip from "../../tooltip/Tooltip";
+import { DropdownState } from "../../common/utility";
 const BootstrapInput = withStyles((theme) => ({
   root: {
     minWidth: "5rem",
@@ -74,10 +75,12 @@ const Dropdown = (props) => {
     updateFieldData,
     customStyles,
     disableReadOnlyMode,
+    setFieldError,
+    validationSchema,
   } = {
     ...props,
   };
-
+  console.log("Rendering dropdown");
   const currentValue =
     value &&
     ((valuesList && valuesList.includes(value)) ||
@@ -88,6 +91,32 @@ const Dropdown = (props) => {
     originalState: currentValue,
     tempState: currentValue,
   });
+  const [mError, setError] = useState(touched ? error : null);
+  const [tabClosed, setTabClosed] = useState(DropdownState.untouched);
+  const catchErrors = () => {
+    if (!validationSchema) return;
+    let schema = Yup.object().shape({
+      [name]: validationSchema,
+    });
+    schema
+      .validate({ [name]: selectValue.tempState })
+      .then((val) => {
+        if (mError) setError(null);
+      })
+      .catch(function (err) {
+        console.log(err, err.message);
+        if (!err || !err.message) return;
+        console.log("setting error message");
+        if (mError !== err.message) setError(err.message);
+      });
+  };
+  if (touched && error && mError !== error) {
+    setError(error);
+  } else if (
+    (!currentValue || currentValue === "") &&
+    tabClosed === DropdownState.closed
+  )
+    catchErrors(selectValue.tempState);
   const classes = useStyles();
   let list = [];
 
@@ -123,6 +152,8 @@ const Dropdown = (props) => {
         readOnly={
           !props.editAllowed && !ignoreEditLocked && !disableReadOnlyMode
         }
+        onOpen={() => setTabClosed(DropdownState.open)}
+        onClose={() => setTabClosed(DropdownState.closed)}
         onChange={(e) => {
           setSelectValue({ ...selectValue, tempState: e.target.value });
           if (updateFieldData) updateFieldData(e.target.value);

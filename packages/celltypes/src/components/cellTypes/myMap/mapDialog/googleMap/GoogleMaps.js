@@ -159,19 +159,21 @@ const GoogleMaps = ({
       >
         <Button
           style={{ fontSize: "0.75rem" }}
-          color="secondary"
+          color="primary"
           onClick={onClose}
-          variant="contained"
         >
           Cancel
         </Button>
         <Button
-          style={{ fontSize: "0.75rem", marginLeft: "1rem" }}
+          style={{
+            fontSize: "0.75rem",
+            marginLeft: "1rem",
+          }}
           color="primary"
           onClick={handleSave}
           variant="contained"
         >
-          Save Location
+          Save
         </Button>
       </div>
     </div>

@@ -101,6 +101,7 @@ export const getAddFieldFailed = () => {
   };
 };
 export const getAddFieldSuccess = (data) => {
+  console.log("ADD FIELD SUCCESS", data);
   return {
     type: actionTypes.ADD_FIELD_SUCCESS,
     payload: data,
@@ -202,6 +203,18 @@ export const updateFieldDataFailed = (data) => {
   return {
     type: actionTypes.UPDATING_FIELD_DATA_FAILED,
     payload: data,
+  };
+};
+
+export const updateQueryParams = (data) => {
+  return {
+    type: actionTypes.UPDATING_QUERY_PARAMS,
+    payload: data,
+  };
+};
+export const fetchNewData = () => {
+  return {
+    type: actionTypes.FETCH_NEW_DATA,
   };
 };
 
@@ -386,13 +399,14 @@ export const deleteTableContent = (apiUrl, reportId, fieldId, isSuccess) => {
 };
 
 export const addTableField = (apiUrl, reportId, data, isSuccess) => {
-  return (dispatch) => {
+  return (dispatch, state) => {
     dispatch(getAddFieldStart());
     axios
       .post(`${"/vbeta"}/reports/${reportId}/fields`, data, config)
       .then((response) => {
-        if (response) {
-          dispatch(getAddFieldSuccess(response.data));
+        if (response && response.data && response.data.data) {
+          dispatch(getAddFieldSuccess(response.data.data));
+          dispatch(fetchNewData());
           if (isSuccess) isSuccess(true);
         } else {
           dispatch(getAddFieldFailed());

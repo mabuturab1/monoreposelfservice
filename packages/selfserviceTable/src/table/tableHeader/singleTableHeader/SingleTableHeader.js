@@ -1,7 +1,11 @@
 import React, { useRef, useState } from "react";
 import styles from "./SingleTableHeader.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSort, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSort,
+  faChevronDown,
+  faChevronUp,
+} from "@fortawesome/free-solid-svg-icons";
 import TableCell from "@material-ui/core/TableCell";
 import TableHeaderSettings from "../tableHeaderSettingsDropdown/TableHeaderSettingsDropdown";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
@@ -40,7 +44,9 @@ const SingleTableHeader = (props) => {
           </div>
           {hoverActive || isMenuOpened ? (
             <span>
-              <FontAwesomeIcon icon={faChevronDown} />
+              <FontAwesomeIcon
+                icon={isMenuOpened ? faChevronUp : faChevronDown}
+              />
             </span>
           ) : (
             <span></span>

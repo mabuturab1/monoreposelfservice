@@ -49,3 +49,8 @@ export const checkArrEqual = (arr1, arr2) => {
   if (second.length > 0) return false;
   return true;
 };
+export const DropdownState = {
+  open: "open",
+  closed: "closed",
+  untouched: "untouched",
+};

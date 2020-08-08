@@ -118,7 +118,7 @@ const RadioList = (props) => {
       {/* <InputLabel id="select-label">{label}</InputLabel> */}
       <div className={styles.inputWrapper}>
         <input
-          className={[styles.input, styles.text].join(" ")}
+          className={[styles.text, styles.input].join(" ")}
           readOnly={true}
           onClick={handleClick}
           value={selectValue.tempState}

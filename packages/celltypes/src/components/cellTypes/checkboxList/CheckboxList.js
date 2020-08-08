@@ -71,6 +71,8 @@ const CheckboxList = (props) => {
   const handleClose = () => {
     setAnchorEl(null);
     setTimeout(() => {
+      setTimeout(() => setFieldTouched(name, true), 10);
+      setTimeout(() => setFieldValue(name, selectValue.tempState), 10);
       if (checkArrEqual(selectValue.tempState, selectValue.originalState)) {
         console.log(
           "arrrays are equal",
@@ -80,8 +82,6 @@ const CheckboxList = (props) => {
         return;
       }
       updateFieldData(selectValue.tempState);
-      setTimeout(() => setFieldValue(name, selectValue.tempState), 10);
-      setTimeout(() => setFieldTouched(name, true), 10);
     });
   };
 
@@ -113,7 +113,11 @@ const CheckboxList = (props) => {
         <div key={i} className={styles.optionWrapper}>
           <p className={styles.text}>{options[i]}</p>
           <Checkbox
-            icon={<CheckBoxOutlineBlankIcon style={{ fontSize: 17 }} />}
+            icon={
+              <CheckBoxOutlineBlankIcon
+                style={{ fontSize: 17, color: "#3F45D9" }}
+              />
+            }
             checkedIcon={
               <CheckBoxIcon style={{ fontSize: 17, color: "#3F45D9" }} />
             }
@@ -144,7 +148,7 @@ const CheckboxList = (props) => {
       {/* <InputLabel id="select-label">{label}</InputLabel> */}
       <div className={styles.inputWrapper}>
         <input
-          className={[styles.input, styles.text].join(" ")}
+          className={[styles.text, styles.input].join(" ")}
           readOnly={true}
           onClick={handleClick}
           value={selectValue.tempState.join(", ")}
@@ -177,7 +181,7 @@ const CheckboxList = (props) => {
       <Tooltip
         arrow
         title={error || ""}
-        open={(error && touched) === true}
+        open={(error && touched && !open) === true}
         placement="bottom-start"
       >
         {inputUI}

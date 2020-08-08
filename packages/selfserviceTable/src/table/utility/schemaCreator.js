@@ -54,13 +54,22 @@ const toYup = (type) => {
       return "string";
   }
 };
-
+const isValueExist = (val) => {
+  return val != null && val != undefined;
+};
 const getYupData = (fieldType, JsonKey, JsonData) => {
   switch (JsonKey) {
     case "isRequired":
       return {
-        yupType: "required",
-        params: ["This field is required"],
+        yupType: "test",
+        params: [
+          "len",
+          "This field is required",
+          isCheckbox(fieldType)
+            ? (val) =>
+                isValueExist(val) && typeof val === "array" && val.length > 0
+            : (val) => isValueExist(val) && val.length > 0,
+        ],
       };
     case "email":
       return { yupType: "email", params: ["This email is not valid"] };
@@ -130,6 +139,9 @@ const getYupData = (fieldType, JsonKey, JsonData) => {
 };
 const isDateField = (fieldType) => {
   return toYup(fieldType) === "date";
+};
+const isCheckbox = (fieldType) => {
+  return fieldType === "checkbox";
 };
 const getNumber = (value) => {
   if (!isNaN(value)) return parseFloat(value);

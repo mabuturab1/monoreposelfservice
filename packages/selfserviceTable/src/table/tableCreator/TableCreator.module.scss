@@ -43,3 +43,25 @@ table tr:last-child td:last-child {
   font-weight: 500;
   font-size: 1.2rem;
 }
+.scrollButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 95vh;
+
+  right: 0vw;
+  z-index: 100000;
+
+  background: rgba(0, 0, 50, 0.05);
+  cursor: pointer;
+
+  width: 3rem;
+}
+.scrollButton .scrollIcon {
+  opacity: 0.4;
+}
+
+.scrollButton:hover .scrollIcon {
+  opacity: 1;
+}

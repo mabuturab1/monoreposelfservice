@@ -10,7 +10,7 @@ const mapStateToProps = (state) => {
     tableData: state.tableData,
     tableHeader: state.tableHeader,
     serverError: state.serverError,
-
+    fetchNewDataTrigger: state.fetchData,
     tableHeaderPending: state.tableHeaderPending,
     tableDataPending: state.tableDataPending,
     totalReportItems: state.totalReportItems,
@@ -34,6 +34,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(
         actions.uploadFile(apiUrl, reportId, rowId, data, newKey, isSuccess)
       ),
+    updateQueryParams: (data) => dispatch(actions.updateQueryParams(data)),
     updateFieldData: (apiUrl, reportId, rowId, data, newKey, isSuccess) =>
       dispatch(
         actions.updateFieldData(

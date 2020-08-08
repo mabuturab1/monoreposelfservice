@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 
 import * as Yup from "yup";
 import schemaCreator from "../utility/schemaCreator";
@@ -12,10 +12,15 @@ import InfiniteLoader from "../infiniteLoader/InfiniteLoader";
 import { Paper } from "@material-ui/core";
 import InfoDialog from "../infoDialog/InfoDialog";
 import * as moment from "moment";
-import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faExclamationCircle,
+  faAngleRight,
+  faAngleLeft,
+} from "@fortawesome/free-solid-svg-icons";
 import Loader from "react-loader-spinner";
 import { CellTypes } from "../utility/cellTypes";
 import { getFormattedDate } from "../utility/objectsFunctions";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const TableCreator = (props) => {
   let {
     contentAddAble,
@@ -25,8 +30,14 @@ const TableCreator = (props) => {
     fieldEditAble,
     fieldDeleteAble,
     createAt,
+    fetchNewDataTrigger,
   } = { ...props };
+  let tableWrapper = useRef(null);
   const tableData = props.tableData || [];
+  const [currentTrigger, setCurrentTrigger] = useState(
+    fetchNewDataTrigger || 1
+  );
+
   let concatArr = [];
   if (createAt)
     concatArr.push({
@@ -59,7 +70,7 @@ const TableCreator = (props) => {
   const [editAllowed, setEditAllowed] = useState(
     props.editAllowed != null ? props.editAllowed : true
   );
-
+  let intervalTimer = useRef(null);
   let {
     apiUrl,
     currentReportId,
@@ -89,7 +100,15 @@ const TableCreator = (props) => {
         ...data,
       };
     };
-
+    if (fetchNewDataTrigger && fetchNewDataTrigger != currentTrigger) {
+      console.log("triggering new data fetch");
+      setCurrentTrigger(fetchNewDataTrigger);
+      setQueryParams({
+        ...queryParams,
+        pageNumber: 0,
+        isNewKey: true,
+      });
+    }
     for (let i = 0; i < tableHeader.length; i++) {
       const { key, type } = tableHeader[i];
       const tableHeaderProps = { ...tableHeader[i] };
@@ -179,7 +198,7 @@ const TableCreator = (props) => {
       params.append("end", getFormattedDate(queryParams.end));
 
     mFetchTableData(apiUrl, currentReportId, params, queryParams.isNewKey);
-  }, [mFetchTableData, apiUrl, currentReportId, queryParams]);
+  }, [mFetchTableData, apiUrl, currentReportId, queryParams, currentTrigger]);
 
   const updateApiUrl = useCallback(() => {
     mUpdateApiUrl(apiUrl);
@@ -200,6 +219,7 @@ const TableCreator = (props) => {
       pageNumber: Math.max(0, queryParams.pageNumber + 1),
     };
     setQueryParams(newQueryParams);
+    if (props.updateQueryParams) props.updateQueryParams(newQueryParams);
   };
   // let getSortOrder = (data, isNewKey) => {
   //   if (isNewKey) return "ASC";
@@ -233,6 +253,7 @@ const TableCreator = (props) => {
         newQueryParams.pageNumber = 0;
       }
       setQueryParams(newQueryParams);
+      if (props.updateQueryParams) props.updateQueryParams(newQueryParams);
     }
   };
   useEffect(() => {
@@ -255,7 +276,7 @@ const TableCreator = (props) => {
 
   useEffect(() => {
     if (!staticData) fetchTableHeader(apiUrl, currentReportId);
-  }, [fetchTableHeader, apiUrl, currentReportId, staticData]);
+  }, [fetchTableHeader, apiUrl, currentReportId, staticData, currentTrigger]);
   const updateFieldData = async (
     rowId,
     data,
@@ -320,31 +341,37 @@ const TableCreator = (props) => {
       );
     }
     if (newFilter.toString() !== queryParams.filters.toString()) {
-      setQueryParams({
+      let newQueryParams = {
         ...queryParams,
         pageNumber: 0,
         isNewKey: true,
         filters: newFilter,
-      });
+      };
+      setQueryParams(newQueryParams);
+      if (props.updateQueryParams) props.updateQueryParams(newQueryParams);
     }
   };
   const handleSearch = (searchValue) => {
-    setQueryParams({
+    let newQueryParams = {
       ...queryParams,
       pageNumber: 0,
       isNewKey: true,
       search: searchValue || "",
-    });
+    };
+    setQueryParams(newQueryParams);
+    if (props.updateQueryParams) props.updateQueryParams(newQueryParams);
   };
 
   const handleDateRange = (dateRange) => {
-    setQueryParams({
+    let newQueryParams = {
       ...queryParams,
       pageNumber: 0,
       isNewKey: true,
       start: dateRange.startDate,
       end: dateRange.endDate,
-    });
+    };
+    setQueryParams(newQueryParams);
+    if (props.updateQueryParams) props.updateQueryParams(newQueryParams);
   };
   const tableActionsClicked = (id, rowId) => {
     console.log("table actions clicked", id, rowId);
@@ -355,6 +382,32 @@ const TableCreator = (props) => {
   let tableWidth = Object.keys(columnsWidth)
     .map((el) => columnsWidth[el])
     .reduce((a, b) => a + b, 0);
+  const onScroll = () => {};
+  const setScrollToEnd = () => {
+    let step = 50;
+    if (tableWidth <= tableWrapper.current.offsetWidth) return;
+    intervalTimer.current = setInterval(() => {
+      console.log("timer running");
+      tableWrapper.current.scrollLeft += step;
+      if (
+        tableWrapper.current.scrollLeft >=
+        tableWidth - tableWrapper.current.offsetWidth - 15
+      ) {
+        clearInterval(intervalTimer.current);
+      }
+    }, 5);
+  };
+  const setScrollToStart = () => {
+    let step = 50;
+    if (tableWidth <= tableWrapper.current.offsetWidth) return;
+    intervalTimer.current = setInterval(() => {
+      console.log("timer running");
+      tableWrapper.current.scrollLeft -= step;
+      if (tableWrapper.current.scrollLeft <= 15) {
+        clearInterval(intervalTimer.current);
+      }
+    }, 5);
+  };
   return (
     <TableContext.Provider
       value={{
@@ -367,6 +420,29 @@ const TableCreator = (props) => {
           cellTypes: CellTypes,
         }}
       >
+        {tableData.length > 0 ? (
+          <React.Fragment>
+            <div className={styles.scrollButton} onClick={setScrollToEnd}>
+              <FontAwesomeIcon
+                className={styles.scrollIcon}
+                icon={faAngleRight}
+                size={"lg"}
+              />
+            </div>
+            <div
+              className={styles.scrollButton}
+              style={{ left: "0vw", right: "unset" }}
+              onClick={setScrollToStart}
+            >
+              <FontAwesomeIcon
+                className={styles.scrollIcon}
+                icon={faAngleLeft}
+                size={"lg"}
+              />
+            </div>
+          </React.Fragment>
+        ) : null}
+
         <div
           style={{
             display: "flex",
@@ -401,7 +477,11 @@ const TableCreator = (props) => {
               </div>
             </div>
           ) : null}
-          <div className={styles.wrapper}>
+          <div
+            ref={tableWrapper}
+            className={styles.wrapper}
+            onScroll={onScroll}
+          >
             <Paper
               style={{
                 margin: "0 auto",

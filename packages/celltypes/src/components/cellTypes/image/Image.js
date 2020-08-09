@@ -50,7 +50,7 @@ const Image = (props) => {
       setSelectedFile(newFile);
       setFieldValue(name, null);
     }
-    alert("Sorry" + "Uploaded image is not invalid");
+    alert("Sorry, " + "Uploaded image is not invalid");
   };
 
   const inputUI = (

@@ -288,7 +288,7 @@ const TableCreator = (props) => {
         let file = new File([blob], "test", { type: "image/png" });
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("type", req === "IMAGE_UPDATE" ? "IMAGE" : "FILE");
+        formData.append("type", req === "IMAGE_UPDATE" ? "IMAGE" : "PDF");
 
         props.uploadFile(
           apiUrl,

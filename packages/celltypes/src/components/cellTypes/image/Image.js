@@ -26,6 +26,7 @@ const Image = (props) => {
     image: value,
     updated: true,
   });
+
   let src = value;
   if (!selectedFile.image) src = BlankImage;
   if (selectedFile.image) src = selectedFile.image;
@@ -49,6 +50,7 @@ const Image = (props) => {
       setSelectedFile(newFile);
       setFieldValue(name, null);
     }
+    alert("Sorry" + "Uploaded image is not invalid");
   };
 
   const inputUI = (

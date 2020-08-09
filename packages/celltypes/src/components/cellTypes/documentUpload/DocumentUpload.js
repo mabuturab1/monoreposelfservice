@@ -1,9 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import styles from "./DocumentUpload.module.scss";
 import InputIcon from "../../common/HOC/inputIcon/InputIcon";
 import Tooltip from "../../tooltip/Tooltip";
 import { faFile } from "@fortawesome/free-solid-svg-icons";
 import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
+import { validateExtensions } from "../../common/utility";
 
 const DocumentUpload = (props) => {
   const {
@@ -15,18 +16,20 @@ const DocumentUpload = (props) => {
     setFieldValue,
     error,
     touched,
-    value,
+    value: mValue,
     setFieldTouched,
     updateFieldData,
   } = { ...props };
+  let value = mValue;
+  if (!value) value = {};
   const [selectedFile, setSelectedFile] = useState({
-    filePath: value || DummyInitValues["DOCUMENT"],
-    tempFilePath: value || DummyInitValues["DOCUMENT"],
+    filePath: value.f || DummyInitValues["DOCUMENT"],
+    tempFilePath: value.f || DummyInitValues["DOCUMENT"],
     document: null,
     updated: true,
   });
   let src = value;
-
+  let localFileName = useRef(null);
   if (selectedFile.document) src = URL.createObjectURL(selectedFile.document);
 
   const onLoad = (updatedValue) => {
@@ -46,7 +49,14 @@ const DocumentUpload = (props) => {
       setFieldValue(name, null);
     }
   };
-  if (value && selectedFile.filePath != value)
+  const getName = () => {
+    if (localFileName.current) return String(localFileName.current);
+    if (selectedFile.tempFilePath && selectedFile.tempFilePath != "")
+      return String(selectedFile.tempFilePath);
+
+    return "Change Selected file";
+  };
+  if (mValue && mValue.f && selectedFile.filePath != mValue.f)
     setSelectedFile({
       ...selectedFile,
       filePath: value,
@@ -68,12 +78,12 @@ const DocumentUpload = (props) => {
                 event.currentTarget.files.length < 1
               )
                 return;
-              console.log(
-                "on changed in doc upload",
-                event,
-                event.currentTarget.files[0]
-              );
+
+              if (!validateExtensions(event.currentTarget.files[0], [".pdf"])) {
+                return;
+              }
               let tempPath = URL.createObjectURL(event.currentTarget.files[0]);
+              localFileName.current = event.currentTarget.files[0].name;
               setSelectedFile({
                 ...selectedFile,
                 tempFilePath: tempPath,
@@ -84,15 +94,16 @@ const DocumentUpload = (props) => {
               setTimeout(() => onLoad(tempPath), 10);
             }}
             placeholder="Kindly select to upload a file"
-            accept="/*"
+            accept="application/pdf"
           />
           {selectedFile.tempFilePath && selectedFile.tempFilePath != ""
-            ? "Change Selected file"
+            ? getName()
             : " Kindly select a file to upload"}
         </label>
       </InputIcon>
     </div>
   );
+
   return (
     <React.Fragment>
       <Tooltip

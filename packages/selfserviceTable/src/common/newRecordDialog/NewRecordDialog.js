@@ -49,7 +49,7 @@ const NewRecordDialog = (props) => {
     setDataUpdateStatus(DataUpdateStatus.updating);
     Object.keys(docValues).forEach(async (el) => {
       let myCell = getTableHeaderCell(el);
-      let type = "FILE";
+      let type = "PDF";
       if (myCell && myCell.type.toUpperCase() === "IMAGE") type = "IMAGE";
       let formData = await getFormData(docValues[el], type);
       isWaitForData = true;

@@ -221,17 +221,8 @@ const TableCreator = (props) => {
     setQueryParams(newQueryParams);
     if (props.updateQueryParams) props.updateQueryParams(newQueryParams);
   };
-  // let getSortOrder = (data, isNewKey) => {
-  //   if (isNewKey) return "ASC";
-  //   if (data === "") return "ASC";
-  //   if (data === "ASC") return "DESC";
-  //   if (data === "DESC") return "";
-  // };
+
   let onHeaderClicked = (key, selectedOption = "") => {
-    // let currentSortOrder = getSortOrder(
-    //   queryParams.order,
-    //   key !== queryParams.key
-    // );
     console.log("key is", key, "option is", selectedOption);
     let newQueryParams = {};
     if (key === "indexIdNumber") return;

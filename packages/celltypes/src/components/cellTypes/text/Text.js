@@ -22,6 +22,7 @@ const Text = (props) => {
     disableReadOnlyMode,
     type,
     unit,
+    serverFieldType,
   } = { ...props };
 
   const [readOnly, setReadOnly] = useState(true);
@@ -31,6 +32,7 @@ const Text = (props) => {
     tempState: value || "",
   });
   const checkForDecimalCount = (value) => {
+    if (!value || value === "") return value;
     let myVal = value;
     if (decimalCount && !isNaN(decimalCount)) {
       myVal =
@@ -38,6 +40,15 @@ const Text = (props) => {
         Math.pow(10, +decimalCount);
     }
     return myVal;
+  };
+  const onKeyDown = (e) => {
+    if (
+      (serverFieldType === "NUMBER" && event.key === ".") ||
+      event.key === ","
+    ) {
+      e.preventDefault();
+      return;
+    }
   };
   const inputChanged = (e) => {
     setInputValue({
@@ -80,6 +91,7 @@ const Text = (props) => {
           placeholder={props.editAllowed ? placeholder : ""}
           readOnly={readOnly && !disableReadOnlyMode}
           onDoubleClick={() => setReadOnly(false || !props.editAllowed)}
+          onKeyDown={onKeyDown}
           onChange={inputChanged}
           onBlur={(e) => {
             // onBlur(e);

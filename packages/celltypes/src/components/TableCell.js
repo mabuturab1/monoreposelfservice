@@ -145,6 +145,7 @@ const MyTableCell = (props) => {
       ...props.serverData,
       ...props.item,
       ...props.handlerFunctions,
+      serverFieldType: item.type.toUpperCase(),
       rowData: props.rowData,
       tableActionsClicked: props.tableActionsClicked,
       customStyles: props.customStyles,

@@ -59,7 +59,7 @@ const isValueExist = (val) => {
 };
 const hasValue = (val) => {
   if (typeof val === "object") return Object.keys(val).length > 0;
-  else return val.length > 0;
+  else return String(val).length > 0;
 };
 const getYupData = (fieldType, JsonKey, JsonData) => {
   switch (JsonKey) {

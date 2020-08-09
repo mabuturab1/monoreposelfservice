@@ -107,17 +107,19 @@ const reducer = (state = initialState, action) => {
         totalReportItems: action.payload.totalReportItems,
       });
     case actionTypes.DELETE_CONTENT_SUCCESS:
-      console.log(
-        "delete",
-        action.type,
-        action.payload,
-        deleteTableContent(state.tableData, action.payload)
-      );
       return updateObject(state, {
         tableData: addIndexNumber(
           deleteTableContent(state.tableData, action.payload),
           0
         ),
+        snackbarStatus: {
+          isUpdating: false,
+          error: false,
+          cellKey: "",
+          updated: true,
+          content: "Data is deleted successfully",
+        },
+        totalReportItems: state.totalReportItems - 1,
       });
     case actionTypes.CLEAR_TABLE_DATA:
       return updateObject(state, { tableData: [] });
@@ -200,16 +202,7 @@ const reducer = (state = initialState, action) => {
           content: "Deleting Table Data",
         },
       });
-    case actionTypes.DELETE_CONTENT_SUCCESS:
-      return updateObject(state, {
-        snackbarStatus: {
-          isUpdating: false,
-          error: false,
-          cellKey: "",
-          updated: true,
-          content: "Data is deleted successfully",
-        },
-      });
+
     case actionTypes.UPDATING_FIELD_DATA_SUCCESS:
       if (!action.payload.id || !action.payload.data) return { ...state };
       let newTableData = getUpdatedTableData(state.tableData, action.payload);

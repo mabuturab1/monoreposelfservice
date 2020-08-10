@@ -506,7 +506,7 @@ const TableCreator = (props) => {
                 }}
               >
                 {(formData) =>
-                  props.tableHeaderPending || tableData.length < 1 ? (
+                  props.tableHeaderPending ? (
                     <div
                       style={{
                         width: staticData ? "500px" : "100vw",
@@ -517,7 +517,7 @@ const TableCreator = (props) => {
                         alignItems: "center",
                       }}
                     >
-                      {props.tableDataPending || props.tableHeaderPending ? (
+                      {props.tableDataPending ? (
                         <Loader
                           type="ThreeDots"
                           color="#00BFFF"

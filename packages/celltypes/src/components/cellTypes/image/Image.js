@@ -20,10 +20,11 @@ const Image = (props) => {
     setFieldTouched,
     updateFieldData,
   } = { ...props };
-  let value = (mValue || {}).f;
+  let value = mValue;
+  if (!value) value = {};
 
   const [selectedFile, setSelectedFile] = useState({
-    image: value,
+    image: value.f,
     updated: true,
   });
 
@@ -51,7 +52,13 @@ const Image = (props) => {
       setFieldValue(name, null);
     }
   };
-
+  if (mValue && mValue.f && selectedFile.image != mValue.f) {
+    setSelectedFile({
+      ...selectedFile,
+      image: mValue.f,
+      updated: true,
+    });
+  }
   const inputUI = (
     <div className={styles.wrapper}>
       <img

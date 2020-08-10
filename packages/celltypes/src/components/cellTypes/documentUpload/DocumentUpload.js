@@ -61,12 +61,13 @@ const DocumentUpload = (props) => {
       ? selectedFile.tempFilePath
       : undefined;
   };
-  if (mValue && mValue.f && selectedFile.filePath != mValue.f)
+  if (mValue && mValue.f && selectedFile.filePath != mValue.f) {
     setSelectedFile({
       ...selectedFile,
-      filePath: value,
-      tempFilePath: value,
+      filePath: mValue.f,
+      tempFilePath: mValue.f,
     });
+  }
   const inputUI = (
     <div className={styles.wrapper}>
       <InputIcon icon={faFile}>

@@ -162,6 +162,7 @@ const FilterHeader = (props) => {
     styles.label,
     styles.topHeaderItemWrapper,
     styles.applyElevation,
+    styles.backgroundWhite,
   ].join(" ");
   const getFormattedDate = (dateObj, fallback = "") => {
     if (!dateObj) return fallback;

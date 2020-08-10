@@ -7,6 +7,8 @@
 .imageStyle {
   width: 4rem;
   height: 4rem;
+  object-fit: cover;
+  object-position: center;
 }
 .fileInput {
   width: 4rem;

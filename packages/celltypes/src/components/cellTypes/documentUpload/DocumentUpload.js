@@ -49,12 +49,17 @@ const DocumentUpload = (props) => {
       setFieldValue(name, null);
     }
   };
-  const getName = () => {
-    if (localFileName.current) return String(localFileName.current);
-    if (selectedFile.tempFilePath && selectedFile.tempFilePath != "")
-      return String(selectedFile.tempFilePath);
+  // const getName = () => {
+  //   if (localFileName.current) return String(localFileName.current);
+  //   if (selectedFile.tempFilePath && selectedFile.tempFilePath != "")
+  //     return String(selectedFile.tempFilePath);
 
-    return "Change Selected file";
+  //   return "Change Selected file";
+  // };
+  const getHref = () => {
+    return selectedFile.tempFilePath != null && selectedFile.tempFilePath != ""
+      ? selectedFile.tempFilePath
+      : undefined;
   };
   if (mValue && mValue.f && selectedFile.filePath != mValue.f)
     setSelectedFile({
@@ -66,39 +71,51 @@ const DocumentUpload = (props) => {
     <div className={styles.wrapper}>
       <InputIcon icon={faFile}>
         <label className={styles.fileInput}>
-          <input
-            style={{ display: "none" }}
-            type={props.editAllowed ? "file" : "text"}
-            disabled={!props.editAllowed}
-            onBlur={(e) => {}}
-            {...{ name, disabled, label, onBlur, placeholder }}
-            onChange={(event) => {
-              if (
-                !event.currentTarget.files ||
-                event.currentTarget.files.length < 1
-              )
-                return;
+          {props.editAllowed ? (
+            <React.Fragment>
+              <input
+                style={{ display: "none", overflow: "hidden" }}
+                type={props.editAllowed ? "file" : "text"}
+                disabled={!props.editAllowed}
+                onBlur={(e) => {}}
+                {...{ name, disabled, label, onBlur, placeholder }}
+                onChange={(event) => {
+                  if (
+                    !event.currentTarget.files ||
+                    event.currentTarget.files.length < 1
+                  )
+                    return;
 
-              if (!validateExtensions(event.currentTarget.files[0], [".pdf"])) {
-                return;
-              }
-              let tempPath = URL.createObjectURL(event.currentTarget.files[0]);
-              localFileName.current = event.currentTarget.files[0].name;
-              setSelectedFile({
-                ...selectedFile,
-                tempFilePath: tempPath,
-                document: event.currentTarget.files[0],
-                updated: false,
-              });
-              updateFieldData(tempPath, "FILE_UPDATE");
-              setTimeout(() => onLoad(tempPath), 10);
-            }}
-            placeholder="Kindly select to upload a file"
-            accept="application/pdf"
-          />
-          {selectedFile.tempFilePath && selectedFile.tempFilePath != ""
-            ? getName()
-            : " Kindly select a file to upload"}
+                  if (
+                    !validateExtensions(event.currentTarget.files[0], [".pdf"])
+                  ) {
+                    return;
+                  }
+                  let tempPath = URL.createObjectURL(
+                    event.currentTarget.files[0]
+                  );
+                  localFileName.current = event.currentTarget.files[0].name;
+                  setSelectedFile({
+                    ...selectedFile,
+                    tempFilePath: tempPath,
+                    document: event.currentTarget.files[0],
+                    updated: false,
+                  });
+                  updateFieldData(tempPath, "FILE_UPDATE");
+                  setTimeout(() => onLoad(tempPath), 10);
+                }}
+                placeholder="Kindly select to upload a file"
+                accept="application/pdf"
+              />
+              Kindly select to upload a file
+            </React.Fragment>
+          ) : (
+            <a className={styles.nolink} href={getHref()}>
+              {selectedFile.tempFilePath && selectedFile.tempFilePath != ""
+                ? "Download selected file"
+                : " Kindly select a file to upload"}
+            </a>
+          )}
         </label>
       </InputIcon>
     </div>

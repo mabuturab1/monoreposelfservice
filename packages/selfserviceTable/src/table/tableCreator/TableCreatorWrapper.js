@@ -30,9 +30,17 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(actions.updateCurrentReportId(currentReportId)),
     deleteTableContent: (apiUrl, reportId, rowId) =>
       dispatch(actions.deleteTableContent(apiUrl, reportId, rowId)),
-    uploadFile: (apiUrl, reportId, rowId, data, newKey, isSuccess) =>
+    uploadFile: (apiUrl, reportId, rowId, data, type, newKey, isSuccess) =>
       dispatch(
-        actions.uploadFile(apiUrl, reportId, rowId, data, newKey, isSuccess)
+        actions.uploadFile(
+          apiUrl,
+          reportId,
+          rowId,
+          data,
+          type,
+          newKey,
+          isSuccess
+        )
       ),
     updateQueryParams: (data) => dispatch(actions.updateQueryParams(data)),
     updateFieldData: (apiUrl, reportId, rowId, data, newKey, isSuccess) =>

@@ -25,7 +25,7 @@ export const getTableDataSuccess = (data) => {
 export const getUploadFileStart = (content = null) => {
   return {
     type: actionTypes.START_UPLOAD_FILE,
-    payload: content ? content : "Kindly wait while file is uploading",
+    payload: content != null ? content : "Kindly wait while file is uploading",
   };
 };
 export const getUploadFileFailed = () => {
@@ -261,16 +261,27 @@ export const getTableHeader = (apiUrl, reportId) => {
       });
   };
 };
+const getFormData = async (localData, type) => {
+  console.log("local image file url is", localData);
 
+  if (!localData) return;
+  let blob = await fetch(localData).then((r) => r.blob());
+  let file = new File([blob], "test");
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("type", type);
+  return formData;
+};
 export const uploadFile = (
   apiUrl,
   reportId,
   rowId,
   data,
+  type,
   newKey,
   isSuccess
 ) => {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     const currentState = getState().snackbarStatus || {};
     console.log("is updating state", currentState.isUpdating);
     if (currentState.isUpdating) {
@@ -278,8 +289,9 @@ export const uploadFile = (
       return;
     }
     dispatch(getUploadFileStart());
+    let formData = await getFormData(data, type);
     axios
-      .post(`${"/vbeta"}/uploads`, data, config)
+      .post(`${"/vbeta"}/uploads`, formData, config)
       .then((response) => {
         if (response) {
           dispatch(getUploadFileSuccess(response.data));

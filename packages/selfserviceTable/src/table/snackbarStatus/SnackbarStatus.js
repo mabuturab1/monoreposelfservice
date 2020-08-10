@@ -78,7 +78,12 @@ const mapStateToProps = (state) => {
 
 const areEqualSnackbars = (prevProps, nextProps) => {
   if (!prevProps.updateStatus || !nextProps.updateStatus) return false;
-
+  console.log(
+    "SNACKBAR STATUS",
+    Object.keys(prevProps.updateStatus).filter(
+      (el) => prevProps.updateStatus[el] !== nextProps.updateStatus[el]
+    )
+  );
   return (
     Object.keys(prevProps.updateStatus).filter(
       (el) => prevProps.updateStatus[el] !== nextProps.updateStatus[el]

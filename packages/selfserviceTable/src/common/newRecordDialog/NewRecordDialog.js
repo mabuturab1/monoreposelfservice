@@ -26,17 +26,17 @@ const NewRecordDialog = (props) => {
   };
 
   const id = open ? "simple-popover" : undefined;
-  const getFormData = async (localData, type) => {
-    console.log("local image file url is", localData);
+  // const getFormData = async (localData, type) => {
+  //   console.log("local image file url is", localData);
 
-    if (!localData) return;
-    let blob = await fetch(localData).then((r) => r.blob());
-    let file = new File([blob], "test");
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("type", type);
-    return formData;
-  };
+  //   if (!localData) return;
+  //   let blob = await fetch(localData).then((r) => r.blob());
+  //   let file = new File([blob], "test");
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //   formData.append("type", type);
+  //   return formData;
+  // };
   const getTableHeaderCell = (key) => {
     return tableHeader.find((el) => el.key === key);
   };
@@ -51,14 +51,14 @@ const NewRecordDialog = (props) => {
       let myCell = getTableHeaderCell(el);
       let type = "PDF";
       if (myCell && myCell.type.toUpperCase() === "IMAGE") type = "IMAGE";
-      let formData = await getFormData(docValues[el], type);
       isWaitForData = true;
       console.log("uploading file", el);
       props.uploadFile(
         props.apiUrl,
         props.reportId,
         null,
-        formData,
+        docValues[el],
+        type,
         el,
         (isSuccess, result) => {
           if (!isSuccess) setDataUpdateStatus(DataUpdateStatus.error);
@@ -124,9 +124,17 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    uploadFile: (apiUrl, reportId, rowId, data, newKey, isSuccess) =>
+    uploadFile: (apiUrl, reportId, rowId, data, type, newKey, isSuccess) =>
       dispatch(
-        actions.uploadFile(apiUrl, reportId, rowId, data, newKey, isSuccess)
+        actions.uploadFile(
+          apiUrl,
+          reportId,
+          rowId,
+          data,
+          type,
+          newKey,
+          isSuccess
+        )
       ),
     addTableContent: (apiUrl, reportId, data, isSuccess) =>
       dispatch(actions.addTableContent(apiUrl, reportId, data, isSuccess)),

@@ -8,12 +8,7 @@ import styles from "./NewRecordDialog.module.scss";
 
 import { Button, CircularProgress } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTimes,
-  faPlusCircle,
-  faSave,
-  faRedo,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faSave, faRedo } from "@fortawesome/free-solid-svg-icons";
 import { DataUpdateStatus } from "../../table/constants/Constants";
 
 const NewRecordData = (props) => {

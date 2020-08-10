@@ -93,6 +93,15 @@ const TableCreator = (props) => {
     end: new Date(moment.now()),
     start: new Date(moment().subtract(1, "months")),
   });
+  if (fetchNewDataTrigger && fetchNewDataTrigger !== currentTrigger) {
+    console.log("triggering new data fetch");
+    setCurrentTrigger(fetchNewDataTrigger);
+    setQueryParams({
+      ...queryParams,
+      pageNumber: 0,
+      isNewKey: true,
+    });
+  }
   const createHeaderSpecs = useCallback(() => {
     let cellSpecs = [];
     let updateTableHeaderProps = (type, data) => {
@@ -100,15 +109,7 @@ const TableCreator = (props) => {
         ...data,
       };
     };
-    if (fetchNewDataTrigger && fetchNewDataTrigger != currentTrigger) {
-      console.log("triggering new data fetch");
-      setCurrentTrigger(fetchNewDataTrigger);
-      setQueryParams({
-        ...queryParams,
-        pageNumber: 0,
-        isNewKey: true,
-      });
-    }
+
     for (let i = 0; i < tableHeader.length; i++) {
       const { key, type } = tableHeader[i];
       const tableHeaderProps = { ...tableHeader[i] };
@@ -198,7 +199,7 @@ const TableCreator = (props) => {
       params.append("end", getFormattedDate(queryParams.end));
 
     mFetchTableData(apiUrl, currentReportId, params, queryParams.isNewKey);
-  }, [mFetchTableData, apiUrl, currentReportId, queryParams, currentTrigger]);
+  }, [mFetchTableData, apiUrl, currentReportId, queryParams]);
 
   const updateApiUrl = useCallback(() => {
     mUpdateApiUrl(apiUrl);
@@ -284,17 +285,14 @@ const TableCreator = (props) => {
         console.log("local image file url is", localData);
 
         if (!localData) return;
-        let blob = await fetch(localData).then((r) => r.blob());
-        let file = new File([blob], "test", { type: "image/png" });
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("type", req === "IMAGE_UPDATE" ? "IMAGE" : "PDF");
 
+        let type = req === "IMAGE_UPDATE" ? "IMAGE" : "PDF";
         props.uploadFile(
           apiUrl,
           props.currentReportId,
           rowId,
-          formData,
+          localData,
+          type,
           newKey,
           isSuccess
         );

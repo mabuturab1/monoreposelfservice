@@ -55,7 +55,7 @@ const toYup = (type) => {
   }
 };
 const isValueExist = (val) => {
-  return val != null && val != undefined;
+  return val !== null && val !== undefined;
 };
 const hasValue = (val) => {
   if (typeof val === "object") return Object.keys(val).length > 0;
@@ -70,8 +70,7 @@ const getYupData = (fieldType, JsonKey, JsonData) => {
           "len",
           "This field is required",
           isCheckbox(fieldType)
-            ? (val) =>
-                isValueExist(val) && typeof val === "array" && val.length > 0
+            ? (val) => isValueExist(val) && Array.isArray(val) && val.length > 0
             : (val) => isValueExist(val) && hasValue(val),
         ],
       };

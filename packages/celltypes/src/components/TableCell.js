@@ -169,6 +169,8 @@ const MyTableCell = (props) => {
         key={props.myKey}
         className={props.className}
         style={{
+          maxWidth: "100%",
+          overflow: "visible",
           position: "relative",
           height: props.rowHeight,
           border: "none",

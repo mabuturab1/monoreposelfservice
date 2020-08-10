@@ -1,11 +1,7 @@
 import React, { useRef, useState } from "react";
 import styles from "./SingleTableHeader.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSort,
-  faChevronDown,
-  faChevronUp,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import TableCell from "@material-ui/core/TableCell";
 import TableHeaderSettings from "../tableHeaderSettingsDropdown/TableHeaderSettingsDropdown";
 import AddIcon from "@material-ui/icons/AddCircleOutline";

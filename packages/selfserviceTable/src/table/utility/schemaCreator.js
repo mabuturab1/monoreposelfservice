@@ -57,6 +57,10 @@ const toYup = (type) => {
 const isValueExist = (val) => {
   return val !== null && val !== undefined;
 };
+const checkValidValue = (val) => {
+  if (isValueExist(val)) return val;
+  else return null;
+};
 const hasValue = (val) => {
   if (typeof val === "object") return Object.keys(val).length > 0;
   else return String(val).length > 0;
@@ -84,11 +88,10 @@ const getYupData = (fieldType, JsonKey, JsonData) => {
           "len",
           `Please use Indonesian prefix in format ${JsonData[JsonKey]}xxxxxx`,
           (val) => {
-            return (
-              val &&
-              val.toString().slice(0, JsonData[JsonKey].length) ===
-                JsonData[JsonKey].toString()
-            );
+            return checkValidValue(val) == null
+              ? false
+              : val.toString().slice(0, JsonData[JsonKey].length) ===
+                  JsonData[JsonKey].toString();
           },
         ],
       };
@@ -98,7 +101,10 @@ const getYupData = (fieldType, JsonKey, JsonData) => {
         params: [
           "len",
           `The field cannot exceed ${JsonData[JsonKey]} characters,whitespace included`,
-          (val) => val && val.toString().length <= getNumber(JsonData[JsonKey]),
+          (val) =>
+            checkValidValue(val) == null
+              ? false
+              : val.toString().length <= getNumber(JsonData[JsonKey]),
         ],
       };
 
@@ -108,7 +114,10 @@ const getYupData = (fieldType, JsonKey, JsonData) => {
         params: [
           "len",
           `Must be minimum ${JsonData[JsonKey]} characters`,
-          (val) => val && val.toString().length >= getNumber(JsonData[JsonKey]),
+          (val) =>
+            checkValidValue(val) == null
+              ? false
+              : val.toString().length >= getNumber(JsonData[JsonKey]),
         ],
       };
 
@@ -120,7 +129,9 @@ const getYupData = (fieldType, JsonKey, JsonData) => {
               "len",
               `Must be maximum ${JsonData[JsonKey]}`,
               (val) =>
-                val && val && getNumber(val) <= getNumber(JsonData[JsonKey]),
+                checkValidValue(val) == null
+                  ? false
+                  : getNumber(val) <= getNumber(JsonData[JsonKey]),
             ]
           : null,
       };
@@ -132,7 +143,9 @@ const getYupData = (fieldType, JsonKey, JsonData) => {
               "len",
               `Must be minimum ${JsonData[JsonKey]}`,
               (val) =>
-                val && val && getNumber(val) >= getNumber(JsonData[JsonKey]),
+                checkValidValue(val) == null
+                  ? false
+                  : getNumber(val) >= getNumber(JsonData[JsonKey]),
             ]
           : null,
       };
@@ -147,7 +160,9 @@ const isCheckbox = (fieldType) => {
   return fieldType === "checkbox";
 };
 const getNumber = (value) => {
-  if (!isNaN(value)) return parseFloat(value);
-  return 0;
+  if (!isNaN(value)) {
+    return parseFloat(value);
+  }
+  return -1 * Infinity;
 };
 export default schemaCreator;

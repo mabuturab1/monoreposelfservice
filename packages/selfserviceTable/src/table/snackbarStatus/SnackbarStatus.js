@@ -24,6 +24,7 @@ const SnackbarStatus = (props) => {
 
     setShowSnackbar(false);
     setTimeout(() => {
+      console.log("RESETTING MESSAGE");
       setSeverity((severity) => (severity !== "info" ? "info" : severity));
       setMessage((message) =>
         message !== updatingMessage ? updatingMessage : message
@@ -46,10 +47,12 @@ const SnackbarStatus = (props) => {
     let data = updateStatus.isUpdating
       ? snackbarData.content || updatingMessage
       : updateStatus.updated
-      ? `${updateStatus.cellKey} updated successfully`
-      : `An error occurred while updating ${updateStatus.cellKey}`;
+      ? snackbarData.content || `${updateStatus.cellKey} updated successfully`
+      : snackbarData.content ||
+        `An error occurred while updating ${updateStatus.cellKey}`;
 
     if (!showSnackbar) setShowSnackbar(true);
+    console.log("SETTING SNACKBAR MESSAGE", message, data, message != data);
     setMessage((message) => (message !== data ? data : message));
     setSeverity((severity) =>
       severity !== severityVal ? severityVal : severity

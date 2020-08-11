@@ -3,7 +3,13 @@ import styles from "./Image.module.scss";
 import BlankImage from "../../../assets/images/blankImage.png";
 import Tooltip from "../../tooltip/Tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEdit,
+  faExclamationCircle,
+  faImage,
+} from "@fortawesome/free-solid-svg-icons";
+import InfoDialog from "../../common/infoDialog/InfoDialog";
+import LightBox from "../../common/lightBox/LightBox";
 
 const Image = (props) => {
   const {
@@ -22,20 +28,21 @@ const Image = (props) => {
   } = { ...props };
   let value = mValue;
   if (!value) value = {};
-
+  let src = value.t;
+  if (!src) src = BlankImage;
   const [selectedFile, setSelectedFile] = useState({
-    image: value.f,
+    image: src,
+    tempImage: src,
     updated: true,
   });
-
-  let src = value;
-  if (!selectedFile.image) src = BlankImage;
-  if (selectedFile.image) src = selectedFile.image;
+  const [showError, setShowError] = useState(false);
+  const [showImage, setShowImage] = useState(false);
   const onLoad = (event) => {
     if (!selectedFile.updated) {
-      if (updateFieldData) updateFieldData(selectedFile.image, "IMAGE_UPDATE");
+      if (updateFieldData)
+        updateFieldData(selectedFile.tempImage, "IMAGE_UPDATE");
 
-      setTimeout(() => setFieldValue(name, selectedFile.image), 10);
+      setTimeout(() => setFieldValue(name, selectedFile.tempImage), 10);
 
       const newFile = { ...selectedFile };
       setTimeout(() => setFieldTouched(name, true), 10);
@@ -45,30 +52,48 @@ const Image = (props) => {
   };
   const onError = (event) => {
     if (!selectedFile.updated) {
-      const newFile = { ...selectedFile };
-      newFile.image = null;
+      const newFile = { ...selectedFile, image: src, tempImage: src };
       newFile.updated = true;
+      setShowError(true);
       setSelectedFile(newFile);
-      setFieldValue(name, null);
+
+      // setTimeout(() => {
+      //   setFieldValue(name, null);
+      //   setFieldTouched(name, true);
+      // });
     }
   };
-  if (mValue && mValue.f && selectedFile.image != mValue.f) {
+  if (touched)
+    console.log(
+      mValue && mValue.t && selectedFile.image != mValue.t,
+      mValue,
+      selectedFile
+    );
+  if (mValue && mValue.t && selectedFile.image != mValue.t) {
     setSelectedFile({
       ...selectedFile,
-      image: mValue.f,
+      image: mValue.t,
+      tempImage: mValue.t,
       updated: true,
     });
   }
+  const imageClicked = () => {
+    if (!mValue || !mValue.f) return;
+    console.log("image clicked");
+    setShowImage(true);
+  };
+
   const inputUI = (
     <div className={styles.wrapper}>
-      <img
-        src={src}
-        onError={onError}
-        onLoad={onLoad}
-        className={styles.imageStyle}
-        alt="user"
-      />
-
+      <div onClick={imageClicked} className={styles.imageWrapper}>
+        <img
+          src={selectedFile.tempImage || BlankImage}
+          onError={onError}
+          onLoad={onLoad}
+          className={styles.imageStyle}
+          alt="user"
+        />
+      </div>
       <label className={styles.fileInput}>
         <input
           style={{ display: "none" }}
@@ -77,9 +102,15 @@ const Image = (props) => {
           onBlur={(e) => {}}
           {...{ name, disabled, label, onBlur, placeholder }}
           onChange={(event) => {
-            if (setFieldValue) {
+            if (
+              setFieldValue &&
+              event.currentTarget.files &&
+              event.currentTarget.files.length > 0
+            ) {
+              console.log(event.currentTarget.files[0]);
               setSelectedFile({
-                image: URL.createObjectURL(event.currentTarget.files[0]),
+                ...selectedFile,
+                tempImage: URL.createObjectURL(event.currentTarget.files[0]),
                 updated: false,
               });
             }
@@ -107,6 +138,26 @@ const Image = (props) => {
   );
   return (
     <React.Fragment>
+      {showError ? (
+        <InfoDialog
+          open={showError}
+          icon={faExclamationCircle}
+          handleClose={() => setShowError(false)}
+          buttonTitle={"Okay"}
+          content={"The file is not valid image file"}
+          title={"Sorry"}
+        />
+      ) : null}
+      {showImage ? (
+        <LightBox
+          open={showImage}
+          icon={faImage}
+          handleClose={() => setShowImage(false)}
+          buttonTitle={"Close"}
+          src={mValue && mValue.f}
+          title={"Image Preview"}
+        />
+      ) : null}
       <Tooltip
         arrow
         title={error || ""}

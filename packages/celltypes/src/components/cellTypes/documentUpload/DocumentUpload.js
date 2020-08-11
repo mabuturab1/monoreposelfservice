@@ -2,9 +2,10 @@ import React, { useState, useContext, useRef } from "react";
 import styles from "./DocumentUpload.module.scss";
 import InputIcon from "../../common/HOC/inputIcon/InputIcon";
 import Tooltip from "../../tooltip/Tooltip";
-import { faFile } from "@fortawesome/free-solid-svg-icons";
+import { faFile, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 import { validateExtensions } from "../../common/utility";
+import InfoDialog from "../../common/infoDialog/InfoDialog";
 
 const DocumentUpload = (props) => {
   const {
@@ -28,6 +29,7 @@ const DocumentUpload = (props) => {
     document: null,
     updated: true,
   });
+  const [showError, setShowError] = useState(false);
   let src = value;
   let localFileName = useRef(null);
   if (selectedFile.document) src = URL.createObjectURL(selectedFile.document);
@@ -90,6 +92,7 @@ const DocumentUpload = (props) => {
                   if (
                     !validateExtensions(event.currentTarget.files[0], [".pdf"])
                   ) {
+                    setShowError(true);
                     return;
                   }
                   let tempPath = URL.createObjectURL(
@@ -124,6 +127,16 @@ const DocumentUpload = (props) => {
 
   return (
     <React.Fragment>
+      {showError ? (
+        <InfoDialog
+          open={showError}
+          icon={faExclamationCircle}
+          handleClose={() => setShowError(false)}
+          buttonTitle={"Okay"}
+          content={"The file is not valid pdf file"}
+          title={"Sorry"}
+        />
+      ) : null}
       <Tooltip
         arrow
         title={error || ""}

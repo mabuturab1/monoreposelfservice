@@ -30,8 +30,12 @@ const DateTime = (props) => {
   let decodeFormat = mDecodeFormat;
   let showFormat = mShowFormat;
   let value = null;
-  let dateValid = moment(mValue || DummyInitValues["DATETIME"]);
-  if (dateValid.isValid()) value = mValue;
+  let isDateValid = false;
+  let dateValid = moment(mValue);
+  if (dateValid.isValid()) {
+    value = mValue;
+    isDateValid = true;
+  }
   if (submitFormat)
     submitFormat = mSubmitFormat.replace("yyyy", "YYYY").replace("dd", "DD");
   if (decodeFormat)
@@ -41,12 +45,19 @@ const DateTime = (props) => {
   const [dateValOriginal, setDateValOriginal] = useState(value);
   const [dateVal, setDateVal] = useState(
     (value && moment(value, decodeFormat || submitFormat)) ||
-      moment(new Date(), decodeFormat || submitFormat)
+      moment(min || new Date(), decodeFormat || submitFormat)
   );
-
+  const updateDefaultValue = () => {
+    setDateVal(
+      (value && moment(value, decodeFormat || submitFormat)) ||
+        moment(min || new Date(), decodeFormat || submitFormat)
+    );
+  };
   const [anchorEl, setAnchorEl] = useState(null);
+  const [dateRangeError, setDateRangeError] = useState(false);
   let generalFormat = "YYYY-MM-DD HH:mm";
   const handleClick = (event) => {
+    if (!props.editAllowed) return;
     setAnchorEl(event.currentTarget);
   };
 
@@ -61,12 +72,46 @@ const DateTime = (props) => {
       updatedTime,
       isUpdateAvailable
     );
-    let processedTime = moment(processedTimeFormat).format(
+    let processedTimeMoment = moment(processedTimeFormat);
+    let processedTime = processedTimeMoment.format(
       submitFormat || decodeFormat || generalFormat
     );
-    if (updateFieldData && value !== processedTime) {
+    console.log(
+      moment(min, decodeFormat || submitFormat),
+      processedTimeMoment,
+      processedTimeMoment.isBefore(moment(min, decodeFormat || submitFormat))
+    );
+    console.log(
+      moment(max, decodeFormat || submitFormat),
+      processedTimeMoment,
+      processedTimeMoment.isAfter(moment(max, decodeFormat || submitFormat))
+    );
+    if (
+      isUpdateAvailable &&
+      min &&
+      processedTimeMoment.isBefore(moment(min, decodeFormat || submitFormat))
+    ) {
+      updateDefaultValue();
+      setDateRangeError(true);
+      return;
+    }
+    if (
+      isUpdateAvailable &&
+      max &&
+      processedTimeMoment.isAfter(moment(max, decodeFormat || submitFormat))
+    ) {
+      updateDefaultValue();
+      setDateRangeError(true);
+      return;
+    }
+    if (dateRangeError) setDateRangeError(false);
+    setAnchorEl(null);
+
+    console.log("FINAL RESULT IS");
+    console.log(value, processedTime);
+    if (updateFieldData && value !== processedTime && isUpdateAvailable) {
       updateFieldData(processedTime);
-      setTimeout(() => setFieldValue(name, processedTime));
+      setTimeout(() => setFieldValue(name, processedTime), 10);
     }
 
     setTimeout(() => setFieldTouched(name, true), 10);
@@ -77,12 +122,14 @@ const DateTime = (props) => {
   let getProcessedTime = (selectedDates, updatedTime, isUpdateAvailable) => {
     if (!isUpdateAvailable) return selectedDates;
     let tempDate = moment(selectedDates);
+    let clock = updatedTime.clock || "";
     let format =
       tempDate.format("yyyy-MM-DD") +
       "T" +
       getTwoDigitsNumber(
-        +updatedTime.hours +
-          ((updatedTime.clock || "").trim() === "PM" ? 12 : 0) || "00"
+        +updatedTime.hours === 12 && clock.trim() === "AM"
+          ? +updatedTime.hours - 12
+          : +updatedTime.hours + (clock.trim() === "PM" ? 12 : 0) || "00"
       ) +
       ":" +
       getTwoDigitsNumber(updatedTime.mins || "00").trim() +
@@ -166,9 +213,11 @@ const DateTime = (props) => {
               hours={getLocalTime("hh")}
               mins={getLocalTime("mm")}
               clock={getLocalTime("clock")}
+              rangeError={dateRangeError}
               onCancel={handleClose}
+              min={min}
+              max={max}
               onApply={(update) => {
-                setAnchorEl(null);
                 updateInputValue(update);
 
                 setTimeout(() => handleDataSubmit(update));

@@ -37,7 +37,7 @@ const ContactData = ({ value: mValue, editAllowed }) => {
         classes={{
           paper: classes.paper,
         }}
-        open={open && editAllowed}
+        open={open}
         onClose={handleClose}
       >
         <ContactDataDialog {...value} onClose={handleClose} />

@@ -4,7 +4,7 @@ import styles from "./ContactDataDialog.module.scss";
 import StyledInput from "../../../common/styledInput/StyledInput";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-const ContactDataDialog = ({ items, onClose, sum }) => {
+const ContactDataDialog = ({ items, title, onClose, sum }) => {
   const cellTypes = [
     { key: "name", label: "Name.", type: "READONLY_TEXT" },
     { key: "msisdn", label: "MSISDN.", type: "READONLY_TEXT" },
@@ -28,7 +28,7 @@ const ContactDataDialog = ({ items, onClose, sum }) => {
     </div>
   ));
   const tableData = [];
-  console.log("items are", items);
+  console.log("items are", items, title);
   if (items)
     items.forEach((td, i) => {
       tableData.push(
@@ -52,9 +52,13 @@ const ContactDataDialog = ({ items, onClose, sum }) => {
     <React.Fragment>
       <div className={styles.dialogHeaderWrapper}>
         <h6 className={[styles.text, styles.title].join(" ")}>
-          Contact Details
+          {title || "Contact Details"}
         </h6>
-        <FontAwesomeIcon icon={faTimes} onClick={onClose} />
+        <FontAwesomeIcon
+          icon={faTimes}
+          onClick={onClose}
+          style={{ color: "#4A4A4A", cursor: "pointer" }}
+        />
       </div>
       <div className={styles.contactDialogWrapper}>
         <div className={styles.headerWrapper}>{tableHeader}</div>

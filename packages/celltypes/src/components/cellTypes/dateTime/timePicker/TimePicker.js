@@ -1,14 +1,33 @@
 import React, { useState } from "react";
 import styles from "./TimePicker.module.scss";
-
+import * as moment from "moment";
 const TimePicker = (props) => {
   const [errorState, setErrorState] = useState(false);
   const { hours, mins, clock, onApply, onCancel } = { ...props };
+  let getLocalTime = (dateVal, val) => {
+    if (val === "hh")
+      return dateVal.format("hh A").replace("PM", "").replace("AM", "");
+    if (val === "mm")
+      return dateVal.format("mm A").replace("PM", "").replace("AM", "");
+    if (val === "clock")
+      return dateVal.format("hh A").includes("AM") ? "AM" : "PM";
+  };
+  let minTime = moment(props.min);
+  let minHour = null;
+  let minMins = null;
+  let clockTime = null;
+  if (minTime && minTime.isValid()) {
+    minHour = getLocalTime(minTime, "hh");
+    minMins = getLocalTime(minTime, "mm");
+    minMins = getLocalTime(minTime, "clock");
+  }
+  if (minHour) minHour;
   const [timeVal, setTimeVal] = useState({
-    hours: hours || "00",
-    mins: mins || "00",
-    clock: clock || "AM",
+    hours: hours || minHour || "00",
+    mins: mins || minMins || "00",
+    clock: clock || clockTime || "AM",
   });
+
   const onTimeChange = (e, min, max) => {
     if (!e.currentTarget.value) {
       return "";
@@ -24,8 +43,33 @@ const TimePicker = (props) => {
     if (timeVal.clock === "AM") return "PM";
     else return "AM";
   };
+  let dateRangeClasses = [styles.timeLabel, styles.smallMargin];
+  if (props.rangeError) dateRangeClasses.push(styles.redColor);
   return (
     <div className={styles.timePickerWrapper}>
+      {props.min && props.max ? (
+        <div className={styles.dateRangeLabels}>
+          <div>
+            <p
+              className={[styles.timeLabel, styles.removeBottomMargin].join(
+                " "
+              )}
+            >
+              Date Range
+            </p>
+          </div>
+          <div className={styles.rangeValueWrapper}>
+            <p className={dateRangeClasses.join(" ")}>{props.min}</p>
+            <p
+              className={dateRangeClasses.join(" ")}
+              style={{ textDecoration: "none" }}
+            >
+              -
+            </p>
+            <p className={dateRangeClasses.join(" ")}>{props.max}</p>
+          </div>
+        </div>
+      ) : null}
       <div className={styles.timeLabelWrapper}>
         <p className={styles.timeLabel}> Set Time</p>
       </div>

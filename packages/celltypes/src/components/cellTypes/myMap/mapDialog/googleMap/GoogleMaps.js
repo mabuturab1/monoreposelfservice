@@ -20,12 +20,12 @@ const GoogleMaps = ({
   const [mapsLoaded, setMapsLoaded] = useState(false);
 
   const markerPositionRef = useRef({
-    lat: value && value.lat ? value.lat : -1.2884,
-    lng: value && value.long ? value.long : 36.8233,
+    lat: value && value.lat ? value.lat : -6.175328,
+    lng: value && value.long ? value.long : 106.82711,
   });
   const mapPositionRef = useRef({
-    lat: value && value.lat ? value.lat : -1.2884,
-    lng: value && value.long ? value.long : 36.8233,
+    lat: value && value.lat ? value.lat : -6.175328,
+    lng: value && value.long ? value.long : 106.82711,
   });
 
   const getLatLng = ({ place_id }) => {
@@ -126,6 +126,7 @@ const GoogleMaps = ({
           icon={faTimes}
           onClick={onClose}
           className={styles.icon}
+          style={{ color: "#4A4A4A", cursor: "pointer" }}
         />
       </div>
 

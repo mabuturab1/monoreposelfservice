@@ -10,7 +10,7 @@ import CellTypeContext from "../context/CellTypeContext";
 import styles from "./TableCreator.module.scss";
 import InfiniteLoader from "../infiniteLoader/InfiniteLoader";
 import { Paper } from "@material-ui/core";
-import InfoDialog from "../infoDialog/InfoDialog";
+import InfoDialog from "@selfservicetable/celltypes/src/components/common/infoDialog/InfoDialog";
 import * as moment from "moment";
 import {
   faExclamationCircle,

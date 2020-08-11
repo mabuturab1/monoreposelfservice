@@ -199,6 +199,7 @@ const NewRecordData = (props) => {
               icon={faTimes}
               className={styles.closeIcon}
               onClick={handleClose}
+              style={{ color: "#4A4A4A", cursor: "pointer" }}
             />
           </div>
           {headerSpecs.map((el, index) => {

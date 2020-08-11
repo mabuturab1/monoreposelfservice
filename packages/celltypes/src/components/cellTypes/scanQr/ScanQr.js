@@ -36,6 +36,10 @@ const ScanQr = (props) => {
 
   const [readOnly, setReadOnly] = useState(true);
   const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = useState({
+    originalState: value || DummyInitValues["SCAN_QR"],
+    tempState: value || DummyInitValues["SCAN_QR"],
+  });
 
   const handleClick = (event) => {
     console.log("setting open to true");
@@ -53,14 +57,10 @@ const ScanQr = (props) => {
     }
     setTimeout(() => {
       setFieldValue(name, inputValue.tempState);
-      setTimeout(() => setFieldTouched(name, true), 10);
-    });
-    if (selectValue.originalState === selectValue.tempState) return;
+      setFieldTouched(name, true);
+    }, 10);
+    // if (inputValue.originalState === inputValue.tempState) return;
   };
-  const [inputValue, setInputValue] = useState({
-    originalState: value || DummyInitValues["SCAN_QR"],
-    tempState: value || DummyInitValues["SCAN_QR"],
-  });
 
   const inputChanged = (value) => {
     console.log("input changed qr", value);
@@ -73,7 +73,7 @@ const ScanQr = (props) => {
     if (!props.editAllowed) return;
     setReadOnly(true);
     updateInput(value);
-    setTimeout(() => inputBlurred(value));
+    setTimeout(() => inputBlurred(value), 5);
   };
   const updateInput = (value) => {
     console.log(

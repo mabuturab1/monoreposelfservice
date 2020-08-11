@@ -177,9 +177,10 @@ export const getFilterData = (data) => {
   };
 };
 
-export const updateFieldDataStart = () => {
+export const updateFieldDataStart = (msg) => {
   return {
     type: actionTypes.START_UPDATING_FIELD,
+    payload: msg,
   };
 };
 export const updateApiUrl = (data) => {
@@ -357,7 +358,7 @@ export const updateFieldData = (
       return;
     }
 
-    dispatch(updateFieldDataStart());
+    dispatch(updateFieldDataStart("Kindly wait while data is updating"));
     let sendData = {
       ...data,
       indexIdNumber: undefined,

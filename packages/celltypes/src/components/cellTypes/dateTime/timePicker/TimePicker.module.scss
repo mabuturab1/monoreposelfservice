@@ -85,3 +85,21 @@
   top: 110%;
   left: 10%;
 }
+.dateRangeLabels {
+  display: flex;
+  flex-flow: column;
+}
+.rangeValueWrapper {
+  display: flex;
+}
+.smallMargin {
+  margin: 0.5rem 0.5rem;
+}
+.removeBottomMargin {
+  margin-bottom: 0;
+}
+.redColor {
+  color: red;
+  font-weight: 500;
+  text-decoration: underline;
+}

@@ -4,7 +4,7 @@ import ConfirmationDialog from "../../common/confirmationDialog/ConfirmationDial
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-const IconList = ({ tableActionsClicked, rowData }) => {
+const IconList = ({ tableActionsClicked, rowData, onDialogClosed }) => {
   const [currentSelection, setCurrentSelection] = useState("");
   const handleDelete = () => {
     setCurrentSelection("delete");
@@ -15,13 +15,17 @@ const IconList = ({ tableActionsClicked, rowData }) => {
       if (tableActionsClicked) tableActionsClicked("delete", rowId);
     }
   };
+  const dialogClosed = () => {
+    setCurrentSelection("");
+    if (onDialogClosed) onDialogClosed();
+  };
   return (
     <React.Fragment>
       <div onClick={handleDelete} className={styles.icon}>
         <FontAwesomeIcon icon={faTrashAlt} />
       </div>
       <ConfirmationDialog
-        onDialogClosed={() => setCurrentSelection("")}
+        onDialogClosed={() => dialogClosed()}
         handleResponse={(response) =>
           handleConfirmationResult(response, currentSelection)
         }
@@ -36,7 +40,10 @@ const IconList = ({ tableActionsClicked, rowData }) => {
 export const ReadOnlyText = (props) => {
   let actionsList = null;
   const [hoverActive, setHoverActive] = useState(false);
-  if (props.iconsArr) actionsList = <IconList {...props} />;
+  if (props.iconsArr)
+    actionsList = (
+      <IconList {...props} onDialogClosed={() => setHoverActive(false)} />
+    );
   return (
     <div
       className={styles.text}

@@ -76,12 +76,6 @@ export const validateExtensions = (fileInput, _validFileExtensions) => {
     }
     console.log("VALIDATION FAILED");
     if (!blnValid) {
-      alert(
-        "Sorry, " +
-          sFileName +
-          " is invalid, allowed extensions are: " +
-          _validFileExtensions.join(", ")
-      );
       return false;
     }
   }

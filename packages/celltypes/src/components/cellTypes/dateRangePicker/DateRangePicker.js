@@ -23,7 +23,7 @@ const RangePicker = (props) => {
     <React.Fragment>
       <div style={{ position: "relative" }}>
         <div onClick={toggle}>{props.children}</div>
-        <div style={{ position: "absolute", top: "100%", left: 0 }}>
+        <div className={styles.dateRangeWrapper}>
           <DateRangePicker open={open} toggle={toggle} onChange={rangeChange} />
           {open ? (
             <div

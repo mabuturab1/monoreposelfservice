@@ -1,5 +1,5 @@
 import React from "react";
-import { Dialog, makeStyles, DialogTitle } from "@material-ui/core";
+import { Dialog, makeStyles } from "@material-ui/core";
 import TableCreator from "../../table/tableCreator/TableCreator";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";

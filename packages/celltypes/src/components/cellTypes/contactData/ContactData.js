@@ -16,7 +16,6 @@ const ContactData = ({ value: mValue, editAllowed }) => {
   let value = mValue || {};
   const [open, setOpen] = useState(false);
   const handleClick = () => {
-    if (!editAllowed) return;
     setOpen(true);
   };
   const handleClose = () => {

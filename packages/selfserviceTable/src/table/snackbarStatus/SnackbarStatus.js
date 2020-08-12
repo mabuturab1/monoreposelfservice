@@ -45,14 +45,14 @@ const SnackbarStatus = (props) => {
       ? "error"
       : "success";
     let data = updateStatus.isUpdating
-      ? snackbarData.content || updatingMessage
+      ? updateStatus.content || updatingMessage
       : updateStatus.updated
-      ? snackbarData.content || `${updateStatus.cellKey} updated successfully`
-      : snackbarData.content ||
+      ? updateStatus.content || `${updateStatus.cellKey} updated successfully`
+      : updateStatus.content ||
         `An error occurred while updating ${updateStatus.cellKey}`;
 
     if (!showSnackbar) setShowSnackbar(true);
-    console.log("SETTING SNACKBAR MESSAGE", message, data, message != data);
+
     setMessage((message) => (message !== data ? data : message));
     setSeverity((severity) =>
       severity !== severityVal ? severityVal : severity
@@ -81,12 +81,7 @@ const mapStateToProps = (state) => {
 
 const areEqualSnackbars = (prevProps, nextProps) => {
   if (!prevProps.updateStatus || !nextProps.updateStatus) return false;
-  console.log(
-    "SNACKBAR STATUS",
-    Object.keys(prevProps.updateStatus).filter(
-      (el) => prevProps.updateStatus[el] !== nextProps.updateStatus[el]
-    )
-  );
+
   return (
     Object.keys(prevProps.updateStatus).filter(
       (el) => prevProps.updateStatus[el] !== nextProps.updateStatus[el]

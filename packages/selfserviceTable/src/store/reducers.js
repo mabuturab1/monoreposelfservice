@@ -218,6 +218,7 @@ const reducer = (state = initialState, action) => {
               ? action.payload.newKey
               : "",
           updated: true,
+          content: null,
         },
       });
     case actionTypes.UPLOAD_FILE_SUCCESS:
@@ -243,6 +244,7 @@ const reducer = (state = initialState, action) => {
               ? action.payload.newKey
               : "",
           updated: false,
+          content: null,
         },
       });
     default:

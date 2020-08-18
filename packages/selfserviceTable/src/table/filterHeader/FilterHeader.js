@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,7 +12,7 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import styles from "./FilterHeader.module.scss";
 import TableContext from "../context/TableContext";
 import TableFilter from "../tableFilter/TableFilter";
-import { Popover } from "@material-ui/core";
+import { Popover, CircularProgress } from "@material-ui/core";
 import { connect } from "react-redux";
 import schemaCreator from "../utility/schemaCreator";
 import * as actions from "../../store/actions";
@@ -22,6 +22,7 @@ import NewRecordDialog from "../../common/newRecordDialog/NewRecordDialog";
 import DateRangePicker from "@selfservicetable/celltypes/src/components/cellTypes/dateRangePicker/DateRangePicker";
 
 const FilterHeader = (props) => {
+  const tableContext = useContext(TableContext);
   const searchConditions = [
     "less than (<)",
     "less than equals (<=)",
@@ -42,7 +43,10 @@ const FilterHeader = (props) => {
   const [open, setOpen] = useState(false);
   const [dateRange, setDateRange] = useState(props.initDateRange || {});
   const [searchValue, setSearchValue] = useState("");
-
+  const [currentUpdateCycle, setCurrentUpdateCycle] = useState(0);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [editAllowed, setEditAllowd] = useState(tableContext.editAllowed);
+  const intervalTimer = useRef(0);
   let updateReduxState = (filter) => {
     props.storeFilterData(filter);
     if (props.handleNewFilterData) props.handleNewFilterData(filter);
@@ -146,13 +150,25 @@ const FilterHeader = (props) => {
     styles.applyElevation,
   ];
 
-  const tableContext = useContext(TableContext);
+  const checkUpdateCycle = (newValue) => {
+    let value = props.getCurrentUpdateCycle();
+
+    if (currentUpdateCycle !== value) {
+      setCurrentUpdateCycle(value);
+      setIsUpdating(false);
+
+      setEditAllowd(newValue);
+      clearInterval(intervalTimer.current);
+    }
+  };
   let toggleEditLocked = (e) => {
     let val = tableContext.editAllowed;
-
-    tableContext.setEditAllowed(!val);
+    setIsUpdating(true);
+    setTimeout(() => tableContext.setEditAllowed(!val), 500);
+    intervalTimer.current = setInterval(() => checkUpdateCycle(!val), 1000);
   };
-  if (tableContext.editAllowed) editLockedClasses.push(styles.lockDisabled);
+  if (editAllowed) editLockedClasses.push(styles.lockDisabled);
+
   const onDateRangeSelect = (mDateRange) => {
     setDateRange(mDateRange);
     if (props.handleDateRange) props.handleDateRange(mDateRange);
@@ -203,13 +219,19 @@ const FilterHeader = (props) => {
             className={editLockedClasses.join(" ")}
             onClick={toggleEditLocked}
           >
-            <FontAwesomeIcon
-              size={"lg"}
-              icon={tableContext.editAllowed ? faUnlock : faLock}
-              className={styles.icon}
-            />
+            {isUpdating ? (
+              <div className={styles.icon} style={{ color: "black" }}>
+                <CircularProgress size={14} color="inherit" />
+              </div>
+            ) : (
+              <FontAwesomeIcon
+                size={"lg"}
+                icon={editAllowed ? faUnlock : faLock}
+                className={styles.icon}
+              />
+            )}
             <span className={styles.label}>
-              {tableContext.editAllowed ? "Edit Unlocked" : "Edit Locked"}
+              {editAllowed ? "Edit Unlocked" : "Edit Locked"}
             </span>
           </div>
         ) : (

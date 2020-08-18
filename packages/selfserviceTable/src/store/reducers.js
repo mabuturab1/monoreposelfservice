@@ -89,7 +89,6 @@ const reducer = (state = initialState, action) => {
     case actionTypes.START_FETCHING_TABLE_DATA:
       return updateObject(state, { tableDataPending: true });
     case actionTypes.ADD_CONTENT_SUCCESS:
-    case actionTypes.FETCHING_TABLE_DATA_SUCCESS:
       let tableDataUpdate = updateObject(
         state,
         {
@@ -100,9 +99,35 @@ const reducer = (state = initialState, action) => {
         },
         "tableData",
         true,
-        true
+        true,
+        false
       );
       return updateObject(tableDataUpdate, {
+        tableDataPending: false,
+        totalReportItems: action.payload.totalReportItems,
+        snackbarStatus: {
+          isUpdating: false,
+          error: false,
+          cellKey: "",
+          updated: true,
+          content: "Data added successfully",
+        },
+      });
+    case actionTypes.FETCHING_TABLE_DATA_SUCCESS:
+      let tableDataUpdateNew = updateObject(
+        state,
+        {
+          tableData: addIndexNumber(
+            action.payload.tableData,
+            state.tableData.length
+          ),
+        },
+        "tableData",
+        true,
+        true,
+        false
+      );
+      return updateObject(tableDataUpdateNew, {
         tableDataPending: false,
         totalReportItems: action.payload.totalReportItems,
       });
@@ -144,13 +169,15 @@ const reducer = (state = initialState, action) => {
     case actionTypes.FETCH_NEW_DATA:
       return updateObject(state, { fetchData: state.fetchData + 1 });
     case actionTypes.ADD_FIELD_SUCCESS:
-      console.log("PREV TABLE HEADER", state.tableHeader);
-      console.log(
-        "new table header",
-        (state.tableHeader || []).concat(action.payload)
-      );
       return updateObject(state, {
         tableHeader: (state.tableHeader || []).concat(action.payload),
+        snackbarStatus: {
+          isUpdating: false,
+          error: false,
+          cellKey: "",
+          updated: true,
+          content: "Field added successfully",
+        },
       });
     case actionTypes.EDIT_FIELD_SUCCESS:
       let updatedTableHeader = getUpdatedTableHeader(
@@ -159,6 +186,13 @@ const reducer = (state = initialState, action) => {
       );
       return updateObject(state, {
         tableHeader: updatedTableHeader,
+        snackbarStatus: {
+          isUpdating: false,
+          error: false,
+          cellKey: "",
+          updated: true,
+          content: "Field edited successfully",
+        },
       });
     case actionTypes.DELETE_FIELD_SUCCESS:
       console.log(action.type, action.payload);
@@ -183,6 +217,8 @@ const reducer = (state = initialState, action) => {
       return updateObject(state, { queryParams: action.payload });
     case actionTypes.START_UPLOAD_FILE:
     case actionTypes.START_UPDATING_FIELD:
+    case actionTypes.START_ADD_FIELD:
+    case actionTypes.START_EDIT_FIELD:
       return updateObject(state, {
         snackbarStatus: {
           isUpdating: true,
@@ -231,6 +267,10 @@ const reducer = (state = initialState, action) => {
           content: "File uploaded successfully",
         },
       });
+    case actionTypes.ADD_FIELD_FAILED:
+    case actionTypes.EDIT_FIELD_FAILED:
+    case actionTypes.DELETE_FIELD_FAILED:
+    case actionTypes.ADD_CONTENT_FAILED:
     case actionTypes.UPLOAD_FILE_FAILED:
     case actionTypes.UPDATING_FIELD_DATA_FAILED:
     case actionTypes.DELETE_CONTENT_FAILED:

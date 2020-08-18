@@ -280,12 +280,13 @@ export const uploadFile = (
   data,
   type,
   newKey,
-  isSuccess
+  isSuccess,
+  forcedUpdate = false
 ) => {
   return async (dispatch, getState) => {
     const currentState = getState().snackbarStatus || {};
     console.log("is updating state", currentState.isUpdating);
-    if (currentState.isUpdating) {
+    if (currentState.isUpdating && !forcedUpdate) {
       setTimeout(() => isSuccess(false), 100);
       return;
     }
@@ -311,22 +312,21 @@ export const uploadFile = (
 };
 
 export const addTableContent = (apiUrl, reportId, data, isSuccess) => {
-  return (dispatch) => {
-    console.log("STARTING ADD TABLE CONTENT");
+  return (dispatch, getState) => {
     dispatch(getAddContentStart());
     axios
       .post(`${"/vbeta"}/reports/${reportId}/contents`, data, config)
       .then((response) => {
-        if (response && response.data) {
+        if (response && response.data && response.data.data) {
           dispatch(
             getAddContentSuccess({
               tableData: [
                 {
                   id: new Date().getTime().toString(),
-                  data: response.data,
+                  data: response.data.data,
                 },
               ],
-              totalReportItems: 1,
+              totalReportItems: (getState().totalReportItems || 0) + 1,
             })
           );
           isSuccess(true);
@@ -442,6 +442,7 @@ export const editTableField = (apiUrl, reportId, fieldKey, data, isSuccess) => {
       .then((response) => {
         if (response) {
           dispatch(getEditFieldSuccess(response.data));
+          dispatch(fetchNewData());
           if (isSuccess) isSuccess(true);
         } else {
           dispatch(getEditFieldFailed());

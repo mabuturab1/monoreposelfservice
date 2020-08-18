@@ -10,7 +10,7 @@ import styles from "./QrReader.module.scss";
 import { Button } from "@material-ui/core";
 global.Buffer = Buffer; // very important
 
-const QrReader = ({ onClose, onSubmit }) => {
+const QrReader = ({ onClose, onSubmit, valueChanged }) => {
   const videoConstraints = {
     width: 400,
     height: 400,
@@ -33,30 +33,9 @@ const QrReader = ({ onClose, onSubmit }) => {
     const code = jsqr(Uint8ClampedArray.from(png.data), png.width, png.height);
 
     if (code != null) setResult(code);
+    if (valueChanged && code != null) valueChanged(code.data);
   }, [webcamRef]);
-  const decodeResult = (clampedArray, width, height) => {
-    return jsqr(clampedArray, width, height);
-  };
-  const convertBase64ToRGBA = (base64) => {
-    const jpegData = Buffer.from(
-      base64.slice("data:image/jpeg;base64,".length),
-      "base64"
-    );
 
-    var rawImageData = jpeg.decode(jpegData);
-
-    var clampedArray = new Uint8ClampedArray(rawImageData.data.lengt);
-
-    var i;
-    for (i = 0; i < rawImageData.data.length; i++) {
-      clampedArray[i] = rawImageData.data[i];
-    }
-    return {
-      clampedArray,
-      width: rawImageData.width,
-      height: rawImageData.height,
-    };
-  };
   const resetError = () => {
     setError(false);
   };
@@ -77,7 +56,7 @@ const QrReader = ({ onClose, onSubmit }) => {
   }, [decodeQr, anError, setError]);
   const handleClose = () => {
     clearInterval(interval.current);
-    onClose();
+    // onClose();
   };
   return (
     <div>

@@ -65,7 +65,8 @@ const NewRecordDialog = (props) => {
           if (isSuccess) currIndex++;
           if (isSuccess && result) updatedDocValues[el] = result;
           if (currIndex >= numDocKeys) uploadComplete(updatedDocValues);
-        }
+        },
+        true
       );
     });
     if (isWaitForData) uploadComplete({});
@@ -124,7 +125,16 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    uploadFile: (apiUrl, reportId, rowId, data, type, newKey, isSuccess) =>
+    uploadFile: (
+      apiUrl,
+      reportId,
+      rowId,
+      data,
+      type,
+      newKey,
+      isSuccess,
+      forcedUpdate
+    ) =>
       dispatch(
         actions.uploadFile(
           apiUrl,
@@ -133,7 +143,8 @@ const mapDispatchToProps = (dispatch) => {
           data,
           type,
           newKey,
-          isSuccess
+          isSuccess,
+          forcedUpdate
         )
       ),
     addTableContent: (apiUrl, reportId, data, isSuccess) =>

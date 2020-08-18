@@ -10,6 +10,7 @@ import { Button, CircularProgress } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faSave, faRedo } from "@fortawesome/free-solid-svg-icons";
 import { DataUpdateStatus } from "../../table/constants/Constants";
+import { DummyInitValues } from "@selfservicetable/celltypes/src/components/common/constants/cellTypesDefaultValues";
 
 const NewRecordData = (props) => {
   let { dataUpdateStatus } = props;
@@ -24,7 +25,10 @@ const NewRecordData = (props) => {
     let updateTableHeaderProps = (type, data) => {
       return {
         ...data,
-        isRequired: false,
+        isRequired:
+          type !== "NESTED_DROPDOWN" &&
+          type !== "CONTACT" &&
+          type !== "ITEM_LIST",
       };
     };
 
@@ -49,7 +53,7 @@ const NewRecordData = (props) => {
       if (el.type === "EMAIL")
         updatedEl = { ...updatedEl, data: { ...updatedEl.data, email: true } };
 
-      schemaObj[el.key] = schemaCreator(updatedEl, true);
+      schemaObj[el.key] = schemaCreator(updatedEl);
     });
     let nestedDropdownItems = specs.filter(
       (el) => el.type === "NESTED_DROPDOWN"
@@ -72,11 +76,10 @@ const NewRecordData = (props) => {
   };
   let getInitValues = () => {
     let data = {};
-    // let specs = createHeaderSpecs(tableHeader);
-    // specs.forEach((el) => {
-    //   data[el.key] = DummyInitValues[el.type] || "";
-
-    // });
+    let specs = createHeaderSpecs(tableHeader);
+    specs.forEach((el) => {
+      data[el.key] = DummyInitValues[el.type] || "";
+    });
     return data;
   };
   let headerSpecs = createHeaderSpecs(tableHeader);
@@ -114,7 +117,6 @@ const NewRecordData = (props) => {
   };
 
   const submitData = () => {
-    console.log(resultData.current);
     let staticValues = { ...resultData.current };
     let docValues = {};
     if (props.onSubmit) {
@@ -129,12 +131,9 @@ const NewRecordData = (props) => {
       props.onSubmit(staticValues, docValues);
     }
   };
-
   const updateFieldData = (rowId, data, newKey, isSuccess) => {
     resultData.current = { ...resultData.current, ...data };
-
     isSuccess(true);
-    console.log({ ...resultData.current });
   };
   const getSaveButtonStatus = () => {
     switch (dataUpdateStatus) {
@@ -166,12 +165,17 @@ const NewRecordData = (props) => {
         );
     }
   };
+  const handleDataSubmission = (handleSubmit, errors, touched) => {
+    handleSubmit();
+    console.log(errors, touched);
+  };
   return (
     <Formik
       initialValues={getInitValues()}
       validationSchema={Yup.object().shape(createValidationSchema())}
       onSubmit={(values, actions) => {
-        handleClose();
+        submitData();
+        // handleClose();
       }}
     >
       {({
@@ -284,7 +288,7 @@ const NewRecordData = (props) => {
               Cancel
             </Button>
             <Button
-              onClick={submitData}
+              onClick={() => handleDataSubmission(handleSubmit, errors, values)}
               variant="contained"
               color="primary"
               style={{ fontSize: "0.75rem" }}

@@ -66,6 +66,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
 
     ...tableProps
   } = props;
+  console.log("TABLE VIRTUAIZED Re-rendered");
   const getKey = (tableDataId, fieldKey) => {
     return tableDataId + fieldKey;
   };

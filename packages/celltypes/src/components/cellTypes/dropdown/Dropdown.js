@@ -83,7 +83,7 @@ const Dropdown = (props) => {
     ...props,
   };
 
-  console.log("Rendering dropdown", touched, error);
+  // console.log("Rendering dropdown", touched, error);
   const currentValue =
     value &&
     ((valuesList && valuesList.includes(value)) ||
@@ -96,7 +96,7 @@ const Dropdown = (props) => {
   });
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
-    if (!props.editAllowed) return;
+    if (!props.editAllowed && !ignoreEditLocked) return;
     setAnchorEl(event.currentTarget);
   };
 
@@ -108,7 +108,7 @@ const Dropdown = (props) => {
       setTimeout(() => setFieldValue(name, value || selectValue.tempState), 10);
       if (value && selectValue.originalState === value) {
         return;
-      } else if (value) updateFieldData(value);
+      } else if (value && updateFieldData) updateFieldData(value);
     });
   };
   const classes = useStyles();

@@ -42,7 +42,6 @@ const ScanQr = (props) => {
   });
 
   const handleClick = (event) => {
-    console.log("setting open to true");
     if (!props.editAllowed) return;
     setOpen(true);
   };
@@ -63,26 +62,20 @@ const ScanQr = (props) => {
   };
 
   const inputChanged = (value) => {
-    console.log("input changed qr", value);
     setInputValue({
       ...inputValue,
       tempState: value || "",
     });
     handleClose(true);
-    console.log("edit allowed", props.editAllowed);
+
     if (!props.editAllowed) return;
     setReadOnly(true);
     updateInput(value);
     setTimeout(() => inputBlurred(value), 5);
   };
   const updateInput = (value) => {
-    console.log(
-      "updating field data in scan QR",
-      inputValue.tempState,
-      inputValue.originalState
-    );
     if (value === inputValue.originalState) return;
-    console.log("updating field data in scan QR", inputValue.tempState);
+
     updateFieldData(value);
   };
   const inputBlurred = (value) => {
@@ -142,7 +135,13 @@ const ScanQr = (props) => {
         open={open && props.editAllowed}
         onClose={handleClose}
       >
-        <QrReader onSubmit={inputChanged} onClose={handleClose} />
+        <QrReader
+          valueChanged={(data) =>
+            setInputValue({ ...inputValue, tempState: data })
+          }
+          onSubmit={inputChanged}
+          onClose={handleClose}
+        />
       </Dialog>
     </React.Fragment>
   );

@@ -82,6 +82,7 @@ const TableCreator = (props) => {
   } = {
     ...props,
   };
+  const currentUpdateCycle = useRef(0);
   const [queryParams, setQueryParams] = useState({
     pageNumber: 0,
     pageSize: 50,
@@ -269,6 +270,10 @@ const TableCreator = (props) => {
   useEffect(() => {
     if (!staticData) fetchTableHeader(apiUrl, currentReportId);
   }, [fetchTableHeader, apiUrl, currentReportId, staticData, currentTrigger]);
+  useEffect(() => {
+    currentUpdateCycle.current += 1;
+  }, [editAllowed, currentUpdateCycle]);
+
   const updateFieldData = async (
     rowId,
     data,
@@ -452,6 +457,7 @@ const TableCreator = (props) => {
                 }}
               >
                 <FilterHeader
+                  getCurrentUpdateCycle={() => currentUpdateCycle.current}
                   totalReportItems={props.totalReportItems}
                   contentAddAble={contentAddAble}
                   contentEditAble={contentEditAble}

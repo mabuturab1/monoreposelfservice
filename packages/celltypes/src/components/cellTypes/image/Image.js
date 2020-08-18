@@ -63,12 +63,7 @@ const Image = (props) => {
       // });
     }
   };
-  if (touched)
-    console.log(
-      mValue && mValue.t && selectedFile.image != mValue.t,
-      mValue,
-      selectedFile
-    );
+
   if (mValue && mValue.t && selectedFile.image != mValue.t) {
     setSelectedFile({
       ...selectedFile,

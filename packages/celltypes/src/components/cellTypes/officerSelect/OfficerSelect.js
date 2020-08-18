@@ -86,7 +86,7 @@ const OfficerSelect = (props) => {
     valuesList = mOptions.map((el) => el.i);
   }
   const currentValue =
-    mValue && valuesList && valuesList.includes(mValue.i) ? mValue.i : "";
+    mValue && valuesList && valuesList.includes(mValue) ? mValue : "";
   const [selectValue, setSelectValue] = useState({
     originalState: currentValue,
     tempState: currentValue,
@@ -131,7 +131,12 @@ const OfficerSelect = (props) => {
       originalState: currentValue,
       tempState: currentValue,
     });
-
+  const getLabel = (id) => {
+    if (!valuesList) return id;
+    let index = valuesList.findIndex((el) => el === id);
+    if (index < 0) return id;
+    return options[index];
+  };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   const inputUI = (
@@ -141,7 +146,7 @@ const OfficerSelect = (props) => {
           className={[styles.text, styles.input].join(" ")}
           readOnly={true}
           onClick={handleClick}
-          value={selectValue.tempState}
+          value={getLabel(selectValue.tempState)}
         />
 
         <FontAwesomeIcon

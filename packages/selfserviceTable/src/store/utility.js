@@ -5,20 +5,22 @@ export const updateObject = (
   updatedProperties,
   concatKey = "",
   concat = false,
-  filterById = false
+  filterById = false,
+  concatAtStart = false
 ) => {
   if (concat && oldObject[concatKey] && updatedProperties[concatKey]) {
     const prevObj = oldObject[concatKey].map((el) => ({ ...el }));
     let newObj = [];
     if (!filterById) {
-      newObj = prevObj.concat(updatedProperties[concatKey]);
+      if (concatAtStart) newObj = updatedProperties[concatKey].concat(prevObj);
+      else newObj = prevObj.concat(updatedProperties[concatKey]);
     } else {
       let prevObjIds = prevObj.map((el) => el.id);
       const uniqueItems = (updatedProperties[concatKey] || []).filter(
         (el) => !prevObjIds.includes(el.id)
       );
-
-      newObj = prevObj.concat(uniqueItems);
+      if (concatAtStart) newObj = uniqueItems.concat(prevObj);
+      else newObj = prevObj.concat(uniqueItems);
     }
 
     return {

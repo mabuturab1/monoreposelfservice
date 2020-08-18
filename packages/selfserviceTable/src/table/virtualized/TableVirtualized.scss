@@ -56,3 +56,25 @@
   border-bottom: 1px solid #eee;
   border-right: 1px solid #eee;
 }
+.scrollButtonTableVirtual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 5vh;
+
+  left: 95vw;
+  z-index: 100000;
+
+  background: rgba(0, 0, 50, 0.05);
+  cursor: pointer;
+
+  width: 3rem;
+}
+.scrollButton .scrollIcon {
+  opacity: 0.4;
+}
+
+.scrollButton:hover .scrollIcon {
+  opacity: 1;
+}

@@ -21,6 +21,7 @@ import Loader from "react-loader-spinner";
 import { CellTypes } from "../utility/cellTypes";
 import { getFormattedDate } from "../utility/objectsFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 const TableCreator = (props) => {
   let {
     contentAddAble,
@@ -380,6 +381,7 @@ const TableCreator = (props) => {
   const setScrollToEnd = () => {
     let step = 50;
     if (tableWidth <= tableWrapper.current.offsetWidth) return;
+    if (intervalTimer.current != null) clearInterval(intervalTimer.current);
     intervalTimer.current = setInterval(() => {
       console.log("timer running");
       tableWrapper.current.scrollLeft += step;
@@ -394,6 +396,7 @@ const TableCreator = (props) => {
   const setScrollToStart = () => {
     let step = 50;
     if (tableWidth <= tableWrapper.current.offsetWidth) return;
+    if (intervalTimer.current != null) clearInterval(intervalTimer.current);
     intervalTimer.current = setInterval(() => {
       console.log("timer running");
       tableWrapper.current.scrollLeft -= step;
@@ -402,6 +405,7 @@ const TableCreator = (props) => {
       }
     }, 5);
   };
+
   return (
     <TableContext.Provider
       value={{

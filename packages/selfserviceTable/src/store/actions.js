@@ -285,7 +285,10 @@ export const uploadFile = (
 ) => {
   return async (dispatch, getState) => {
     const currentState = getState().snackbarStatus || {};
-    console.log("is updating state", currentState.isUpdating);
+    console.log(
+      "is updating state in upload file",
+      currentState.isUpdating && !forcedUpdate
+    );
     if (currentState.isUpdating && !forcedUpdate) {
       setTimeout(() => isSuccess(false), 100);
       return;
@@ -317,6 +320,7 @@ export const addTableContent = (apiUrl, reportId, data, isSuccess) => {
     axios
       .post(`${"/vbeta"}/reports/${reportId}/contents`, data, config)
       .then((response) => {
+        console.log("ADD TABLE CONTENT RESPONSE", response.data.data);
         if (response && response.data && response.data.data) {
           dispatch(
             getAddContentSuccess({
@@ -331,12 +335,13 @@ export const addTableContent = (apiUrl, reportId, data, isSuccess) => {
           );
           isSuccess(true);
         } else {
-          dispatch(getTableHeaderFailed());
+          dispatch(getAddContentFailed());
           isSuccess(false);
         }
       })
       .catch((error) => {
-        dispatch(getTableHeaderFailed());
+        console.log("ERROR OCCURRED IN TABLE", error);
+        dispatch(getAddContentFailed());
         isSuccess(false);
       });
   };

@@ -44,6 +44,17 @@ let addIndexNumber = (data, indexStart) => {
     },
   }));
 };
+let reInitIndexNumber = (data) => {
+  if (!data || data.length < 1) return [];
+  return data.map((el, index) => ({
+    ...el,
+    data: {
+      ...el.data,
+      indexIdNumber: index + 1,
+      createAt: el.createAt,
+    },
+  }));
+};
 const getUpdatedTableData = (tableData, payload) => {
   let index = tableData.findIndex((el) => el.id === payload.id);
   if (index < -1) return null;
@@ -85,11 +96,12 @@ const deleteTableContent = (tableData, payload) => {
   return updatedTableData;
 };
 const reducer = (state = initialState, action) => {
+  console.log("update obj is", state, action);
   switch (action.type) {
     case actionTypes.START_FETCHING_TABLE_DATA:
       return updateObject(state, { tableDataPending: true });
     case actionTypes.ADD_CONTENT_SUCCESS:
-      let tableDataUpdate = updateObject(
+      let updatedState = updateObject(
         state,
         {
           tableData: addIndexNumber(
@@ -100,9 +112,11 @@ const reducer = (state = initialState, action) => {
         "tableData",
         true,
         true,
-        false
+        true
       );
-      return updateObject(tableDataUpdate, {
+      let tableDataUpdate = reInitIndexNumber(updatedState.tableData);
+      return updateObject(state, {
+        tableData: tableDataUpdate,
         tableDataPending: false,
         totalReportItems: action.payload.totalReportItems,
         snackbarStatus: {

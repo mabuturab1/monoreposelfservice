@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { withStyles } from "@material-ui/core/styles";
@@ -11,6 +11,8 @@ import TableDialog from "../../common/tableDialog/TableDialog";
 import "react-virtualized/styles.css";
 import "./TableVirtualized.scss";
 import TableContext from "../context/TableContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 const styles = (theme) => ({
   flexContainer: {
     display: "flex",
@@ -46,12 +48,16 @@ const styles = (theme) => ({
 });
 
 const VirtualizedTable = React.forwardRef((props, ref) => {
+  let tableWrapper = useRef(ref);
+  let currentTableHeight = useRef(null);
+  let tempScrollTop = useRef(0);
+  let intervalTimer = useRef(null);
   const tableContext = useContext(TableContext);
   let defaultProps = {
     headerHeight: Constants.tableHeaderHeight,
     rowHeight: Constants.tableRowHeight,
   };
-
+  const [scrollTop, setScrollTop] = useState(0);
   const {
     classes,
     columns,
@@ -196,53 +202,121 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
   const getColumnsWidth = (columnsList) => {
     return columnsList.map((el) => el.width || 150).reduce((a, b) => a + b, 0);
   };
+  const setScrollToTop = () => {
+    let step = defaultProps.rowHeight * 3;
 
+    if (intervalTimer.current != null) clearInterval(intervalTimer.current);
+    intervalTimer.current = setInterval(() => {
+      console.log("timer running");
+      let currentScrollTop = tempScrollTop.current - step;
+      if (currentScrollTop < defaultProps.rowHeight) return;
+      tempScrollTop.current = currentScrollTop;
+      setScrollTop((scrollTop) => tempScrollTop.current - step);
+      if (tableWrapper.current.scrollTop <= 15) {
+        clearInterval(intervalTimer.current);
+      }
+    }, 5);
+  };
+
+  const setScrollToBottom = () => {
+    currentTableHeight.current = tableData.length * defaultProps.rowHeight;
+    console.log("SCROLL TO BOTTOM", tableData.length);
+
+    let step = defaultProps.rowHeight * 3;
+
+    if (intervalTimer.current != null) clearInterval(intervalTimer.current);
+
+    intervalTimer.current = setInterval(() => {
+      console.log("timer running", currentTableHeight.current);
+
+      let currentScrollTop = tempScrollTop.current + step;
+
+      if (
+        currentScrollTop >
+        currentTableHeight.current - defaultProps.rowHeight
+      )
+        return;
+      tempScrollTop.current = currentScrollTop;
+      setScrollTop((scrollTop) => tempScrollTop.current + step);
+      if (
+        currentScrollTop >=
+        currentTableHeight.current - defaultProps.rowHeight
+      ) {
+        clearInterval(intervalTimer.current);
+      }
+    }, 10);
+  };
+  const scrollTopChanged = ({ scrollTop }) => {
+    tempScrollTop.current = scrollTop;
+    console.log("Scroll top is", tempScrollTop.current);
+  };
   return (
-    <AutoSizer>
-      {({ height, width }) => (
-        <Table
-          height={height}
-          width={getColumnsWidth(columns)}
-          scrollTop={props.scrollTop ? props.scrollTop : undefined}
-          onScroll={props.onScroll ? props.onScroll : undefined}
-          rowHeight={rowHeight || defaultProps.rowHeight}
-          gridStyle={{
-            direction: "inherit",
-          }}
-          headerHeight={headerHeight || defaultProps.headerHeight}
-          className={classes.table}
-          onRowsRendered={onRowsRendered}
-          noRowsRenderer={() => (
-            <div className="no-data">
-              {tableData.length > 0 ? <div></div> : "No data found"}
-            </div>
-          )}
-          ref={ref}
-          {...tableProps}
-          rowClassName={getRowClassName}
-        >
-          {columns.map(({ key: dataKey, ...other }, index) => {
-            return (
-              <Column
-                key={dataKey}
-                headerRenderer={(headerProps) =>
-                  headerRenderer({
-                    ...headerProps,
-                    columnIndex: index,
-                    onHeaderClicked,
-                    sortByColumn,
-                  })
-                }
-                className={clsx(classes.flexContainer)}
-                cellRenderer={cellRenderer}
-                dataKey={dataKey}
-                {...other}
-              />
-            );
-          })}
-        </Table>
-      )}
-    </AutoSizer>
+    <React.Fragment>
+      <div className={"scrollButtonTableVirtual"} onClick={setScrollToTop}>
+        <FontAwesomeIcon
+          className={styles.scrollIcon}
+          icon={faAngleUp}
+          size={"lg"}
+        />
+      </div>
+      <div
+        className={"scrollButtonTableVirtual"}
+        style={{ top: "90vh", bottom: "unset" }}
+        onClick={setScrollToBottom}
+      >
+        <FontAwesomeIcon
+          className={styles.scrollIcon}
+          icon={faAngleDown}
+          size={"lg"}
+        />
+      </div>
+
+      <AutoSizer>
+        {({ height, width }) => (
+          <Table
+            scrollTop={tempScrollTop.current}
+            onScroll={scrollTopChanged}
+            height={height}
+            width={getColumnsWidth(columns)}
+            rowHeight={rowHeight || defaultProps.rowHeight}
+            gridStyle={{
+              direction: "inherit",
+            }}
+            headerHeight={headerHeight || defaultProps.headerHeight}
+            className={classes.table}
+            onRowsRendered={onRowsRendered}
+            noRowsRenderer={() => (
+              <div className="no-data">
+                {tableData.length > 0 ? <div></div> : "No data found"}
+              </div>
+            )}
+            ref={ref}
+            {...tableProps}
+            rowClassName={getRowClassName}
+          >
+            {columns.map(({ key: dataKey, ...other }, index) => {
+              return (
+                <Column
+                  key={dataKey}
+                  headerRenderer={(headerProps) =>
+                    headerRenderer({
+                      ...headerProps,
+                      columnIndex: index,
+                      onHeaderClicked,
+                      sortByColumn,
+                    })
+                  }
+                  className={clsx(classes.flexContainer)}
+                  cellRenderer={cellRenderer}
+                  dataKey={dataKey}
+                  {...other}
+                />
+              );
+            })}
+          </Table>
+        )}
+      </AutoSizer>
+    </React.Fragment>
   );
 });
 const isFormDataEqual = (obj1, obj2) => {

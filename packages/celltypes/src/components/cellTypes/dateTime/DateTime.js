@@ -8,6 +8,7 @@ import TimePicker from "./timePicker/TimePicker";
 import moment from "moment";
 import { Popover } from "@material-ui/core";
 import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
+import Tooltip from "../../tooltip/Tooltip";
 
 const DateTime = (props) => {
   const {
@@ -21,7 +22,8 @@ const DateTime = (props) => {
     min,
     max,
     value: mValue,
-
+    error,
+    touched,
     updateFieldData,
   } = {
     ...props,
@@ -163,22 +165,33 @@ const DateTime = (props) => {
   }
   return (
     <div className={styles.dateTimeWrapper}>
-      <div className={styles.inputWrapper}>
-        <input
-          autoComplete="off"
-          className={styles.input}
-          readOnly
-          value={dateVal.format(
-            showFormat || submitFormat || decodeFormat || "YYYY-MM-DDTHH:mm"
-          )}
-        />
-        <div onClick={handleClick}>
-          <FontAwesomeIcon
-            style={{ color: "#31b0d5", cursor: "pointer" }}
-            icon={faCalendarDay}
+      <Tooltip
+        arrow
+        title={error || ""}
+        open={(error && touched) === true}
+        placement="bottom-start"
+        PopperProps={{
+          disablePortal: true,
+        }}
+      >
+        <div className={styles.inputWrapper}>
+          <input
+            autoComplete="off"
+            className={styles.input}
+            readOnly
+            value={dateVal.format(
+              showFormat || submitFormat || decodeFormat || "YYYY-MM-DDTHH:mm"
+            )}
           />
+          <div onClick={handleClick}>
+            <FontAwesomeIcon
+              style={{ color: "#31b0d5", cursor: "pointer" }}
+              icon={faCalendarDay}
+            />
+          </div>
         </div>
-      </div>
+      </Tooltip>
+
       <Popover
         id={id}
         open={open}

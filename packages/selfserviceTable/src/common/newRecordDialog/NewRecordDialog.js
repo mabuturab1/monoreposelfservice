@@ -61,6 +61,7 @@ const NewRecordDialog = (props) => {
         type,
         el,
         (isSuccess, result) => {
+          console.log("IMAGE UPDATE RESULT IS", isSuccess, result);
           if (!isSuccess) setDataUpdateStatus(DataUpdateStatus.error);
           if (isSuccess) currIndex++;
           if (isSuccess && result) updatedDocValues[el] = result;
@@ -69,7 +70,7 @@ const NewRecordDialog = (props) => {
         true
       );
     });
-    if (isWaitForData) uploadComplete({});
+    if (!isWaitForData) uploadComplete({});
   };
   const onSubmit = (values, docValues) => {
     console.log("ON SUBMIT DATA IS", values, docValues);
@@ -86,7 +87,6 @@ const NewRecordDialog = (props) => {
     if (!values || Object.keys(values).length < 1) return;
     setDataUpdateStatus(DataUpdateStatus.updating);
     props.addTableContent(props.apiUrl, props.reportId, values, (isSuccess) => {
-      console.log("NEW DATA SUBMIT IS", isSuccess);
       if (isSuccess) handleClose();
       setDataUpdateStatus(
         isSuccess ? DataUpdateStatus.updated : DataUpdateStatus.error

@@ -80,9 +80,9 @@
   opacity: 1;
 }
 .freezedTable * {
-  ::-webkit-scrollbar {
-    display: none;
-  }
-
   scrollbar-width: none !important;
+}
+.freezedTable ::-webkit-scrollbar {
+  display: none;
+  width: 0px;
 }

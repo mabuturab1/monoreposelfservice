@@ -22,6 +22,7 @@ const InfiniteLoaderWrapper = ({
   validationSchema,
   tableActionsClicked,
   updateCurrentScroll,
+  editAllowed,
 }) => {
   const isItemLoaded = ({ index }) => {
     return !!tableData[index];
@@ -58,6 +59,7 @@ const InfiniteLoaderWrapper = ({
               tableActionsClicked,
               tableStatus,
               updateCurrentScroll,
+              editAllowed,
             }}
             showCircularIndicator={isNextPageLoading}
             rowCount={tableData.length}

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { withStyles } from "@material-ui/core/styles";
@@ -10,7 +10,6 @@ import * as Constants from "../constants/Constants";
 import TableDialog from "../../common/tableDialog/TableDialog";
 import "react-virtualized/styles.css";
 import "./TableVirtualized.scss";
-import TableContext from "../context/TableContext";
 import isEqual from "lodash.isequal";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
@@ -49,8 +48,8 @@ const styles = (theme) => ({
 });
 
 const VirtualizedTable = React.forwardRef((props, ref) => {
-  const [scrollIndex, setScrollIndex] = useState(0);
-  const tableContext = useContext(TableContext);
+  // const [scrollIndex, setScrollIndex] = useState(0);
+
   let defaultProps = {
     headerHeight: Constants.tableHeaderHeight,
     rowHeight: Constants.tableRowHeight,
@@ -69,25 +68,27 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     sortByColumn,
     formData,
     isFreezed,
-
+    updateCurrentScroll,
     ...tableProps
   } = props;
   console.log("TABLE VIRTUAIZED Re-rendered", columns);
   const getKey = (tableDataId, fieldKey) => {
     return tableDataId + fieldKey;
   };
-  const handleKeyDown = (event) => {
-    if (props.updateCurrentScroll && event.shiftKey)
-      props.updateCurrentScroll(scrollTopTable.current);
-  };
+
   useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (updateCurrentScroll != null && event.shiftKey)
+        updateCurrentScroll(scrollTopTable.current);
+    };
+
     window.addEventListener("keydown", handleKeyDown);
 
     // cleanup this component
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [updateCurrentScroll]);
   const getInitData = (el) => {
     if (el.type === "CONTACT") {
       let cell = columns.find((el) => el.type === "CONTACT");
@@ -122,7 +123,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
 
     const tableCell = (
       <MyTableCell
-        editAllowed={tableContext.editAllowed}
+        editAllowed={props.editAllowed}
         myKey={getKey(rowData.id, myCell.key)}
         className={clsx(classes.tableCell, classes.flexContainer, {
           [classes.noClick]: onRowClick == null,
@@ -165,7 +166,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     );
     return myCell.type === "ITEM_LIST" ? (
       <TableDialog
-        editAllowed={tableContext.editAlloweD || true}
+        editAllowed={props.editAllowed || true}
         {...{ ...myCell.data, value: undefined }}
         value={
           formData.values[getKey(rowData.id, myCell.key)] || getInitData(myCell)
@@ -215,15 +216,15 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
   const getColumnsWidth = (columnsList) => {
     return columnsList.map((el) => el.width || 150).reduce((a, b) => a + b, 0);
   };
-  const setScrollToTop = () => {
-    setScrollIndex(0);
-  };
+  // const setScrollToTop = () => {
+  //   setScrollIndex(0);
+  // };
 
-  const setScrollToBottom = () => {
-    console.log("setting scroll index", tableData.length);
-    let tableScroll = tableData.length - 10;
-    if (tableScroll > 0) setScrollIndex(tableScroll);
-  };
+  // const setScrollToBottom = () => {
+  //   console.log("setting scroll index", tableData.length);
+  //   let tableScroll = tableData.length - 10;
+  //   if (tableScroll > 0) setScrollIndex(tableScroll);
+  // };
   let tableClasses = [classes.table];
   if (isFreezed) tableClasses.push("freezedTable");
   const onScrollTable = (event) => {
@@ -316,6 +317,7 @@ const areEqual = (prevProps, nextProps) => {
   console.log("CHECKING EQUALITY");
 
   let status =
+    isEqual(prevProps["editAllowed"], nextProps["editAllowed"]) &&
     isEqual(prevProps["tableData"], nextProps["tableData"]) &&
     isEqual(prevProps["tableHeader"], nextProps["tableHeader"]) &&
     isFormDataEqual(prevProps["formData"], nextProps["formData"]);

@@ -232,7 +232,12 @@ export const fetchNewData = () => {
     type: actionTypes.FETCH_NEW_DATA,
   };
 };
-
+export const showSnackbarContent = (data) => {
+  return {
+    type: actionTypes.UPDATE_SNACKABR_STATUS,
+    payload: data,
+  };
+};
 export const getTableData = (apiUrl, reportId, params, isNewData = false) => {
   return (dispatch) => {
     dispatch(getTableDataStart());

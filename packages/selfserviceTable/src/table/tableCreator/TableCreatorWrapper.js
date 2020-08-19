@@ -20,6 +20,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    showSnackbarContent: (data) => dispatch(actions.showSnackbarContent(data)),
     fetchTableHeader: (apiUrl, reportId) =>
       dispatch(actions.getTableHeader(apiUrl, reportId)),
     fetchTableData: (apiUrl, reportId, params, isNewData) =>

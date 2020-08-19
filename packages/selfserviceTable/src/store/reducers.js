@@ -172,6 +172,15 @@ const reducer = (state = initialState, action) => {
           (el) => el !== action.payload
         ),
       });
+    case actionTypes.UPDATE_SNACKABR_STATUS:
+      return updateObject(state, {
+        snackbarStatus: {
+          ...state.snackbarStatus,
+          error: false,
+          cellKey: "",
+          content: action.payload,
+        },
+      });
     case actionTypes.FETCHING_TABLE_DATA_FAILED:
       return updateObject(state, {
         tableDataPending: false,

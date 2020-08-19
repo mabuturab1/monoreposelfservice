@@ -35,6 +35,9 @@ const TableCreator = (props) => {
     fetchNewDataTrigger,
   } = { ...props };
   let tableWrapper = useRef(null);
+  const [showFreezedTable, setShowFreezedTable] = useState(false);
+  const tempFreezedTable = useRef(false);
+  const [scrollTopTable, setScrollTopTable] = useState(0);
   const tableData = props.tableData || [];
   const [currentTrigger, setCurrentTrigger] = useState(
     fetchNewDataTrigger || 1
@@ -73,6 +76,7 @@ const TableCreator = (props) => {
     props.editAllowed != null ? props.editAllowed : true
   );
   let intervalTimer = useRef(null);
+  let timeoutTimer = useRef(null);
   let {
     apiUrl,
     currentReportId,
@@ -415,6 +419,7 @@ const TableCreator = (props) => {
     freezedColumnKeys.includes(el.key)
   );
   const getFreezedColumnWidth = () => {
+    if (!showFreezedTable) return 0;
     return freezedColumnKeys
       .map((el) => columnsWidth[el])
       .reduce((a, b) => a + b, 0);
@@ -426,6 +431,21 @@ const TableCreator = (props) => {
     fieldAddAble: false,
     fieldEditAble: false,
     fieldDeleteAble: false,
+  };
+  const updateCurrentScroll = (val) => {
+    console.log("STATE IS", !showFreezedTable, !tempFreezedTable.current);
+    if (!showFreezedTable && !tempFreezedTable.current) {
+      tempFreezedTable.current = true;
+      setShowFreezedTable(true);
+      setScrollTopTable(val);
+      console.log("FREEZED TABLE STATE", tempFreezedTable.current, val);
+    }
+    if (timeoutTimer.current != null) clearTimeout(timeoutTimer.current);
+    timeoutTimer.current = setTimeout(() => {
+      setShowFreezedTable(false);
+      tempFreezedTable.current = false;
+      console.log("FREEZED TABLE STATE END", tempFreezedTable.current);
+    }, 1000);
   };
   let freezedTable = (formData) => (
     <TableVirtualized
@@ -439,6 +459,7 @@ const TableCreator = (props) => {
         updateFieldData,
         tableActionsClicked,
       }}
+      scrollTop={scrollTopTable}
       isFreezed={true}
       sortByColumn={() => {}}
       validationSchema={{}}
@@ -538,22 +559,28 @@ const TableCreator = (props) => {
               <div
                 style={{ position: "relative", width: "100%", height: "100%" }}
               >
-                <div
-                  className={styles.freezedTable}
-                  style={{
-                    width: getFreezedColumnWidth(),
-                  }}
-                >
-                  {freezedTable(formData)}
-                </div>
+                {showFreezedTable && freezedColumnKeys.length > 0 ? (
+                  <div
+                    className={styles.freezedTable}
+                    style={{
+                      width: getFreezedColumnWidth(),
+                      height: `calc(100% - ${20}px)`,
+                      maxWidth: "50vw",
+                      overflow: "auto",
+                    }}
+                  >
+                    {/* {freezedTable(formData)} */}
+                  </div>
+                ) : null}
                 <div
                   ref={tableWrapper}
                   className={styles.wrapper}
                   onScroll={onScroll}
                   style={{
                     position: "relative",
-                    width: "100%",
+                    width: `calc(100% - ${getFreezedColumnWidth()})`,
                     height: "100%",
+                    marginLeft: getFreezedColumnWidth() + "px",
                   }}
                 >
                   <Paper
@@ -622,6 +649,7 @@ const TableCreator = (props) => {
                         updateFieldData={updateFieldData}
                         freezedColumnKeys={props.freezedColumnKeys || []}
                         tableActionsClicked={tableActionsClicked}
+                        updateCurrentScroll={updateCurrentScroll}
                         tableStatus={{
                           contentAddAble,
                           contentEditAble,

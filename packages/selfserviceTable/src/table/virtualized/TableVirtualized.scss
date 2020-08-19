@@ -79,6 +79,10 @@
 .scrollButton:hover .scrollIcon {
   opacity: 1;
 }
-.freezedTable .ReactVirtualized__Table__Grid {
-  overflow-y: none !important;
+.freezedTable * {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  scrollbar-width: none !important;
 }

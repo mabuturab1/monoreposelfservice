@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { withStyles } from "@material-ui/core/styles";
@@ -11,8 +11,9 @@ import TableDialog from "../../common/tableDialog/TableDialog";
 import "react-virtualized/styles.css";
 import "./TableVirtualized.scss";
 import TableContext from "../context/TableContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
+import isEqual from "lodash.isequal";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 const styles = (theme) => ({
   flexContainer: {
     display: "flex",
@@ -55,6 +56,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     rowHeight: Constants.tableRowHeight,
   };
 
+  const scrollTopTable = useRef(null);
   const {
     classes,
     columns,
@@ -70,10 +72,22 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
 
     ...tableProps
   } = props;
-  console.log("TABLE VIRTUAIZED Re-rendered");
+  console.log("TABLE VIRTUAIZED Re-rendered", columns);
   const getKey = (tableDataId, fieldKey) => {
     return tableDataId + fieldKey;
   };
+  const handleKeyDown = (event) => {
+    if (props.updateCurrentScroll && event.shiftKey)
+      props.updateCurrentScroll(scrollTopTable.current);
+  };
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+
+    // cleanup this component
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
   const getInitData = (el) => {
     if (el.type === "CONTACT") {
       let cell = columns.find((el) => el.type === "CONTACT");
@@ -212,9 +226,12 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
   };
   let tableClasses = [classes.table];
   if (isFreezed) tableClasses.push("freezedTable");
+  const onScrollTable = (event) => {
+    scrollTopTable.current = event.scrollTop;
+  };
   return (
     <React.Fragment>
-      <div className={"scrollButtonTableVirtual"}>
+      {/* <div className={"scrollButtonTableVirtual"}>
         <div onClick={setScrollToTop} style={{ marginBottom: "3px" }}>
           <FontAwesomeIcon
             className={styles.scrollIcon}
@@ -229,20 +246,19 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
             size={"lg"}
           />
         </div>
-      </div>
+      </div> */}
 
       <AutoSizer>
         {({ height, width }) => (
           <Table
-            scrollToIndex={scrollIndex}
-            scrollTop={props.scrollTop ?? undefined}
+            scrollTop={props.scrollTop ? props.scrollTop : undefined}
             height={height}
             width={getColumnsWidth(columns)}
             rowHeight={rowHeight || defaultProps.rowHeight}
             gridStyle={{
               direction: "inherit",
             }}
-            onScroll={props.onScroll ?? undefined}
+            onScroll={onScrollTable}
             headerHeight={headerHeight || defaultProps.headerHeight}
             className={tableClasses.join(" ")}
             onRowsRendered={onRowsRendered}
@@ -284,26 +300,27 @@ const isFormDataEqual = (obj1, obj2) => {
   return (
     equalObj(obj1.values, obj2.values, 1) &&
     equalObj(obj1.errors, obj2.errors, 2) &&
-    equalObj(obj1.touched, obj2.touched, 3) &&
-    equalObj(obj2.values, obj1.values, 4) &&
-    equalObj(obj2.errors, obj1.errors, 5) &&
-    equalObj(obj2.touched, obj1.touched, 6)
+    equalObj(obj1.touched, obj2.touched, 3)
+    //  &&
+    // equalObj(obj2.values, obj1.values, 4) &&
+    // equalObj(obj2.errors, obj1.errors, 5) &&
+    // equalObj(obj2.touched, obj1.touched, 6)
   );
 };
 const equalObj = (val1, val2, id) => {
-  let status =
-    Object.keys(val1).filter((el) => val1[el] !== val2[el]).length === 0;
-
+  let status = isEqual(val1, val2);
+  console.log(id, status);
   return status;
 };
 const areEqual = (prevProps, nextProps) => {
+  console.log("CHECKING EQUALITY");
+
   let status =
-    prevProps["tableData"] === nextProps["tableData"] &&
-    prevProps["tableHeader"] === nextProps["tableHeader"] &&
-    // (!nextProps["scrollTop"] ||
-    //   nextProps["scrollTop"] === prevProps["scrollTop"]) &&
+    isEqual(prevProps["tableData"], nextProps["tableData"]) &&
+    isEqual(prevProps["tableHeader"], nextProps["tableHeader"]) &&
     isFormDataEqual(prevProps["formData"], nextProps["formData"]);
 
+  console.log("TABLE VIRTUALIZED EQUALITY", status);
   return status;
 };
 VirtualizedTable.propTypes = {

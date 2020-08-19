@@ -17,6 +17,7 @@ const TableHeaderSettings = (props) => {
     fieldEditAble = props.tableStatus.fieldEditAble;
     fieldDeleteAble = props.tableStatus.fieldDeleteAble;
   }
+  let freezedColumnKeys = props.freezedColumnKeys || [];
   const { apiUrl, currentReportId } = props;
   const [currentSelection, setCurrentSelection] = useState("");
   const [currentSortOrder, setCurrentSortOrder] = useState(props.sortOrder);
@@ -54,8 +55,12 @@ const TableHeaderSettings = (props) => {
       headerTitle: "Settings",
       options: [
         {
-          id: "freeze",
-          text: "Freeze",
+          id: freezedColumnKeys.includes(props.cellSpecs?.key)
+            ? "unfreeze"
+            : "freeze",
+          text: freezedColumnKeys.includes(props.cellSpecs?.key)
+            ? "Un freeze"
+            : "Freeze",
           icon: (
             <div style={{ position: "relative" }}>
               <div
@@ -114,6 +119,10 @@ const TableHeaderSettings = (props) => {
     if (!item || !item.id) return;
     setCurrentSelection(item.id);
     if (i === 0 && item && isSortOrder(item.id)) setCurrentSortOrder(item.id);
+    if (item.id.startsWith("freeze"))
+      props.addFreezedColumn(props.cellSpecs.key);
+    else if (item.id.startsWith("unfreeze"))
+      props.removeFreezedColumn(props.cellSpecs.key);
     setTimeout(() => props.onItemSelect(item.id));
   };
   const handleSubmitData = (values, isSuccess) => {
@@ -191,6 +200,7 @@ const mapStateToProps = (state) => {
   return {
     currentReportId: state.currentReportId,
     apiUrl: state.apiAddress,
+    freezedColumnKeys: state.freezedColumnKeys,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -211,6 +221,9 @@ const mapDispatchToProps = (dispatch) => {
           isSuccess
         )
       ),
+    addFreezedColumn: (data) => dispatch(actions.getAddToFreezedColumn(data)),
+    removeFreezedColumn: (data) =>
+      dispatch(actions.getRemoveFromFreezedColumn(data)),
     addTableField: (apiUrl, currentReportId, data, isSuccess) =>
       dispatch(actions.addTableField(apiUrl, currentReportId, data, isSuccess)),
   };

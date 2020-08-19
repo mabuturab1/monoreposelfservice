@@ -14,6 +14,7 @@ const mapStateToProps = (state) => {
     tableHeaderPending: state.tableHeaderPending,
     tableDataPending: state.tableDataPending,
     totalReportItems: state.totalReportItems,
+    freezedColumnKeys: state.freezedColumnKeys,
   };
 };
 

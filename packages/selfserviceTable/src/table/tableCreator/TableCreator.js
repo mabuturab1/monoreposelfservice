@@ -21,6 +21,7 @@ import Loader from "react-loader-spinner";
 import { CellTypes } from "../utility/cellTypes";
 import { getFormattedDate } from "../utility/objectsFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import TableVirtualized from "../virtualized/TableVirtualized";
 
 const TableCreator = (props) => {
   let {
@@ -405,7 +406,55 @@ const TableCreator = (props) => {
       }
     }, 5);
   };
+  let freezedColumnKeys = props.freezedColumnKeys || [];
+  let tableHeaderFreezed = tableHeader.filter((el) =>
+    freezedColumnKeys.includes(el.key)
+  );
+  let cellSpecsNew = createHeaderSpecs(tableHeader);
+  let cellSpecsFreezed = cellSpecsNew.filter((el) =>
+    freezedColumnKeys.includes(el.key)
+  );
+  const getFreezedColumnWidth = () => {
+    return freezedColumnKeys
+      .map((el) => columnsWidth[el])
+      .reduce((a, b) => a + b, 0);
+  };
+  let disableTableStatus = {
+    contentAddAble: false,
+    contentEditAble: false,
+    contentDeleteAble: false,
+    fieldAddAble: false,
+    fieldEditAble: false,
+    fieldDeleteAble: false,
+  };
+  let freezedTable = (formData) => (
+    <TableVirtualized
+      {...{
+        tableData,
 
+        formData,
+
+        onHeaderClicked,
+
+        updateFieldData,
+        tableActionsClicked,
+      }}
+      isFreezed={true}
+      sortByColumn={() => {}}
+      validationSchema={{}}
+      tableStatus={disableTableStatus}
+      tableHeader={tableHeaderFreezed}
+      cellSpecs={cellSpecsFreezed}
+      showCircularIndicator={false}
+      rowCount={tableData.length}
+      rowGetter={({ index }) => tableData[index]}
+      columns={tableHeaderFreezed.map((el) => ({
+        ...el,
+        dataKey: el.key,
+        width: columnsWidth[el.key] != null ? columnsWidth[el.key] : 100,
+      }))}
+    />
+  );
   return (
     <TableContext.Provider
       value={{
@@ -476,98 +525,118 @@ const TableCreator = (props) => {
               </div>
             </div>
           ) : null}
-          <div
-            ref={tableWrapper}
-            className={styles.wrapper}
-            onScroll={onScroll}
+          <Formik
+            initialValues={getInitValues()}
+            enableReinitialize={true}
+            validationSchema={getValidationSchemaObject()}
+            onSubmit={(values, actions) => {
+              console.log("values", values);
+              console.log("actions", actions);
+            }}
           >
-            <Paper
-              style={{
-                margin: "0 auto",
-                flex: 1,
-                width:
-                  tableData.length > 0
-                    ? tableWidth
-                    : staticData
-                    ? "500px"
-                    : "100vw",
-              }}
-            >
-              {(props.serverError && props.serverError.length > 0) === true ? (
-                <InfoDialog
-                  open={
-                    (props.serverError && props.serverError.length > 0) === true
-                  }
-                  icon={faExclamationCircle}
-                  handleClose={() => props.removeError()}
-                  buttonTitle={"Okay"}
-                  content={props.serverError}
-                  title={"Sorry"}
-                />
-              ) : null}
-
-              <Formik
-                initialValues={getInitValues()}
-                enableReinitialize={true}
-                validationSchema={getValidationSchemaObject()}
-                onSubmit={(values, actions) => {
-                  console.log("values", values);
-                  console.log("actions", actions);
-                }}
+            {(formData) => (
+              <div
+                style={{ position: "relative", width: "100%", height: "100%" }}
               >
-                {(formData) =>
-                  props.tableHeaderPending ? (
-                    <div
-                      style={{
-                        width: staticData ? "500px" : "100vw",
-                        height: "100%",
+                <div
+                  className={styles.freezedTable}
+                  style={{
+                    width: getFreezedColumnWidth(),
+                  }}
+                >
+                  {freezedTable(formData)}
+                </div>
+                <div
+                  ref={tableWrapper}
+                  className={styles.wrapper}
+                  onScroll={onScroll}
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                >
+                  <Paper
+                    style={{
+                      margin: "0 auto",
+                      flex: 1,
+                      width:
+                        tableData.length > 0
+                          ? tableWidth
+                          : staticData
+                          ? "500px"
+                          : "100vw",
+                    }}
+                  >
+                    {(props.serverError && props.serverError.length > 0) ===
+                    true ? (
+                      <InfoDialog
+                        open={
+                          (props.serverError &&
+                            props.serverError.length > 0) === true
+                        }
+                        icon={faExclamationCircle}
+                        handleClose={() => props.removeError()}
+                        buttonTitle={"Okay"}
+                        content={props.serverError}
+                        title={"Sorry"}
+                      />
+                    ) : null}
 
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      {props.tableDataPending ? (
-                        <Loader
-                          type="ThreeDots"
-                          color="#00BFFF"
-                          height={50}
-                          width={50}
-                          timeout={0} //3 secs
-                        />
-                      ) : (
-                        <h4 className={styles.noData}>No Record Found</h4>
-                      )}
-                    </div>
-                  ) : (
-                    <InfiniteLoader
-                      isNextPageLoading={props.tableDataPending}
-                      loadNextPage={loadMoreItems}
-                      tableData={props.tableData}
-                      tableHeader={tableHeader}
-                      cellSpecs={createHeaderSpecs(tableHeader)}
-                      formData={formData}
-                      totalReportItems={props.totalReportItems}
-                      columnsWidth={columnsWidth}
-                      validationSchema={createValidationSchema()}
-                      sortByColumn={queryParams}
-                      onHeaderClicked={onHeaderClicked}
-                      updateFieldData={updateFieldData}
-                      tableActionsClicked={tableActionsClicked}
-                      tableStatus={{
-                        contentAddAble,
-                        contentEditAble,
-                        contentDeleteAble,
-                        fieldAddAble,
-                        fieldEditAble,
-                        fieldDeleteAble,
-                      }}
-                    />
-                  )
-                }
-              </Formik>
-            </Paper>
-          </div>
+                    {props.tableHeaderPending ? (
+                      <div
+                        style={{
+                          width: staticData ? "500px" : "100vw",
+                          height: "100%",
+
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        {props.tableDataPending ? (
+                          <Loader
+                            type="ThreeDots"
+                            color="#00BFFF"
+                            height={50}
+                            width={50}
+                            timeout={0} //3 secs
+                          />
+                        ) : (
+                          <h4 className={styles.noData}>No Record Found</h4>
+                        )}
+                      </div>
+                    ) : (
+                      <InfiniteLoader
+                        isNextPageLoading={props.tableDataPending}
+                        loadNextPage={loadMoreItems}
+                        tableData={props.tableData}
+                        tableHeader={tableHeader}
+                        cellSpecs={createHeaderSpecs(tableHeader)}
+                        formData={formData}
+                        totalReportItems={props.totalReportItems}
+                        columnsWidth={columnsWidth}
+                        validationSchema={createValidationSchema()}
+                        sortByColumn={queryParams}
+                        onHeaderClicked={onHeaderClicked}
+                        updateFieldData={updateFieldData}
+                        freezedColumnKeys={props.freezedColumnKeys || []}
+                        tableActionsClicked={tableActionsClicked}
+                        tableStatus={{
+                          contentAddAble,
+                          contentEditAble,
+                          contentDeleteAble,
+                          fieldAddAble,
+                          fieldEditAble,
+                          fieldDeleteAble,
+                        }}
+                      />
+                    )}
+                  </Paper>
+                </div>
+              </div>
+            )}
+          </Formik>
         </div>
       </CellTypeContext.Provider>
     </TableContext.Provider>

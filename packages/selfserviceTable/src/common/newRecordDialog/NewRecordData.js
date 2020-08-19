@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from "react";
 import MyTableCell from "@selfservicetable/celltypes/src/App";
-import schemaCreator from "../../table/utility/schemaCreator";
+import schemaCreatorNewRecord from "../../table/utility/schemaCreatorNewRecord";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import { DocCells } from "../../table/utility/cellTypes";
@@ -26,6 +26,7 @@ const NewRecordData = (props) => {
       return {
         ...data,
         isRequired:
+          data.isRequired &&
           type !== "NESTED_DROPDOWN" &&
           type !== "CONTACT" &&
           type !== "ITEM_LIST",
@@ -53,7 +54,7 @@ const NewRecordData = (props) => {
       if (el.type === "EMAIL")
         updatedEl = { ...updatedEl, data: { ...updatedEl.data, email: true } };
 
-      schemaObj[el.key] = schemaCreator(updatedEl);
+      schemaObj[el.key] = schemaCreatorNewRecord(updatedEl);
     });
     let nestedDropdownItems = specs.filter(
       (el) => el.type === "NESTED_DROPDOWN"
@@ -61,8 +62,17 @@ const NewRecordData = (props) => {
     nestedDropdownItems.forEach((item) => {
       if (item.data && item.data.fields) {
         let list = item.data.fields;
+
         list.forEach((el) => {
-          schemaObj[item.key + el.key] = schemaCreator(el);
+          schemaObj[item.key + el.key] = schemaCreatorNewRecord({
+            ...el,
+            data: { ...el },
+          });
+          console.log(
+            "ASSIGNING NESTED DROPDOWN",
+            item.key + el.key,
+            schemaObj[item.key + el.key]
+          );
         });
       }
     });
@@ -78,7 +88,21 @@ const NewRecordData = (props) => {
     let data = {};
     let specs = createHeaderSpecs(tableHeader);
     specs.forEach((el) => {
-      data[el.key] = DummyInitValues[el.type] || "";
+      if (el.data.isRequired && !el.data.isDisabled) {
+        data[el.key] = DummyInitValues[el.key];
+      } else data[el.key] = null;
+    });
+    let nestedDropdownItems = specs.filter(
+      (el) => el.type === "NESTED_DROPDOWN"
+    );
+    nestedDropdownItems.forEach((item) => {
+      if (item.data && item.data.fields) {
+        let list = item.data.fields;
+        list.forEach((el) => {
+          console.log("ASSIGNING TO NESTED DROPDOWN", el.key);
+          data[item.key + el.key] = DummyInitValues[el.key];
+        });
+      }
     });
     return data;
   };
@@ -165,6 +189,7 @@ const NewRecordData = (props) => {
         );
     }
   };
+
   const handleDataSubmission = (handleSubmit, errors, touched) => {
     handleSubmit();
     console.log(errors, touched);
@@ -247,6 +272,7 @@ const NewRecordData = (props) => {
                     appTouchedObj={touched}
                     appErrorObj={errors}
                     rowWidth={160}
+                    myKey={el.key}
                     cellOriginalKey={el.key}
                     rowData={{ data: {} }}
                     updateFieldData={updateFieldData}

@@ -79,6 +79,7 @@ export const getDeleteContentStart = () => {
     type: actionTypes.START_DELETE_CONTENT,
   };
 };
+
 export const getDeleteContentFailed = () => {
   return {
     type: actionTypes.DELETE_CONTENT_FAILED,
@@ -87,6 +88,18 @@ export const getDeleteContentFailed = () => {
 export const getDeleteContentSuccess = (data) => {
   return {
     type: actionTypes.DELETE_CONTENT_SUCCESS,
+    payload: data,
+  };
+};
+export const getAddToFreezedColumn = (data) => {
+  return {
+    type: actionTypes.ADD_FREEZED_COLUMN,
+    payload: data,
+  };
+};
+export const getRemoveFromFreezedColumn = (data) => {
+  return {
+    type: actionTypes.REMOVE_FREEZED_COLUMN,
     payload: data,
   };
 };

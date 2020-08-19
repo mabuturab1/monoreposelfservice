@@ -16,6 +16,7 @@ const initialState = {
   totalReportItems: 0,
   queryParams: {},
   fetchData: 1,
+  freezedColumnKeys: [],
   totalUpdateFieldErrors: 0,
   snackbarStatus: {
     updated: false,
@@ -96,7 +97,6 @@ const deleteTableContent = (tableData, payload) => {
   return updatedTableData;
 };
 const reducer = (state = initialState, action) => {
-  console.log("update obj is", state, action);
   switch (action.type) {
     case actionTypes.START_FETCHING_TABLE_DATA:
       return updateObject(state, { tableDataPending: true });
@@ -162,6 +162,16 @@ const reducer = (state = initialState, action) => {
       });
     case actionTypes.CLEAR_TABLE_DATA:
       return updateObject(state, { tableData: [] });
+    case actionTypes.ADD_FREEZED_COLUMN:
+      return updateObject(state, {
+        freezedColumnKeys: state.freezedColumnKeys.concat(action.payload),
+      });
+    case actionTypes.REMOVE_FREEZED_COLUMN:
+      return updateObject(state, {
+        freezedColumnKeys: state.freezedColumnKeys.filter(
+          (el) => el !== action.payload
+        ),
+      });
     case actionTypes.FETCHING_TABLE_DATA_FAILED:
       return updateObject(state, {
         tableDataPending: false,

@@ -78,7 +78,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (updateCurrentScroll != null && event.shiftKey)
+      if (updateCurrentScroll != null && event.ctrlKey)
         updateCurrentScroll(scrollTopTable.current);
     };
 

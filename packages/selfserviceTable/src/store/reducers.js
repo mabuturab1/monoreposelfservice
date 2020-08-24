@@ -163,14 +163,20 @@ const reducer = (state = initialState, action) => {
     case actionTypes.CLEAR_TABLE_DATA:
       return updateObject(state, { tableData: [] });
     case actionTypes.ADD_FREEZED_COLUMN:
+      let prevFreezed = [action.payload];
+      if (!state.freezedColumnKeys.includes("indexIdNumber"))
+        prevFreezed = ["indexIdNumber", action.payload];
       return updateObject(state, {
-        freezedColumnKeys: state.freezedColumnKeys.concat(action.payload),
+        freezedColumnKeys: state.freezedColumnKeys.concat(prevFreezed),
       });
     case actionTypes.REMOVE_FREEZED_COLUMN:
+      let remKeys = state.freezedColumnKeys.filter(
+        (el) => el !== action.payload
+      );
+      if (remKeys.length < 2 && remKeys.includes("indexIdNumber")) remKeys = [];
+
       return updateObject(state, {
-        freezedColumnKeys: state.freezedColumnKeys.filter(
-          (el) => el !== action.payload
-        ),
+        freezedColumnKeys: remKeys,
       });
     case actionTypes.UPDATE_SNACKABR_STATUS:
       return updateObject(state, {

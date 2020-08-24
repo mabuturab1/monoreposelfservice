@@ -81,7 +81,7 @@ const InfiniteLoaderWrapper = ({
     );
   };
   const handleKeyDown = (event) => {
-    console.log("shift key pressed status", event, event.shiftKey);
+    console.log("shift key pressed status", event, event.ctrlKey);
   };
   useEffect(() => {
     window.addEventListener("keypressed", handleKeyDown);

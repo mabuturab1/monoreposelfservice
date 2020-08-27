@@ -595,9 +595,9 @@ const TableCreator = (props) => {
                   onScroll={onScroll}
                   style={{
                     position: "relative",
-                    width: `calc(100% - ${getFreezedColumnWidth()})`,
+                    width: `calc(100% - ${0})`,
                     height: "100%",
-                    marginLeft: getFreezedColumnWidth() + "px",
+                    marginLeft: 0 + "px",
                   }}
                 >
                   <Paper

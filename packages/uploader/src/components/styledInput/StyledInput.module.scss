@@ -1,0 +1,52 @@
+.input {
+  width: 90%;
+  color: #4a4a4a;
+  font-weight: 500;
+  font-size: 0.8rem;
+  background-color: transparent;
+  font-family: inherit;
+  //   padding: 0.4rem 1rem;
+  &,
+  &:focus {
+    border: 1px solid rgba(0, 0, 50, 0.4);
+    outline: none;
+    border-radius: 0.3rem;
+  }
+  &:read-only {
+    border: 1px solid transparent;
+    outline: none;
+    cursor: pointer;
+  }
+  &::placeholder {
+    font-weight: 400;
+    opacity: 0.8;
+    color: #cacaca;
+  }
+}
+.fileInput {
+  display: block;
+  font-size: 0.7rem;
+  min-height: 1.5rem;
+  text-align: center;
+  color: #939393;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+
+  cursor: pointer;
+  min-width: 7rem;
+  border: 1px solid rgba(0, 0, 50, 0.4);
+  outline: none;
+  border-radius: 0.3rem;
+}
+.wrapper {
+  display: flex;
+  flex-flow: column;
+}
+.label {
+  font-size: 1rem;
+  color: black;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}

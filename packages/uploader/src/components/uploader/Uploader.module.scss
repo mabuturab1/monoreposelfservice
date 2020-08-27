@@ -1,0 +1,37 @@
+.uploaderWrapper {
+  width: 30rem;
+  height: 30rem;
+  display: flex;
+  flex-flow: column;
+  padding: 20px;
+}
+.buttonWrapper {
+  display: flex;
+  padding: 10px 0px;
+  justify-content: space-between;
+}
+.inputWrapper {
+  width: 10rem;
+}
+.label {
+  font-size: 1rem;
+  color: black;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+.iconWrapper {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+.subtitleWrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.subtitleText {
+  font-size: 0.7rem;
+
+  text-align: center;
+  color: #939393;
+}

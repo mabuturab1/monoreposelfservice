@@ -1,0 +1,48 @@
+.inputWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  // padding: 0.5rem;
+  border-radius: 0.45rem;
+  cursor: pointer;
+  position: relative;
+
+  //   padding: 0.4rem 1rem;
+
+  span {
+    color: #4a4a4a;
+    font-weight: 500;
+    font-size: 0.8rem;
+    background-color: transparent;
+    font-family: "Roboto", "sans-serif";
+  }
+}
+.icon {
+  padding-right: 0.6rem;
+}
+.adorment {
+  padding-right: 0.6rem !important;
+  right: 0.3rem !important;
+  background-color: white;
+  p {
+    font-size: 0.8rem !important;
+  }
+}
+.absoluteIcon {
+  position: absolute;
+  top: 50%;
+  right: 2.4rem;
+  transform: translateY(-50%);
+  z-index: 10000;
+  color: lightgrey;
+}
+.focus {
+  border: 1px solid rgba(0, 0, 50, 0.4);
+  outline: none;
+  border-radius: 0.3rem;
+}
+.readOnly {
+  border: 1px solid transparent;
+  outline: none;
+}

@@ -6,7 +6,7 @@ import { MuiPickersUtilsProvider, Calendar } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/moment";
 import TimePicker from "./timePicker/TimePicker";
 import moment from "moment";
-import { Popover } from "@material-ui/core";
+import { Popover, Button } from "@material-ui/core";
 import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 import Tooltip from "../../tooltip/Tooltip";
 
@@ -25,9 +25,11 @@ const DateTime = (props) => {
     error,
     touched,
     updateFieldData,
+    pickers,
   } = {
     ...props,
   };
+
   let submitFormat = mSubmitFormat;
   let decodeFormat = mDecodeFormat;
   let showFormat = mShowFormat;
@@ -38,6 +40,7 @@ const DateTime = (props) => {
     value = mValue;
     isDateValid = true;
   }
+
   if (submitFormat)
     submitFormat = mSubmitFormat.replace("yyyy", "YYYY").replace("dd", "DD");
   if (decodeFormat)
@@ -67,17 +70,20 @@ const DateTime = (props) => {
     setAnchorEl(null);
     handleDataSubmit();
   };
+
   const handleDataSubmit = (updatedTime = {}) => {
-    let isUpdateAvailable = Object.keys(updatedTime).length > 0;
+    let timeUpdateObtained = Object.keys(updatedTime).length > 0;
+
     let processedTimeFormat = getProcessedTime(
       dateVal,
       updatedTime,
-      isUpdateAvailable
+      timeUpdateObtained
     );
     let processedTimeMoment = moment(processedTimeFormat);
     let processedTime = processedTimeMoment.format(
       submitFormat || decodeFormat || generalFormat
     );
+    console.log("mValue is", mValue);
     console.log(
       moment(min, decodeFormat || submitFormat),
       processedTimeMoment,
@@ -89,18 +95,20 @@ const DateTime = (props) => {
       processedTimeMoment.isAfter(moment(max, decodeFormat || submitFormat))
     );
     if (
-      isUpdateAvailable &&
+      timeUpdateObtained &&
       min &&
-      processedTimeMoment.isBefore(moment(min, decodeFormat || submitFormat))
+      processedTimeMoment.isBefore(moment(min, decodeFormat || submitFormat)) &&
+      pickerHasDate()
     ) {
       updateDefaultValue();
       setDateRangeError(true);
       return;
     }
     if (
-      isUpdateAvailable &&
+      timeUpdateObtained &&
       max &&
-      processedTimeMoment.isAfter(moment(max, decodeFormat || submitFormat))
+      processedTimeMoment.isAfter(moment(max, decodeFormat || submitFormat)) &&
+      pickerHasDate()
     ) {
       updateDefaultValue();
       setDateRangeError(true);
@@ -111,7 +119,8 @@ const DateTime = (props) => {
 
     console.log("FINAL RESULT IS");
     console.log(value, processedTime);
-    if (updateFieldData && value !== processedTime && isUpdateAvailable) {
+    if (pickerOnlyIncludesDate()) timeUpdateObtained = true;
+    if (updateFieldData && value !== processedTime && timeUpdateObtained) {
       updateFieldData(processedTime);
       setTimeout(() => setFieldValue(name, processedTime), 10);
     }
@@ -163,6 +172,23 @@ const DateTime = (props) => {
     setDateValOriginal(value);
     setDateVal(moment(value, decodeFormat || submitFormat));
   }
+
+  const pickerHasDate = () => {
+    return pickers && pickers.length > 0 && pickers.includes("DATE");
+  };
+  const pickerHasTime = () => {
+    return pickers && pickers.length > 0 && pickers.includes("TIME");
+  };
+  const pickerOnlyIncludesDate = () => {
+    return pickers && pickers.length === 1 && pickers.includes("DATE");
+  };
+  const pickerOnlyIncludesTime = () => {
+    return pickers && pickers.length === 1 && pickers.includes("TIME");
+  };
+  const getWidth = () => {
+    if (pickerOnlyIncludesDate() || pickerOnlyIncludesTime()) return "17rem";
+    else return "35rem";
+  };
   return (
     <div className={styles.dateTimeWrapper}>
       <Tooltip
@@ -206,37 +232,64 @@ const DateTime = (props) => {
           horizontal: "center",
         }}
       >
-        <div className={styles.dateTimeModal}>
-          <div className={styles.datePicker}>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <Calendar
-                style={{ width: "20rem" }}
-                date={dateVal}
-                minDate={min ? moment(min) : undefined}
-                maxDate={max ? moment(max) : undefined}
-                onChange={(newDate) => {
-                  setDateVal(newDate);
+        <div className={styles.dateTimeModal} style={{ width: getWidth() }}>
+          {pickerHasDate() ? (
+            <div className={styles.datePicker}>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <Calendar
+                  style={{ width: "20rem" }}
+                  date={dateVal}
+                  minDate={min ? moment(min) : undefined}
+                  maxDate={max ? moment(max) : undefined}
+                  onChange={(newDate) => {
+                    setDateVal(newDate);
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+              {pickerOnlyIncludesDate() ? (
+                <div className={styles.calendarButtonWrapper}>
+                  <Button
+                    style={{ fontSize: "0.9rem" }}
+                    color="secondary"
+                    variant="contained"
+                    onClick={() => setAnchorEl(null)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    style={{
+                      fontSize: "0.9rem",
+                      marginLeft: "1rem",
+                    }}
+                    color="primary"
+                    variant="contained"
+                    onClick={() => handleDataSubmit()}
+                  >
+                    Apply
+                  </Button>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {pickerHasTime() ? (
+            <div className={styles.timeInput}>
+              <TimePicker
+                hours={getLocalTime("hh")}
+                mins={getLocalTime("mm")}
+                clock={getLocalTime("clock")}
+                rangeError={dateRangeError}
+                onCancel={handleClose}
+                min={min}
+                max={max}
+                onApply={(update) => {
+                  updateInputValue(update);
+
+                  setTimeout(() => handleDataSubmit(update));
                 }}
               />
-            </MuiPickersUtilsProvider>
-          </div>
-
-          <div className={styles.timeInput}>
-            <TimePicker
-              hours={getLocalTime("hh")}
-              mins={getLocalTime("mm")}
-              clock={getLocalTime("clock")}
-              rangeError={dateRangeError}
-              onCancel={handleClose}
-              min={min}
-              max={max}
-              onApply={(update) => {
-                updateInputValue(update);
-
-                setTimeout(() => handleDataSubmit(update));
-              }}
-            />
-          </div>
+            </div>
+          ) : null}
         </div>
       </Popover>
     </div>

@@ -11,7 +11,7 @@ const SingleFilter = (props) => {
     tableFields,
     searchConditions,
     searchConditionsValues,
-    queryConditions,
+    // queryConditions,
 
     handleChange,
     handleSubmit,

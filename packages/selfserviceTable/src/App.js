@@ -2,7 +2,6 @@ import React from "react";
 
 import "./App.scss";
 import Table from "./table/Table";
-import Uploader from "@selfservicetable/uploader/src/App";
 
 function App() {
   return (

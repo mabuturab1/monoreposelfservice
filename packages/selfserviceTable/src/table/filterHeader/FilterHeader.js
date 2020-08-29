@@ -99,7 +99,7 @@ const FilterHeader = (props) => {
       return;
     }
     if (idToRemove) {
-      newIdsArr = filterData.idsArr.filter((el) => el != idToRemove);
+      newIdsArr = filterData.idsArr.filter((el) => el !== idToRemove);
       let remFilter = idToRemove;
       ["", "QV", "FV", "SV"].forEach((el) => {
         delete filterInitValues[remFilter + el];
@@ -229,6 +229,16 @@ const FilterHeader = (props) => {
   let getTwoDigitsNumber = (val) => {
     return ("0" + val.toString()).trim().slice(-2);
   };
+  const exportDataTable = () => {
+    props.getReportExportId(
+      props.apiUrl,
+      props.currentReportId,
+      "contents_pdf",
+      (data) => {
+        console.log("data of export is", data);
+      }
+    );
+  };
   return (
     <div className={styles.wrapper}>
       <div className={styles.filterButtonWrapper}>
@@ -272,6 +282,7 @@ const FilterHeader = (props) => {
           false
         )}
         <div
+          onClick={exportDataTable}
           className={[
             styles.topHeaderItemWrapper,
             styles.mediumPadding,
@@ -491,12 +502,18 @@ const mapStateToProps = (state) => {
     filterData: state.filterData,
     tableHeader: state.tableHeader,
     tableData: state.tableData,
+    currentReportId: state.currentReportId,
+    apiUrl: state.apiAddress,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     storeFilterData: (data) => dispatch(actions.getFilterData(data)),
+    getReportExportId: (apiUrl, reportId, contentType, callback) =>
+      dispatch(
+        actions.getReportExportId(apiUrl, reportId, contentType, callback)
+      ),
   };
 };
 

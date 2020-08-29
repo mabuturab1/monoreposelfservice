@@ -6,7 +6,7 @@ import * as serviceWorker from "./serviceWorker";
 
 import tableDataReducer from "./store/reducers";
 import { Provider } from "react-redux";
-import { createStore, applyMiddleware } from "redux";
+import { createStore, applyMiddleware, combineReducers } from "redux";
 import thunk from "redux-thunk";
 
 const store = createStore(tableDataReducer, applyMiddleware(thunk));

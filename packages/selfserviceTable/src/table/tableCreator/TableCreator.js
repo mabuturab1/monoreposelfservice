@@ -17,7 +17,7 @@ import {
   faAngleRight,
   faAngleLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import Loader from "react-loader-spinner";
+// import Loader from "react-loader-spinner";
 import { CellTypes } from "../utility/cellTypes";
 import { getFormattedDate } from "../utility/objectsFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -109,7 +109,7 @@ const TableCreator = (props) => {
   let {
     apiUrl,
     currentReportId,
-    tableDataUrl,
+
     staticData,
     fetchTableData: mFetchTableData,
     fetchTableHeader: mFetchTableHeader,

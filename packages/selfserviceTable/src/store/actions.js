@@ -376,7 +376,33 @@ export const addTableContent = (apiUrl, reportId, data, isSuccess) => {
       });
   };
 };
-
+export const getReportExportId = (apiUrl, reportId, contentType, callback) => {
+  return async (dispatch) => {
+    axios
+      .get(`${"/vbeta"}/reports/${reportId}/${contentType}`, config)
+      .then((response) => {
+        if (response && response.data) callback(response.data);
+        else callback(null);
+      })
+      .catch((error) => {
+        callback(null);
+      });
+  };
+};
+export const getDataFromWebScoket = (exportId) => {
+  const ws = new WebSocket(`${"/vbeta"}/ws/exports/${exportId}`);
+  ws.onopen = () => {
+    console.log("Web socket connected");
+  };
+  ws.onmessage = (data) => {
+    console.log(JSON.parse(data));
+    ws.close();
+  };
+  ws.onerror = (error) => {
+    console.log("error occurred", error);
+    ws.close();
+  };
+};
 export const updateFieldData = (
   apiUrl,
   reportId,

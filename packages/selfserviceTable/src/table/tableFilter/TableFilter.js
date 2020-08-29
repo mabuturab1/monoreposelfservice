@@ -1,14 +1,14 @@
 import React from "react";
 
 import SingleFilter from "./singleFilter/SingleFilter";
-import styles from "./TableFilter.module.scss";
+// import styles from "./TableFilter.module.scss";
 const TableFilter = (props) => {
   const {
     queryConditions,
     tableFields,
     searchConditions,
     searchConditionsValues,
-    numFilters,
+    // numFilters,
     removeFilter,
     idsArr: mIdsArr,
   } = {

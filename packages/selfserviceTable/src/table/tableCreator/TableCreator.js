@@ -61,6 +61,34 @@ const TableCreator = (props) => {
     });
 
   if (!props.tableHeader || props.tableHeader.length < 1) concatArr = [];
+  const dummyTableHeader = [];
+  let dummyColumnWidth = {};
+  for (let i = 0; i < 20; i++) {
+    dummyTableHeader.push({
+      label: "",
+      key: i.toString(),
+      skeletonPreview: "%%SKELETON_PREVIEW%%",
+    });
+    dummyColumnWidth[i] = 80;
+  }
+  const getDummyTableData = () => {
+    const showDummyHeader = props.tableHeaderPending && tableHeader.length < 1;
+    let theader = showDummyHeader ? dummyTableHeader : tableHeader;
+    let dummyTableData = [];
+    for (let i = 0; i < 50; i++) {
+      let dummyRow = {};
+      for (let i = 0; i < theader.length; i++) {
+        dummyRow[theader[i].key] = "%%SKELETON_PREVIEW%%";
+      }
+      dummyTableData.push(dummyRow);
+    }
+
+    if (!showDummyHeader && showSkeletonForTableData()) {
+      console.log("RETURNING DUMMY DATA", dummyTableData);
+      return (props.tableData || []).concat(dummyTableData);
+    }
+    return dummyTableData;
+  };
 
   const tableHeader = (props.tableHeader || [])
     .concat(...concatArr)
@@ -81,6 +109,7 @@ const TableCreator = (props) => {
   let {
     apiUrl,
     currentReportId,
+    tableDataUrl,
     staticData,
     fetchTableData: mFetchTableData,
     fetchTableHeader: mFetchTableHeader,
@@ -330,15 +359,17 @@ const TableCreator = (props) => {
     else columnsWidth[el.key] = 160;
   });
   let handleNewFilterData = (filterData) => {
+    console.log("HANDLE NEW FILTER DATA", filterData);
     let newFilter = new URLSearchParams();
     const { data } = filterData;
 
     if (data == null) return;
 
-    for (let i = 0; i < (filterData.numFilters || 0); i++) {
+    for (let i = 0; i < (filterData.idsArr?.length || 0); i++) {
+      let filtName = filterData.idsArr[i];
       newFilter.append(
         "filters",
-        data[i + "listFV"] + data[i + "listSV"] + data[i + "list"]
+        data[filtName + "FV"] + data[filtName + "SV"] + data[filtName + ""]
       );
     }
     if (newFilter.toString() !== queryParams.filters.toString()) {
@@ -462,6 +493,19 @@ const TableCreator = (props) => {
       tempFreezedTable.current = false;
       console.log("FREEZED TABLE STATE END", tempFreezedTable.current);
     }, 400);
+  };
+  const showSkeletonForTableData = () => {
+    return (
+      (props.tableDataPending || props.tableHeaderPending) &&
+      (tableData.length < 1 || tableHeader.length < 1)
+    );
+  };
+  const showSkeletonForTableHeader = () => {
+    console.log(
+      "show skeleton for tableHeader",
+      props.tableHeaderPending && tableHeader.length < 1
+    );
+    return props.tableHeaderPending && tableHeader.length < 1;
   };
   let freezedTable = (formData) => (
     <TableVirtualized
@@ -627,40 +671,55 @@ const TableCreator = (props) => {
                       />
                     ) : null}
 
-                    {props.tableHeaderPending ? (
-                      <div
-                        style={{
-                          width: staticData ? "500px" : "100vw",
-                          height: "100%",
+                    {
+                      // props.tableHeaderPending ? (
+                      //   <div
+                      //     style={{
+                      //       width: staticData ? "500px" : "100vw",
+                      //       height: "100%",
 
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        {props.tableDataPending ? (
-                          <Loader
-                            type="ThreeDots"
-                            color="#00BFFF"
-                            height={50}
-                            width={50}
-                            timeout={0} //3 secs
-                          />
-                        ) : (
-                          <h4 className={styles.noData}>No Record Found</h4>
-                        )}
-                      </div>
-                    ) : (
+                      //       display: "flex",
+                      //       justifyContent: "center",
+                      //       alignItems: "center",
+                      //     }}
+                      //   >
+                      //     {props.tableDataPending ? (
+                      //       <Loader
+                      //         type="ThreeDots"
+                      //         color="#00BFFF"
+                      //         height={50}
+                      //         width={50}
+                      //         timeout={0} //3 secs
+                      //       />
+                      //     ) : (
+                      //       <h4 className={styles.noData}>No Record Found</h4>
+                      //     )}
+                      //   </div>
+                      // ) :
                       <InfiniteLoader
                         editAllowed={editAllowed}
                         isNextPageLoading={props.tableDataPending}
                         loadNextPage={loadMoreItems}
-                        tableData={props.tableData}
-                        tableHeader={tableHeader}
+                        tableHeaderSkeletonPreview={showSkeletonForTableHeader()}
+                        tableDataSkeletonPreview={showSkeletonForTableData()}
+                        tableData={
+                          showSkeletonForTableData()
+                            ? getDummyTableData()
+                            : props.tableData
+                        }
+                        tableHeader={
+                          showSkeletonForTableHeader()
+                            ? dummyTableHeader
+                            : tableHeader
+                        }
                         cellSpecs={createHeaderSpecs(tableHeader)}
                         formData={formData}
                         totalReportItems={props.totalReportItems}
-                        columnsWidth={columnsWidth}
+                        columnsWidth={
+                          props.tableHeaderPending
+                            ? dummyColumnWidth
+                            : columnsWidth
+                        }
                         validationSchema={createValidationSchema()}
                         sortByColumn={queryParams}
                         onHeaderClicked={onHeaderClicked}
@@ -668,6 +727,8 @@ const TableCreator = (props) => {
                         freezedColumnKeys={props.freezedColumnKeys || []}
                         tableActionsClicked={tableActionsClicked}
                         updateCurrentScroll={updateCurrentScroll}
+                        currentReportId={currentReportId}
+                        apiUrl={apiUrl}
                         tableStatus={{
                           contentAddAble,
                           contentEditAble,
@@ -677,7 +738,7 @@ const TableCreator = (props) => {
                           fieldDeleteAble,
                         }}
                       />
-                    )}
+                    }
                   </Paper>
                 </div>
               </div>

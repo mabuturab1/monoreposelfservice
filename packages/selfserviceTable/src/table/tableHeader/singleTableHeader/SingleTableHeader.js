@@ -5,11 +5,12 @@ import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import TableCell from "@material-ui/core/TableCell";
 import TableHeaderSettings from "../tableHeaderSettingsDropdown/TableHeaderSettingsDropdown";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
+
 const SingleTableHeader = (props) => {
-  const { cellSpecs } = props;
   const [hoverActive, setHoverActive] = useState(false);
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
+  const [cellSpecs, setCellSpecs] = useState(props.cellSpecs);
   const isNestedDropdown = () => {
     return cellSpecs && cellSpecs.type === "NESTED_DROPDOWN";
   };
@@ -84,6 +85,7 @@ const SingleTableHeader = (props) => {
         );
     }
   };
+
   const getDefaultSelection = () => {
     if (cellSpecs && cellSpecs.icon && cellSpecs.icon.toLowerCase() === "add")
       return "edit";
@@ -127,6 +129,7 @@ const SingleTableHeader = (props) => {
           onItemSelect={props.onItemSelect}
           sortOrder={props.sortOrder}
           isMenuOpened={(status) => setIsMenuOpened(status)}
+          updateCellSpecs={(data) => setCellSpecs(data)}
           cellSpecs={
             cellSpecs && cellSpecs.key === "%OPEN_NEW_FIELD_DIALOG%"
               ? {}

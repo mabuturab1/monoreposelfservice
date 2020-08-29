@@ -23,11 +23,14 @@ const InfiniteLoaderWrapper = ({
   tableActionsClicked,
   updateCurrentScroll,
   editAllowed,
+  apiUrl,
+  tableHeaderSkeletonPreview,
+  tableDataSkeletonPreview,
+  currentReportId,
 }) => {
   const isItemLoaded = ({ index }) => {
     return !!tableData[index];
   };
-
   return (
     <div
       style={{
@@ -60,6 +63,10 @@ const InfiniteLoaderWrapper = ({
               tableStatus,
               updateCurrentScroll,
               editAllowed,
+              apiUrl,
+              tableHeaderSkeletonPreview,
+              tableDataSkeletonPreview,
+              currentReportId,
             }}
             showCircularIndicator={isNextPageLoading}
             rowCount={tableData.length}

@@ -8,6 +8,7 @@ import SingleTableHeader from "../tableHeader/singleTableHeader/SingleTableHeade
 import MyTableCell from "@selfservicetable/celltypes/src/App";
 import * as Constants from "../constants/Constants";
 import TableDialog from "../../common/tableDialog/TableDialog";
+import Skeleton from "@material-ui/lab/Skeleton";
 import "react-virtualized/styles.css";
 import "./TableVirtualized.scss";
 import isEqual from "lodash.isequal";
@@ -57,6 +58,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
 
   const scrollTopTable = useRef(null);
   const {
+    apiUrl,
     classes,
     columns,
     rowHeight,
@@ -69,9 +71,12 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     formData,
     isFreezed,
     updateCurrentScroll,
+    tableHeaderSkeletonPreview,
+    tableDataSkeletonPreview,
+    currentReportId,
     ...tableProps
   } = props;
-  console.log("TABLE VIRTUAIZED Re-rendered", columns);
+
   const getKey = (tableDataId, fieldKey) => {
     return tableDataId + fieldKey;
   };
@@ -99,6 +104,11 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     return el.type === "IMAGE" || el.type === "DATETIME" ? null : "";
   };
   const cellRenderer = ({ dataKey, rowData }) => {
+    let currentValue = rowData[dataKey];
+
+    if (currentValue === "%%SKELETON_PREVIEW%%") {
+      return <Skeleton style={{ width: "50px" }} />;
+    }
     const {
       handleChange,
       handleSubmit,
@@ -132,6 +142,8 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
         rowHeight={rowHeight}
         serverData={{ ...myCell.data }}
         tableActionsClicked={tableActionsClicked}
+        apiUrl={apiUrl}
+        bearerToken={Constants.bearerToken}
         handlerFunctions={{
           handleChange,
           handleSubmit,
@@ -180,10 +192,14 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
   };
 
   const headerRenderer = (headerData) => {
+    if (headerData.skeletonPreview === "%%SKELETON_PREVIEW%%") {
+      return <Skeleton style={{ width: "50px" }} />;
+    }
+
     const { label, onHeaderClicked, dataKey, sortByColumn } = headerData;
     const { classes, cellSpecs, tableStatus } = props;
     let myCell = cellSpecs.find((el) => el.key === dataKey);
-
+    console.log("header data is", headerData, cellSpecs);
     return (
       <SingleTableHeader
         className={clsx(
@@ -191,6 +207,9 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
           classes.flexContainer,
           classes.noClick
         )}
+        currentReportId={currentReportId}
+        apiUrl={apiUrl}
+        token={Constants.bearerToken}
         style={
           sortByColumn.key === dataKey ? { backgroundColor: "yellow" } : {}
         }
@@ -272,25 +291,29 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
             {...tableProps}
             rowClassName={getRowClassName}
           >
-            {columns.map(({ key: dataKey, ...other }, index) => {
-              return (
-                <Column
-                  key={dataKey}
-                  headerRenderer={(headerProps) =>
-                    headerRenderer({
-                      ...headerProps,
-                      columnIndex: index,
-                      onHeaderClicked,
-                      sortByColumn,
-                    })
-                  }
-                  className={clsx(classes.flexContainer)}
-                  cellRenderer={cellRenderer}
-                  dataKey={dataKey}
-                  {...other}
-                />
-              );
-            })}
+            {columns.map(
+              ({ key: dataKey, skeletonPreview, ...other }, index) => {
+                return (
+                  <Column
+                    key={dataKey}
+                    headerRenderer={(headerProps) =>
+                      headerRenderer({
+                        ...headerProps,
+
+                        columnIndex: index,
+                        onHeaderClicked,
+                        sortByColumn,
+                        skeletonPreview,
+                      })
+                    }
+                    className={clsx(classes.flexContainer)}
+                    cellRenderer={cellRenderer}
+                    dataKey={dataKey}
+                    {...other}
+                  />
+                );
+              }
+            )}
           </Table>
         )}
       </AutoSizer>
@@ -320,6 +343,14 @@ const areEqual = (prevProps, nextProps) => {
     isEqual(prevProps["editAllowed"], nextProps["editAllowed"]) &&
     isEqual(prevProps["tableData"], nextProps["tableData"]) &&
     isEqual(prevProps["tableHeader"], nextProps["tableHeader"]) &&
+    // isEqual(
+    //   prevProps["tableHeaderSkeletonPreview"],
+    //   nextProps["tableHeaderSkeletonPreview"]
+    // ) &&
+    // isEqual(
+    //   prevProps["tableDataSkeletonPreview"],
+    //   nextProps["tableDataSkeletonPreview"]
+    // ) &&
     isFormDataEqual(prevProps["formData"], nextProps["formData"]);
 
   console.log("TABLE VIRTUALIZED EQUALITY", status);

@@ -280,6 +280,18 @@ export const getTableHeader = (apiUrl, reportId) => {
       });
   };
 };
+export const getTableHeaderField = (apiUrl, reportId, fieldId, callback) => {
+  axios
+    .get(`${"/vbeta"}/reports/${reportId}/fields/${fieldId}`, config)
+    .then((response) => {
+      if (response && response.data) callback(response.data);
+      else callback(null);
+    })
+    .catch((error) => {
+      callback(null);
+    });
+};
+
 const getFormData = async (localData, type) => {
   console.log("local image file url is", localData);
 

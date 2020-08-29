@@ -3,6 +3,8 @@ import styles from "./SingleFilter.module.scss";
 import PropTypes from "prop-types";
 import Dropdown from "@selfservicetable/celltypes/src/components/cellTypes/dropdown/Dropdown";
 import Tooltip from "@selfservicetable/celltypes/src/components/tooltip/Tooltip";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 const SingleFilter = (props) => {
   const {
     name,
@@ -19,6 +21,8 @@ const SingleFilter = (props) => {
     errors,
     touched,
     values,
+    id,
+    removeFilter,
   } = {
     ...props,
   };
@@ -30,9 +34,12 @@ const SingleFilter = (props) => {
     setFieldValue,
     setFieldTouched,
   };
+  const removeCurrentFilter = () => {
+    if (removeFilter && id) removeFilter(id);
+  };
   return (
     <div className={styles.wrapper}>
-      <div className={styles.singleDropdown}>
+      {/* <div className={styles.singleDropdown}>
         <Dropdown
           ignoreEditLocked={true}
           {...handleFunctions}
@@ -42,8 +49,9 @@ const SingleFilter = (props) => {
           error={errors[name + "QV"]}
           touched={touched[name + "QV"]}
         />
-      </div>
+      </div> */}
       <div className={styles.singleDropdown}>
+        {props.showLabel ? <p className={styles.headLabel}>Fields</p> : null}
         <Dropdown
           ignoreEditLocked={true}
           name={name + "FV"}
@@ -55,6 +63,7 @@ const SingleFilter = (props) => {
         />
       </div>
       <div className={styles.singleDropdown}>
+        {props.showLabel ? <p className={styles.headLabel}>Condition</p> : null}
         <Dropdown
           ignoreEditLocked={true}
           name={name + "SV"}
@@ -66,6 +75,9 @@ const SingleFilter = (props) => {
         />
       </div>
       <div className={styles.singleDropdown}>
+        {props.showLabel ? (
+          <p className={styles.headLabel}>Query Text</p>
+        ) : null}
         <Tooltip
           arrow
           title={errors[name] || ""}
@@ -83,6 +95,9 @@ const SingleFilter = (props) => {
             onChange={handleFunctions.handleChange}
           />
         </Tooltip>
+      </div>
+      <div className={styles.iconWrapper} onClick={removeCurrentFilter}>
+        <FontAwesomeIcon icon={faTimesCircle} />
       </div>
     </div>
   );

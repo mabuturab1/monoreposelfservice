@@ -12,7 +12,7 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import styles from "./FilterHeader.module.scss";
 import TableContext from "../context/TableContext";
 import TableFilter from "../tableFilter/TableFilter";
-import { Popover, CircularProgress } from "@material-ui/core";
+import { Popover, CircularProgress, Button } from "@material-ui/core";
 import { connect } from "react-redux";
 import schemaCreator from "../utility/schemaCreator";
 import * as actions from "../../store/actions";
@@ -32,7 +32,11 @@ const FilterHeader = (props) => {
     "equals (::)",
   ];
   const searchConditionsValues = ["<", "<=", ">", ">=", ":>", "::"];
-  const filterDataState = props.filterData || { data: {}, numFilters: 0 };
+  const filterDataState = props.filterData || {
+    idsArr: [],
+    data: {},
+    numFilters: 0,
+  };
   const tableData = props.tableData || [];
   const tableHeader = (props.tableHeader || []).filter(
     (el) => el.key !== "indexIdNumber"
@@ -51,31 +55,59 @@ const FilterHeader = (props) => {
     props.storeFilterData(filter);
     if (props.handleNewFilterData) props.handleNewFilterData(filter);
   };
-  let initNewFilterValues = (
+  let addNewFilter = ({ values }, numFilterValue) => {
+    let filterName = new Date().getTime();
+
+    let tableField =
+      (tableHeader || []).find((el) => el.key !== "indexIdNumber") || {};
+    let filterInitValues = {};
+    const initValues = [
+      "",
+      "WHERE",
+      tableField.key || "",
+      searchConditionsValues[0] || "",
+    ];
+
+    ["", "QV", "FV", "SV"].forEach((el, index) => {
+      filterInitValues[filterName + el] = initValues[index];
+    });
+    console.log("ADD NEW FILTER", { ...filterData });
+    let newData = {
+      idsArr: filterData.idsArr.concat(filterName),
+      data: { ...filterData.data, ...values, ...filterInitValues },
+      numFilters: numFilterValue,
+    };
+    setFilterData(newData);
+
+    // updateReduxState(newData);
+  };
+  let updateFilterValues = (
     { values },
     numFilterValue,
-    removeLastFilter = false,
+    idToRemove = null,
     storeState = false
   ) => {
     if (!tableHeader || tableHeader.length < 1) return;
     let filterInitValues = { ...filterDataState.data, ...values };
-
+    let newIdsArr = filterData.idsArr || [];
     if (numFilterValue < 1) {
-      setFilterData({ data: {}, numFilters: 0 });
+      setFilterData({ idsArr: [], data: {}, numFilters: 0 });
 
       if (storeState) {
         updateReduxState({ data: {}, numFilters: 0 });
       }
       return;
     }
-    if (removeLastFilter) {
-      let remFilter = numFilterValue + "list";
+    if (idToRemove) {
+      newIdsArr = filterData.idsArr.filter((el) => el != idToRemove);
+      let remFilter = idToRemove;
       ["", "QV", "FV", "SV"].forEach((el) => {
         delete filterInitValues[remFilter + el];
       });
     }
-    for (let i = 0; i < numFilterValue; i++) {
-      let filterName = i + "list";
+
+    for (let i = 0; i < newIdsArr.length; i++) {
+      let filterName = newIdsArr[i];
 
       let tableField =
         (tableHeader || []).find((el) => el.key !== "indexIdNumber") || {};
@@ -93,11 +125,13 @@ const FilterHeader = (props) => {
     }
 
     setFilterData({
+      idsArr: newIdsArr,
       data: filterInitValues,
       numFilters: numFilterValue,
     });
     if (storeState) {
       updateReduxState({
+        idsArr: newIdsArr,
         data: filterInitValues,
         numFilters: numFilterValue,
       });
@@ -105,7 +139,7 @@ const FilterHeader = (props) => {
   };
 
   if (Object.keys(filterData.data).length < 1 && filterData.numFilters > 0) {
-    initNewFilterValues({}, filterData.numFilters);
+    addNewFilter({ values: {} }, filterData.numFilters);
   }
 
   let validationScehma = {};
@@ -116,8 +150,8 @@ const FilterHeader = (props) => {
 
     validationScehma = { ...validationScehma, ...validator };
   };
-  for (let i = 0; i < filterData.numFilters; i++) {
-    let filterName = i + "list";
+  for (let i = 0; i < filterData.idsArr.length; i++) {
+    let filterName = filterData.idsArr[i];
     ["", "QV", "FV", "SV"].forEach((el) => {
       updateValidationSchema(filterName + el, {
         type: "TEXT",
@@ -340,7 +374,9 @@ const FilterHeader = (props) => {
         enableReinitialize={true}
         validationSchema={Yup.object().shape(validationScehma)}
         onSubmit={(values, actions) => {
+          console.log("IDS ARR VALUE ON SUBMIT", values);
           updateReduxState({
+            idsArr: filterData.idsArr,
             data: values,
             numFilters: filterData.numFilters,
           });
@@ -366,6 +402,9 @@ const FilterHeader = (props) => {
             }}
           >
             <div className={styles.filterWrapper}>
+              {filterData.numFilters > 0 ? (
+                <h5 className={styles.headLabel}>Filter</h5>
+              ) : null}
               <TableFilter
                 {...{
                   queryConditions,
@@ -373,50 +412,70 @@ const FilterHeader = (props) => {
                   searchConditionsValues,
                   tableFields: tableHeader,
                 }}
+                removeFilter={(id) =>
+                  updateFilterValues(
+                    mProps,
+                    filterData.numFilters - 1,
+                    id,
+                    filterDataState.numFilters > 0
+                  )
+                }
+                idsArr={filterData.idsArr}
                 numFilters={filterData.numFilters}
                 filterFormData={mProps}
               />
 
               <div className={styles.buttonWrapper}>
                 <div>
-                  <button
+                  <Button
+                    color="primary"
+                    variant="contained"
                     onClick={(e) => {
-                      let numberOfFilters = filterData.numFilters + 1;
-                      initNewFilterValues(mProps, numberOfFilters);
+                      addNewFilter(mProps, filterData.numFilters + 1);
                     }}
-                    className={styles.filterButton}
+                    className={styles.materialFilterButton}
                   >
                     Add Filter
-                  </button>
-                  {filterData.numFilters > 0 ? (
-                    <button
+                  </Button>
+
+                  {/* {filterData.numFilters > 0 ? (
+                    <Button
+                      color="secondary"
                       onClick={(e) => {
                         if (filterData.numFilters < 1) return;
                         let numberOfFilters = filterData.numFilters - 1;
 
-                        initNewFilterValues(
+                        updateFilterValues(
                           mProps,
                           numberOfFilters,
                           true,
                           filterDataState.numFilters > 0
                         );
                       }}
-                      className={[styles.filterButton, styles.danger].join(" ")}
+                      className={[
+                        styles.materialFilterButton,
+                        styles.danger,
+                      ].join(" ")}
                     >
                       Remove Filter
-                    </button>
-                  ) : null}
+                    </Button>
+                  ) : null} */}
                 </div>
-                <div>
+                <div className={styles.applyWrapper}>
                   {filterData.numFilters ? (
-                    <button
+                    <Button
+                      color="primary"
+                      variant="contained"
                       onClick={(e) => {
                         mProps.handleSubmit();
                       }}
-                      className={styles.filterButton}
+                      className={[
+                        styles.materialFilterButton,
+                        styles.applyButton,
+                      ].join(" ")}
                     >
                       Apply Filter
-                    </button>
+                    </Button>
                   ) : null}
                 </div>
               </div>

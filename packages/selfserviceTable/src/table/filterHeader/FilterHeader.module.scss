@@ -3,6 +3,7 @@
   background-color: transparent;
   justify-content: space-between;
   align-items: center;
+
   flex-wrap: wrap;
   .lockDisabled {
     background-color: yellow;
@@ -14,6 +15,7 @@
 .filterWrapper {
   display: flex;
   flex-flow: column;
+  padding: 10px;
 }
 .icon {
   padding-right: 0.6rem;
@@ -40,6 +42,15 @@
   background-color: transparent;
   font-family: "Roboto", "sans-serif";
   cursor: pointer;
+}
+.headLabel {
+  color: #4a4a4a;
+  font-weight: bold;
+  font-size: 15px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 20px 0;
 }
 .searchWrapper {
   border: none;
@@ -86,14 +97,30 @@
   padding: 0.6rem;
   font-weight: 600;
 }
+.materialFilterButton {
+  font-family: "Roboto", "Open Sans", "sans-serif" !important;
 
+  font-size: 0.7rem !important;
+  margin: 5px 10px !important;
+  cursor: pointer;
+
+  font-weight: 600;
+}
 .danger {
   color: red;
 }
 .buttonWrapper {
   display: flex;
+  flex-flow: column;
   justify-content: space-between;
   flex-wrap: wrap;
+}
+.applyWrapper {
+  display: flex;
+  justify-content: center;
+}
+.applyButton {
+  font-size: 0.8rem;
 }
 .recordWrapper {
   display: flex;

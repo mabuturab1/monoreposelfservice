@@ -10,6 +10,9 @@ const getFormData = async (localData, type) => {
   formData.append("type", type);
   return formData;
 };
+const config = {
+  headers: { Authorization: `Bearer ` },
+};
 export const uploadFile = async (
   data,
   type,

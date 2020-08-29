@@ -1,5 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import TableCell from "../../TableCell";
+import { getSubfieldsData } from "../../fetchApiData/fetchData";
 const NestedDropdown = ({
   editAllowed,
   myKey,
@@ -15,9 +16,19 @@ const NestedDropdown = ({
   appSchemaObj,
   appErrorObj,
   appTouchedObj,
+
+  apiUrl,
   item,
+  bearerToken,
 }) => {
+  let collection = serverData.collection;
+  let reportType = serverData.reportType;
+
   let dropdownData = useRef(item && item.value ? item.value : {});
+  const [queryParams, setQueryParams] = useState(new URLSearchParams());
+  const [fieldsData, setFieldsData] = useState(
+    serverData && serverData.fields ? serverData.fields : []
+  );
   // console.log("STARTING NEW PRINT");
   // console.log(
   //   "edit allowed",
@@ -49,11 +60,39 @@ const NestedDropdown = ({
   //   "item",
   //   item
   // );
+  const getNewData = (newKey, newValue) => {
+    const params = new URLSearchParams();
+    queryParams.forEach((value, key) => {
+      params.append(key, value);
+    });
+    if (!params.has(newKey)) params.append(newKey, newValue);
+    else params.set(newKey, newValue);
+    getSubfieldsData(
+      apiUrl,
+      reportType,
+      collection,
+      params,
+      bearerToken,
+      (data) => {
+        if (data === null || data.length < 1) return;
+        let newArr = fieldsData.map((el) => ({ ...el }));
+        let fieldIndex = newArr.findIndex((el) => el.key === newKey);
+        if (fieldIndex < 0) return;
+
+        newArr[fieldIndex] = {
+          ...newArr[fieldIndex],
+          options: data,
+        };
+        setFieldsData(newArr);
+      }
+    );
+  };
   const mUpdateFieldData = (rowId, data, key, isSuccess, updateKey) => {
     dropdownData.current = {
       ...dropdownData.current,
       ...data,
     };
+    getNewData(key, data[key]);
     updateFieldData(
       rowId,
       {
@@ -70,8 +109,8 @@ const NestedDropdown = ({
   };
   let itemsList = [];
 
-  if (serverData && serverData.fields) {
-    itemsList = serverData.fields.map((el, i) => {
+  if (fieldsData && fieldsData.length > 0) {
+    itemsList = fieldsData.map((el, i) => {
       let localKey = getKey(myKey, el.key);
 
       return (

@@ -18,3 +18,19 @@
     padding: 4px 4px;
   }
 }
+.headLabel {
+  font-family: "Roboto", "Open sans", "sans-serif";
+
+  font-size: 0.85rem;
+  padding-left: 0.8rem;
+  font-weight: 500;
+  color: #4a4a4a;
+  margin: 0;
+}
+.iconWrapper {
+  margin: 0 10px;
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
+  cursor: pointer;
+}

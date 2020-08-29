@@ -8,6 +8,7 @@ import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import EditIcon from "@material-ui/icons/Edit";
 import CellEditDialog from "../../../common/cellEditDialog/cellEditDialog";
 import ConfirmationDialog from "../../../common/confirmationDialog/ConfirmationDialog";
+import { getTableHeaderField } from "../../../store/actions";
 import { connect } from "react-redux";
 const TableHeaderSettings = (props) => {
   const isNewField = Object.keys(props.cellSpecs).length < 1;
@@ -17,8 +18,12 @@ const TableHeaderSettings = (props) => {
     fieldEditAble = props.tableStatus.fieldEditAble;
     fieldDeleteAble = props.tableStatus.fieldDeleteAble;
   }
-  let freezedColumnKeys = props.freezedColumnKeys || [];
+  const { updateCellSpecs } = props;
   const { apiUrl, currentReportId } = props;
+  let { key } = props.cellSpecs;
+
+  let freezedColumnKeys = props.freezedColumnKeys || [];
+
   const [currentSelection, setCurrentSelection] = useState("");
   const [currentSortOrder, setCurrentSortOrder] = useState(props.sortOrder);
   const headerData = [
@@ -111,13 +116,24 @@ const TableHeaderSettings = (props) => {
     if (data === "unsorted" || data === "ASC" || data === "DESC") return true;
     else return false;
   };
-
+  const updateFieldData = () => {
+    if (!key) return;
+    getTableHeaderField(apiUrl, currentReportId, key, (data) => {
+      if (data && data.key && data.type)
+        updateCellSpecs({
+          key: data.key,
+          type: data.type,
+          data: { ...data },
+        });
+    });
+  };
   const handleItemClicked = (i, j) => {
     const section = headerData[i];
     let item = null;
     if (section) item = section.options[j];
     if (!item || !item.id) return;
     setCurrentSelection(item.id);
+    if (item.id === "edit") updateFieldData();
     if (i === 0 && item && isSortOrder(item.id)) setCurrentSortOrder(item.id);
     if (item.id.startsWith("freeze"))
       props.addFreezedColumn(props.cellSpecs.key);

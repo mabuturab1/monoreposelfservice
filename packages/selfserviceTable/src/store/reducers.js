@@ -8,7 +8,7 @@ const initialState = {
   tableHeader: [],
   tableHeaderPending: false,
   tableDataPending: false,
-  filterData: { data: {}, numFilters: 0 },
+  filterData: { idsArr: [], data: {}, numFilters: 0 },
   serverError: "",
   currentReportId: "",
   apiAddress: "",

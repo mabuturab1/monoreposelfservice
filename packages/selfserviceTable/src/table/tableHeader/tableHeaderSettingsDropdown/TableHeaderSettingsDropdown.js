@@ -18,6 +18,7 @@ const TableHeaderSettings = (props) => {
     fieldEditAble = props.tableStatus.fieldEditAble;
     fieldDeleteAble = props.tableStatus.fieldDeleteAble;
   }
+  let reportType = props.reportType;
   const { updateCellSpecs } = props;
   const { apiUrl, currentReportId } = props;
   let { key } = props.cellSpecs;
@@ -25,6 +26,7 @@ const TableHeaderSettings = (props) => {
   let freezedColumnKeys = props.freezedColumnKeys || [];
 
   const [currentSelection, setCurrentSelection] = useState("");
+
   const [currentSortOrder, setCurrentSortOrder] = useState(props.sortOrder);
   const headerData = [
     {
@@ -118,7 +120,8 @@ const TableHeaderSettings = (props) => {
   };
   const updateFieldData = () => {
     if (!key) return;
-    getTableHeaderField(apiUrl, currentReportId, key, (data) => {
+
+    getTableHeaderField(apiUrl, reportType, currentReportId, key, (data) => {
       if (data && data.key && data.type)
         updateCellSpecs({
           key: data.key,
@@ -144,12 +147,19 @@ const TableHeaderSettings = (props) => {
   const handleSubmitData = (values, isSuccess) => {
     console.log("changed values are", values);
     if (isNewField && props.addTableField) {
-      props.addTableField(apiUrl, currentReportId, values, isSuccess);
+      props.addTableField(
+        apiUrl,
+        reportType,
+        currentReportId,
+        values,
+        isSuccess
+      );
       return;
     }
     if (!isNewField && props.editTableField && props.cellSpecs.key)
       props.editTableField(
         apiUrl,
+        reportType,
         currentReportId,
         props.cellSpecs.key,
         values,
@@ -164,7 +174,12 @@ const TableHeaderSettings = (props) => {
       props.deleteTableField &&
       props.cellSpecs.key
     )
-      props.deleteTableField(apiUrl, currentReportId, props.cellSpecs.key);
+      props.deleteTableField(
+        apiUrl,
+        reportType,
+        currentReportId,
+        props.cellSpecs.key
+      );
   };
   const isMenuOpened = (status) => {
     if (props.isMenuOpened)
@@ -217,20 +232,37 @@ const mapStateToProps = (state) => {
     currentReportId: state.table.currentReportId,
     apiUrl: state.table.apiAddress,
     freezedColumnKeys: state.table.freezedColumnKeys,
+    reportType: state.table.reportType,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    deleteTableField: (apiUrl, currentReportId, fieldKey) =>
-      dispatch(actions.deleteTableField(apiUrl, currentReportId, fieldKey)),
-    updateFieldData: (apiUrl, currentReportId, fieldKey, data) =>
+    deleteTableField: (apiUrl, reportType, currentReportId, fieldKey) =>
       dispatch(
-        actions.updateFieldData(apiUrl, currentReportId, fieldKey, data)
+        actions.deleteTableField(apiUrl, reportType, currentReportId, fieldKey)
       ),
-    editTableField: (apiUrl, currentReportId, fieldKey, data, isSuccess) =>
+    updateFieldData: (apiUrl, reportType, currentReportId, fieldKey, data) =>
+      dispatch(
+        actions.updateFieldData(
+          apiUrl,
+          reportType,
+          currentReportId,
+          fieldKey,
+          data
+        )
+      ),
+    editTableField: (
+      apiUrl,
+      reportType,
+      currentReportId,
+      fieldKey,
+      data,
+      isSuccess
+    ) =>
       dispatch(
         actions.editTableField(
           apiUrl,
+          reportType,
           currentReportId,
           fieldKey,
           data,
@@ -240,8 +272,16 @@ const mapDispatchToProps = (dispatch) => {
     addFreezedColumn: (data) => dispatch(actions.getAddToFreezedColumn(data)),
     removeFreezedColumn: (data) =>
       dispatch(actions.getRemoveFromFreezedColumn(data)),
-    addTableField: (apiUrl, currentReportId, data, isSuccess) =>
-      dispatch(actions.addTableField(apiUrl, currentReportId, data, isSuccess)),
+    addTableField: (apiUrl, reportType, currentReportId, data, isSuccess) =>
+      dispatch(
+        actions.addTableField(
+          apiUrl,
+          reportType,
+          currentReportId,
+          data,
+          isSuccess
+        )
+      ),
   };
 };
 export default connect(

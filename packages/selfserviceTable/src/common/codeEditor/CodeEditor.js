@@ -4,6 +4,7 @@ import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import styles from "./CodeEditor.module.scss";
+import isEqual from "lodash.isequal";
 
 const exampleCode = `{
   "key":"",
@@ -12,10 +13,12 @@ const exampleCode = `{
 `;
 
 const CodeEditor = (props) => {
-  const [code, setCode] = useState(props.code || exampleCode);
+  let value = props.code || exampleCode;
+  const [code, setCode] = useState({ originalCode: value, tempCode: value });
   const [error, setError] = useState(false);
   const [inValidKey, setInvalidKey] = useState(false);
-
+  if (props.code != null && !isEqual(code.originalCode, props.code))
+    setCode({ originalCode: props.code, tempCode: props.code });
   const inValidKeysList = [
     "data",
     "key",
@@ -33,26 +36,26 @@ const CodeEditor = (props) => {
     return true;
   }
   const updateMCode = () => {
-    if (!IsJsonString(code)) {
+    if (!IsJsonString(code.tempCode)) {
       setError(true);
-      console.log("JSON IS INVALID");
+      console.log("returning");
       return;
     } else if (error === true) setError(false);
-    let obj = JSON.parse(code);
+    let obj = JSON.parse(code.tempCode);
     let invalid = Object.keys(obj).filter((el) => inValidKeysList.includes(el));
     if (invalid && invalid.length > 0) {
       setInvalidKey(true);
       return;
     } else if (inValidKey === true) setInvalidKey(false);
     if (props.updateAdditionalSettings) {
-      props.updateAdditionalSettings(code);
+      props.updateAdditionalSettings(code.tempCode);
     }
   };
   return (
     <React.Fragment>
       <Editor
-        value={code}
-        onValueChange={(mcode) => setCode(mcode)}
+        value={code.tempCode}
+        onValueChange={(mcode) => setCode({ ...code, tempCode: mcode })}
         highlight={(mCode) => highlight(mCode, languages.js)}
         padding={10}
         onBlur={(e) => updateMCode()}

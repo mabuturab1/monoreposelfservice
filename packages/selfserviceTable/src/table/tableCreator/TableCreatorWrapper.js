@@ -21,21 +21,33 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     showSnackbarContent: (data) => dispatch(actions.showSnackbarContent(data)),
-    fetchTableHeader: (apiUrl, reportId) =>
-      dispatch(actions.getTableHeader(apiUrl, reportId)),
-    fetchTableData: (apiUrl, reportId, params, isNewData) =>
-      dispatch(actions.getTableData(apiUrl, reportId, params, isNewData)),
+    fetchTableHeader: (apiUrl, reportType, reportId) =>
+      dispatch(actions.getTableHeader(apiUrl, reportType, reportId)),
+    fetchTableData: (apiUrl, reportType, reportId, params, isNewData) =>
+      dispatch(
+        actions.getTableData(apiUrl, reportType, reportId, params, isNewData)
+      ),
     removeError: () => dispatch(actions.removeError()),
     clearTableData: () => dispatch(actions.clearTableData()),
     updateApiUrl: (apiAddress) => dispatch(actions.updateApiUrl(apiAddress)),
     updateCurrentReportId: (currentReportId) =>
       dispatch(actions.updateCurrentReportId(currentReportId)),
-    deleteTableContent: (apiUrl, reportId, rowId) =>
-      dispatch(actions.deleteTableContent(apiUrl, reportId, rowId)),
-    uploadFile: (apiUrl, reportId, rowId, data, type, newKey, isSuccess) =>
+    deleteTableContent: (apiUrl, reportType, reportId, rowId) =>
+      dispatch(actions.deleteTableContent(apiUrl, reportType, reportId, rowId)),
+    uploadFile: (
+      apiUrl,
+      reportType,
+      reportId,
+      rowId,
+      data,
+      type,
+      newKey,
+      isSuccess
+    ) =>
       dispatch(
         actions.uploadFile(
           apiUrl,
+          reportType,
           reportId,
           rowId,
           data,
@@ -45,10 +57,19 @@ const mapDispatchToProps = (dispatch) => {
         )
       ),
     updateQueryParams: (data) => dispatch(actions.updateQueryParams(data)),
-    updateFieldData: (apiUrl, reportId, rowId, data, newKey, isSuccess) =>
+    updateFieldData: (
+      apiUrl,
+      reportType,
+      reportId,
+      rowId,
+      data,
+      newKey,
+      isSuccess
+    ) =>
       dispatch(
         actions.updateFieldData(
           apiUrl,
+          reportType,
           reportId,
           rowId,
           data,

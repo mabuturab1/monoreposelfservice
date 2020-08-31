@@ -20,7 +20,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import NewRecordDialog from "../../common/newRecordDialog/NewRecordDialog";
 import DateRangePicker from "@selfservicetable/celltypes/src/components/cellTypes/dateRangePicker/DateRangePicker";
-
+import ToggleLogicButtons from "./ToggleLogicButtons";
 const FilterHeader = (props) => {
   const tableContext = useContext(TableContext);
   const searchConditions = [
@@ -32,11 +32,14 @@ const FilterHeader = (props) => {
     "equals (::)",
   ];
   const searchConditionsValues = ["<", "<=", ">", ">=", ":>", "::"];
-  const filterDataState = props.filterData || {
+  const filterObj = props.filterData || {};
+  const filterDataState = filterObj.filter || {
     idsArr: [],
     data: {},
     numFilters: 0,
   };
+  const filterLogic = useRef(filterObj.logic || "AND");
+  console.log("INIT VALUE FOR FILTER LOGIC", filterLogic.current);
   const tableData = props.tableData || [];
   const tableHeader = (props.tableHeader || []).filter(
     (el) => el.key !== "indexIdNumber"
@@ -50,10 +53,13 @@ const FilterHeader = (props) => {
   const [currentUpdateCycle, setCurrentUpdateCycle] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
   const [editAllowed, setEditAllowd] = useState(tableContext.editAllowed);
+
+  const reportType = props.reportType;
   const intervalTimer = useRef(0);
   let updateReduxState = (filter) => {
-    props.storeFilterData(filter);
-    if (props.handleNewFilterData) props.handleNewFilterData(filter);
+    props.storeFilterData({ filter: filter, logic: filterLogic.current });
+    if (props.handleNewFilterData)
+      props.handleNewFilterData(filter, filterLogic.current);
   };
   let addNewFilter = ({ values }, numFilterValue) => {
     let filterName = new Date().getTime();
@@ -88,13 +94,14 @@ const FilterHeader = (props) => {
     storeState = false
   ) => {
     if (!tableHeader || tableHeader.length < 1) return;
-    let filterInitValues = { ...filterDataState.data, ...values };
+    let filterInitValues = { ...filterData.data, ...values };
     let newIdsArr = filterData.idsArr || [];
     if (numFilterValue < 1) {
-      setFilterData({ idsArr: [], data: {}, numFilters: 0 });
+      const resetState = { idsArr: [], data: {}, numFilters: 0 };
+      setFilterData(resetState);
 
       if (storeState) {
-        updateReduxState({ data: {}, numFilters: 0 });
+        updateReduxState(resetState);
       }
       return;
     }
@@ -232,6 +239,7 @@ const FilterHeader = (props) => {
   const exportDataTable = () => {
     props.getReportExportId(
       props.apiUrl,
+      reportType,
       props.currentReportId,
       "contents_pdf",
       (data) => {
@@ -437,7 +445,7 @@ const FilterHeader = (props) => {
               />
 
               <div className={styles.buttonWrapper}>
-                <div>
+                <div className={styles.rowWrapper}>
                   <Button
                     color="primary"
                     variant="contained"
@@ -448,7 +456,12 @@ const FilterHeader = (props) => {
                   >
                     Add Filter
                   </Button>
-
+                  {filterData.numFilters > 0 ? (
+                    <ToggleLogicButtons
+                      initValue={filterLogic.current}
+                      onChange={(data) => (filterLogic.current = data)}
+                    />
+                  ) : null}
                   {/* {filterData.numFilters > 0 ? (
                     <Button
                       color="secondary"
@@ -504,15 +517,22 @@ const mapStateToProps = (state) => {
     tableData: state.table.tableData,
     currentReportId: state.table.currentReportId,
     apiUrl: state.table.apiAddress,
+    reportType: state.table.reportType,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     storeFilterData: (data) => dispatch(actions.getFilterData(data)),
-    getReportExportId: (apiUrl, reportId, contentType, callback) =>
+    getReportExportId: (apiUrl, reportType, reportId, contentType, callback) =>
       dispatch(
-        actions.getReportExportId(apiUrl, reportId, contentType, callback)
+        actions.getReportExportId(
+          apiUrl,
+          reportType,
+          reportId,
+          contentType,
+          callback
+        )
       ),
   };
 };

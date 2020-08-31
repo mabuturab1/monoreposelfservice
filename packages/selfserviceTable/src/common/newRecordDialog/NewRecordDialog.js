@@ -12,6 +12,7 @@ const useStyles = makeStyles(() => ({
 
 const NewRecordDialog = (props) => {
   const classes = useStyles();
+  let reportType = props.reportType;
   const tableHeader = props.tableHeader || [];
   const [open, setOpen] = useState(false);
   const [dataUpdateStatus, setDataUpdateStatus] = useState(
@@ -55,6 +56,7 @@ const NewRecordDialog = (props) => {
       console.log("uploading file", el);
       props.uploadFile(
         props.apiUrl,
+        reportType,
         props.reportId,
         null,
         docValues[el],
@@ -120,6 +122,7 @@ const mapStateToProps = (state) => {
     tableHeader: state.table.tableHeader,
     reportId: state.table.currentReportId,
     apiUrl: state.table.apiAddress,
+    reportType: state.table.reportType,
   };
 };
 
@@ -127,6 +130,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     uploadFile: (
       apiUrl,
+      reportType,
       reportId,
       rowId,
       data,
@@ -138,6 +142,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(
         actions.uploadFile(
           apiUrl,
+          reportType,
           reportId,
           rowId,
           data,

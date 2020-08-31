@@ -22,6 +22,7 @@ const CellEditDialogData = React.forwardRef(
     },
     ref
   ) => {
+    console.log("new cell specs in cellEdit DIalog is", cellSpecs);
     const cellTypeContext = useContext(CellTypesContext);
     const isNewField = !cellSpecs || Object.keys(cellSpecs).length < 1;
     const getInitCellSpecs = (cellSpecs) => {

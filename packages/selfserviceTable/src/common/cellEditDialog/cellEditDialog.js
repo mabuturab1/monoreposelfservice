@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Popover, makeStyles } from "@material-ui/core";
+import { Popover, makeStyles, CircularProgress } from "@material-ui/core";
 import CellEditDialogData from "./cellEditDialogData";
 
 const useStyles = makeStyles(() => ({
@@ -10,7 +10,7 @@ const useStyles = makeStyles(() => ({
 }));
 const CellEditDialog = React.forwardRef((props, ref) => {
   const classes = useStyles();
-
+  const showSpinner = props.showSpinner || false;
   const handleClick = (event) => {};
 
   const handleClose = () => {
@@ -37,11 +37,15 @@ const CellEditDialog = React.forwardRef((props, ref) => {
         horizontal: "center",
       }}
     >
-      <CellEditDialogData
-        {...props}
-        handleClick={handleClick}
-        handleClose={handleClose}
-      />
+      {showSpinner ? (
+        <CircularProgress />
+      ) : (
+        <CellEditDialogData
+          {...props}
+          handleClick={handleClick}
+          handleClose={handleClose}
+        />
+      )}
     </Popover>
   );
 });

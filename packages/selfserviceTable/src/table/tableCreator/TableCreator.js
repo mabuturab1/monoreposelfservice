@@ -109,7 +109,7 @@ const TableCreator = (props) => {
   let {
     apiUrl,
     currentReportId,
-
+    reportType,
     staticData,
     fetchTableData: mFetchTableData,
     fetchTableHeader: mFetchTableHeader,
@@ -126,6 +126,7 @@ const TableCreator = (props) => {
     order: "",
     isNewKey: false,
     filters: new URLSearchParams(),
+    filterLogic: "AND",
     search: "",
     end: new Date(moment.now()),
     start: new Date(moment().subtract(1, "months")),
@@ -162,8 +163,8 @@ const TableCreator = (props) => {
     return cellSpecs;
   }, [tableHeader]);
   const fetchTableHeader = useCallback(() => {
-    mFetchTableHeader(apiUrl, currentReportId);
-  }, [mFetchTableHeader, apiUrl, currentReportId]);
+    mFetchTableHeader(apiUrl, reportType, currentReportId);
+  }, [mFetchTableHeader, apiUrl, reportType, currentReportId]);
   const createValidationSchema = useCallback(() => {
     let prevSchema = {};
     let cellSpecs = createHeaderSpecs(tableHeader);
@@ -218,16 +219,21 @@ const TableCreator = (props) => {
     return Yup.object().shape(createValidationSchema());
   }, [createValidationSchema]);
   const fetchTableData = useCallback(() => {
+    console.log("FETCHING TABLE DATA");
     const params = new URLSearchParams();
     params.append("pageNumber", queryParams.pageNumber);
     params.append("pageSize", queryParams.pageSize);
     if (queryParams.key !== "") params.append("sortBy", queryParams.key);
     if (queryParams.order !== "")
       params.append("sortDirection", queryParams.order);
-    if (queryParams.filters.toString() !== "") {
+    if (
+      queryParams.filters.toString() !== "" &&
+      queryParams.filterLogic != ""
+    ) {
       queryParams.filters.forEach((value, key) => {
         params.append(key, value);
       });
+      params.append("logic", queryParams.filterLogic);
     }
     if (queryParams.search !== "") params.append("search", queryParams.search);
     if (queryParams.start != null)
@@ -235,8 +241,14 @@ const TableCreator = (props) => {
     if (queryParams.end != null)
       params.append("end", getFormattedDate(queryParams.end));
 
-    mFetchTableData(apiUrl, currentReportId, params, queryParams.isNewKey);
-  }, [mFetchTableData, apiUrl, currentReportId, queryParams]);
+    mFetchTableData(
+      apiUrl,
+      reportType,
+      currentReportId,
+      params,
+      queryParams.isNewKey
+    );
+  }, [mFetchTableData, apiUrl, reportType, currentReportId, queryParams]);
 
   const updateApiUrl = useCallback(() => {
     mUpdateApiUrl(apiUrl);
@@ -289,6 +301,7 @@ const TableCreator = (props) => {
     if (!staticData)
       fetchTableData(
         apiUrl,
+        reportType,
         currentReportId,
         queryParams,
         queryParams.isNewKey
@@ -330,6 +343,7 @@ const TableCreator = (props) => {
         let type = req === "IMAGE_UPDATE" ? "IMAGE" : "PDF";
         props.uploadFile(
           apiUrl,
+          reportType,
           props.currentReportId,
           rowId,
           localData,
@@ -341,6 +355,7 @@ const TableCreator = (props) => {
       default:
         props.updateFieldData(
           apiUrl,
+          reportType,
           props.currentReportId,
           rowId,
           data,
@@ -358,8 +373,8 @@ const TableCreator = (props) => {
       columnsWidth[el.key] = 3 * 160;
     else columnsWidth[el.key] = 160;
   });
-  let handleNewFilterData = (filterData) => {
-    console.log("HANDLE NEW FILTER DATA", filterData);
+  let handleNewFilterData = (filterData, logic) => {
+    console.log("HANDLE NEW FILTER DATA", filterData, logic);
     let newFilter = new URLSearchParams();
     const { data } = filterData;
 
@@ -372,12 +387,16 @@ const TableCreator = (props) => {
         data[filtName + "FV"] + data[filtName + "SV"] + data[filtName + ""]
       );
     }
-    if (newFilter.toString() !== queryParams.filters.toString()) {
+    if (
+      newFilter.toString() !== queryParams.filters.toString() ||
+      logic != queryParams.filterLogic
+    ) {
       let newQueryParams = {
         ...queryParams,
         pageNumber: 0,
         isNewKey: true,
         filters: newFilter,
+        filterLogic: logic,
       };
       setQueryParams(newQueryParams);
       if (props.updateQueryParams) props.updateQueryParams(newQueryParams);
@@ -409,7 +428,7 @@ const TableCreator = (props) => {
     console.log("table actions clicked", id, rowId);
     if (id === "delete")
       if (props.deleteTableContent)
-        props.deleteTableContent(apiUrl, currentReportId, rowId);
+        props.deleteTableContent(apiUrl, reportType, currentReportId, rowId);
   };
   let tableWidth = Object.keys(columnsWidth)
     .map((el) => columnsWidth[el])
@@ -581,11 +600,12 @@ const TableCreator = (props) => {
             minHeight: "600px",
           }}
         >
-          {props.tableHeader && props.tableHeader.length > 0 && !staticData ? (
+          {(props.tableHeader && props.tableHeader.length > 0 && !staticData) ||
+          true ? (
             <div className={styles.filterHeader}>
               <div
                 style={{
-                  width: tableWidth,
+                  width: "100vw", //replace with tablewidth
 
                   maxWidth: "100vw",
                   margin: "0 auto",

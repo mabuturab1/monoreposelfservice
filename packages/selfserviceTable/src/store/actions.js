@@ -202,6 +202,12 @@ export const updateApiUrl = (data) => {
     payload: data,
   };
 };
+export const updateReportType = (data) => {
+  return {
+    type: actionTypes.UPDATE_REPORT_TYPE,
+    payload: data,
+  };
+};
 export const updateCurrentReportId = (data) => {
   return {
     type: actionTypes.UPDATING_CURRENT_REPORT_ID,
@@ -238,12 +244,18 @@ export const showSnackbarContent = (data) => {
     payload: data,
   };
 };
-export const getTableData = (apiUrl, reportId, params, isNewData = false) => {
+export const getTableData = (
+  apiUrl,
+  reportType,
+  reportId,
+  params,
+  isNewData = false
+) => {
   return (dispatch) => {
     dispatch(getTableDataStart());
     if (isNewData) dispatch(clearTableData());
     return axios
-      .get(`${"/vbeta"}/reports/${reportId}/contents`, {
+      .get(`${"/vbeta"}/${reportType}/${reportId}/contents`, {
         ...config,
         params: params,
       })
@@ -266,11 +278,11 @@ export const getTableData = (apiUrl, reportId, params, isNewData = false) => {
   };
 };
 
-export const getTableHeader = (apiUrl, reportId) => {
+export const getTableHeader = (apiUrl, reportType, reportId) => {
   return (dispatch) => {
     dispatch(getTableHeaderStart());
     axios
-      .get(`${"/vbeta"}/reports/${reportId}/fields`, config)
+      .get(`${"/vbeta"}/${reportType}/${reportId}/fields`, config)
       .then((response) => {
         if (response) dispatch(getTableHeaderSuccess(response.data));
         else dispatch(getTableHeaderFailed());
@@ -280,9 +292,15 @@ export const getTableHeader = (apiUrl, reportId) => {
       });
   };
 };
-export const getTableHeaderField = (apiUrl, reportId, fieldId, callback) => {
+export const getTableHeaderField = (
+  apiUrl,
+  reportType,
+  reportId,
+  fieldId,
+  callback
+) => {
   axios
-    .get(`${"/vbeta"}/reports/${reportId}/fields/${fieldId}`, config)
+    .get(`${"/vbeta"}/${reportType}/${reportId}/fields/${fieldId}`, config)
     .then((response) => {
       if (response && response.data) callback(response.data);
       else callback(null);
@@ -305,6 +323,7 @@ const getFormData = async (localData, type) => {
 };
 export const uploadFile = (
   apiUrl,
+  reportType,
   reportId,
   rowId,
   data,
@@ -344,11 +363,17 @@ export const uploadFile = (
   };
 };
 
-export const addTableContent = (apiUrl, reportId, data, isSuccess) => {
+export const addTableContent = (
+  apiUrl,
+  reportType,
+  reportId,
+  data,
+  isSuccess
+) => {
   return (dispatch, getState) => {
     dispatch(getAddContentStart());
     axios
-      .post(`${"/vbeta"}/reports/${reportId}/contents`, data, config)
+      .post(`${"/vbeta"}/${reportType}/${reportId}/contents`, data, config)
       .then((response) => {
         console.log("ADD TABLE CONTENT RESPONSE", response.data.data);
         if (response && response.data && response.data.data) {
@@ -376,10 +401,16 @@ export const addTableContent = (apiUrl, reportId, data, isSuccess) => {
       });
   };
 };
-export const getReportExportId = (apiUrl, reportId, contentType, callback) => {
+export const getReportExportId = (
+  apiUrl,
+  reportType,
+  reportId,
+  contentType,
+  callback
+) => {
   return async (dispatch) => {
     axios
-      .get(`${"/vbeta"}/reports/${reportId}/${contentType}`, config)
+      .get(`${"/vbeta"}/${reportType}/${reportId}/${contentType}`, config)
       .then((response) => {
         if (response && response.data) callback(response.data);
         else callback(null);
@@ -406,6 +437,7 @@ export const getDataFromWebScoket = (exportId) => {
 export const updateFieldData = (
   apiUrl,
   reportId,
+  reportType,
   rowId,
   data,
   newKey,
@@ -429,7 +461,7 @@ export const updateFieldData = (
 
     axios
       .put(
-        `${"/vbeta"}/reports/${reportId}/contents/${rowId}`,
+        `${"/vbeta"}/${reportType}/${reportId}/contents/${rowId}`,
         sendData,
         config
       )
@@ -452,12 +484,21 @@ export const updateFieldData = (
   };
 };
 
-export const deleteTableContent = (apiUrl, reportId, fieldId, isSuccess) => {
+export const deleteTableContent = (
+  apiUrl,
+  reportType,
+  reportId,
+  fieldId,
+  isSuccess
+) => {
   return (dispatch) => {
     dispatch(getDeleteContentStart());
 
     axios
-      .delete(`${"/vbeta"}/reports/${reportId}/contents/${fieldId}`, config)
+      .delete(
+        `${"/vbeta"}/${reportType}/${reportId}/contents/${fieldId}`,
+        config
+      )
       .then((response) => {
         if (response) {
           dispatch(getDeleteContentSuccess(fieldId));
@@ -473,11 +514,17 @@ export const deleteTableContent = (apiUrl, reportId, fieldId, isSuccess) => {
   };
 };
 
-export const addTableField = (apiUrl, reportId, data, isSuccess) => {
+export const addTableField = (
+  apiUrl,
+  reportType,
+  reportId,
+  data,
+  isSuccess
+) => {
   return (dispatch, state) => {
     dispatch(getAddFieldStart());
     axios
-      .post(`${"/vbeta"}/reports/${reportId}/fields`, data, config)
+      .post(`${"/vbeta"}/${reportType}/${reportId}/fields`, data, config)
       .then((response) => {
         if (response && response.data && response.data.data) {
           dispatch(getAddFieldSuccess(response.data.data));
@@ -495,11 +542,22 @@ export const addTableField = (apiUrl, reportId, data, isSuccess) => {
   };
 };
 
-export const editTableField = (apiUrl, reportId, fieldKey, data, isSuccess) => {
+export const editTableField = (
+  apiUrl,
+  reportType,
+  reportId,
+  fieldKey,
+  data,
+  isSuccess
+) => {
   return (dispatch) => {
     dispatch(getEditFieldStart());
     axios
-      .put(`${"/vbeta"}/reports/${reportId}/fields/${fieldKey}`, data, config)
+      .put(
+        `${"/vbeta"}/${reportType}/${reportId}/fields/${fieldKey}`,
+        data,
+        config
+      )
       .then((response) => {
         if (response) {
           dispatch(getEditFieldSuccess(response.data));
@@ -517,11 +575,20 @@ export const editTableField = (apiUrl, reportId, fieldKey, data, isSuccess) => {
   };
 };
 
-export const deleteTableField = (apiUrl, reportId, fieldKey, isSuccess) => {
+export const deleteTableField = (
+  apiUrl,
+  reportType,
+  reportId,
+  fieldKey,
+  isSuccess
+) => {
   return (dispatch) => {
     dispatch(getDeleteFieldStart());
     axios
-      .delete(`${"/vbeta"}/reports/${reportId}/fields/${fieldKey}`, config)
+      .delete(
+        `${"/vbeta"}/${reportType}/${reportId}/fields/${fieldKey}`,
+        config
+      )
       .then((response) => {
         if (response) {
           dispatch(getDeleteFieldSuccess(fieldKey));

@@ -115,6 +115,11 @@
   justify-content: space-between;
   flex-wrap: wrap;
 }
+.rowWrapper {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+}
 .applyWrapper {
   display: flex;
   justify-content: center;
@@ -150,4 +155,7 @@
   font-weight: 600;
   font-size: 0.8rem;
   text-align: center;
+}
+.toggleButtonStyles {
+  font-size: 0.7rem !important;
 }

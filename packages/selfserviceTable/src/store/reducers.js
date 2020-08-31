@@ -8,13 +8,14 @@ const initialState = {
   tableHeader: [],
   tableHeaderPending: false,
   tableDataPending: false,
-  filterData: { idsArr: [], data: {}, numFilters: 0 },
+  filterData: { filter: { idsArr: [], data: {}, numFilters: 0 }, logic: "AND" },
   serverError: "",
   currentReportId: "",
   apiAddress: "",
   fieldUpdateStatus: { success: false, error: false },
   totalReportItems: 0,
   queryParams: {},
+  reportType: "reports",
   fetchData: 1,
   freezedColumnKeys: [],
   totalUpdateFieldErrors: 0,
@@ -252,6 +253,8 @@ const reducer = (state = initialState, action) => {
       return updateObject(state, { currentReportId: action.payload });
     case actionTypes.UPDATE_API_URL:
       return updateObject(state, { apiAddress: action.payload });
+    case actionTypes.UPDATE_REPORT_TYPE:
+      return updateObject(state, { reportType: action.payload });
     case actionTypes.UPDATING_QUERY_PARAMS:
       return updateObject(state, { queryParams: action.payload });
     case actionTypes.START_UPLOAD_FILE:

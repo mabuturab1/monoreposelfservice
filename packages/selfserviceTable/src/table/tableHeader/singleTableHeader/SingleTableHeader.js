@@ -133,7 +133,7 @@ const SingleTableHeader = (props) => {
           cellSpecs={
             cellSpecs && cellSpecs.key === "%OPEN_NEW_FIELD_DIALOG%"
               ? {}
-              : { ...props.cellSpecs }
+              : { ...cellSpecs }
           }
         >
           {child}

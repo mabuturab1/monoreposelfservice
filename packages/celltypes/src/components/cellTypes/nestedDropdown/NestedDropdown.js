@@ -92,7 +92,7 @@ const NestedDropdown = ({
       ...dropdownData.current,
       ...data,
     };
-    getNewData(key, data[key]);
+    // getNewData(key, data[key]);
     updateFieldData(
       rowId,
       {

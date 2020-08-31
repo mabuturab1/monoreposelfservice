@@ -499,11 +499,11 @@ const FilterHeader = (props) => {
 };
 const mapStateToProps = (state) => {
   return {
-    filterData: state.filterData,
-    tableHeader: state.tableHeader,
-    tableData: state.tableData,
-    currentReportId: state.currentReportId,
-    apiUrl: state.apiAddress,
+    filterData: state.table.filterData,
+    tableHeader: state.table.tableHeader,
+    tableData: state.table.tableData,
+    currentReportId: state.table.currentReportId,
+    apiUrl: state.table.apiAddress,
   };
 };
 

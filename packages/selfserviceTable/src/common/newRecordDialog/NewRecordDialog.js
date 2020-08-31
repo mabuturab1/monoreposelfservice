@@ -117,9 +117,9 @@ const NewRecordDialog = (props) => {
 };
 const mapStateToProps = (state) => {
   return {
-    tableHeader: state.tableHeader,
-    reportId: state.currentReportId,
-    apiUrl: state.apiAddress,
+    tableHeader: state.table.tableHeader,
+    reportId: state.table.currentReportId,
+    apiUrl: state.table.apiAddress,
   };
 };
 

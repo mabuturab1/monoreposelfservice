@@ -8,8 +8,10 @@ import tableDataReducer from "./store/reducers";
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware, combineReducers } from "redux";
 import thunk from "redux-thunk";
-
-const store = createStore(tableDataReducer, applyMiddleware(thunk));
+const rootReducer = combineReducers({
+  table: tableDataReducer,
+});
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
 ReactDOM.render(
   <Provider store={store}>

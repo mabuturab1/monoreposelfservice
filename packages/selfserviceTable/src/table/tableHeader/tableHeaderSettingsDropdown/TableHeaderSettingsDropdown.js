@@ -214,9 +214,9 @@ const TableHeaderSettings = (props) => {
 };
 const mapStateToProps = (state) => {
   return {
-    currentReportId: state.currentReportId,
-    apiUrl: state.apiAddress,
-    freezedColumnKeys: state.freezedColumnKeys,
+    currentReportId: state.table.currentReportId,
+    apiUrl: state.table.apiAddress,
+    freezedColumnKeys: state.table.freezedColumnKeys,
   };
 };
 const mapDispatchToProps = (dispatch) => {

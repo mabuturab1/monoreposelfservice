@@ -7,14 +7,14 @@ const TableWrapper = (props) => {
 };
 const mapStateToProps = (state) => {
   return {
-    tableData: state.tableData,
-    tableHeader: state.tableHeader,
-    serverError: state.serverError,
-    fetchNewDataTrigger: state.fetchData,
-    tableHeaderPending: state.tableHeaderPending,
-    tableDataPending: state.tableDataPending,
-    totalReportItems: state.totalReportItems,
-    freezedColumnKeys: state.freezedColumnKeys,
+    tableData: state.table.tableData,
+    tableHeader: state.table.tableHeader,
+    serverError: state.table.serverError,
+    fetchNewDataTrigger: state.table.fetchData,
+    tableHeaderPending: state.table.tableHeaderPending,
+    tableDataPending: state.table.tableDataPending,
+    totalReportItems: state.table.totalReportItems,
+    freezedColumnKeys: state.table.freezedColumnKeys,
   };
 };
 

@@ -75,7 +75,7 @@ const SnackbarStatus = (props) => {
 };
 const mapStateToProps = (state) => {
   return {
-    updateStatus: state.snackbarStatus,
+    updateStatus: state.table.snackbarStatus,
   };
 };
 

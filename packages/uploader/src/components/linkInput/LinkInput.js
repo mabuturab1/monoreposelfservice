@@ -7,8 +7,15 @@ const LinkInput = ({ onSubmit }) => {
   };
   return (
     <StyledInput
+      style={{
+        width: "100%",
+        height: "100%",
+        outline: "none",
+        border: "none",
+      }}
       headLabel={"Link "}
-      style={{ width: 0, height: 0, overflow: "hidden" }}
+      type="text"
+      placeholder="Kindly enter a valid Youtube url"
       value={value}
       onChange={(e) => setValue(e.target.value)}
       onBlur={handleSubmit}

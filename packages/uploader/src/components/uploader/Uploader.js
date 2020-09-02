@@ -13,6 +13,8 @@ import Document from "../document/Document";
 import { faFileAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { uploadFile } from "./uploadFunctions";
+import PdfImage from "../../../public/pdfImage.png";
+import YoutubeImage from "../../../public/youtube.png";
 const BootstrapInput = withStyles((theme) => ({
   root: {
     minWidth: "5rem",
@@ -66,9 +68,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Uploader = (props) => {
-  const { isSuccess } = props;
+  const { onFileUploadedToServer, apiUrl, reportType } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [currentValue, setCurrentValue] = useState(null);
   const handleClick = () => {
     setOpen(true);
   };
@@ -78,22 +81,63 @@ const Uploader = (props) => {
   const id = open ? "popover" : undefined;
   const [currentType, setCurrentType] = useState("Image");
   const handleChange = (event) => {
+    setCurrentValue(null);
     setCurrentType(event.target.value);
+  };
+  const handleDataSubmit = (data) => {
+    setCurrentValue(data);
   };
   const getUI = () => {
     switch (currentType) {
       case "Image":
-        return <Image />;
+        return <Image onSubmit={handleDataSubmit} />;
       case "PDF":
-        return <Document />;
+        return <Document onSubmit={handleDataSubmit} />;
       case "Video":
-        return <Video />;
+        return <Video onSubmit={handleDataSubmit} />;
       case "Youtube":
-        return <LinkInput />;
+        return <LinkInput onSubmit={handleDataSubmit} />;
     }
   };
-  const uploadFile = (data) => {
-    uploadFile(data, currentType, isSuccess, submitData);
+  const getCurrentDisplayElement = () => {
+    switch (currentType) {
+      case "Image":
+        return <img src={currentValue} className={styles.singleItemWrapper} />;
+      case "PDF":
+        return (
+          <React.Fragment>
+            <img src={PdfImage} className={styles.singleItemWrapper} />
+            <p>{currentValue.name}</p>
+          </React.Fragment>
+        );
+      case "Video":
+        return (
+          <video
+            controls
+            src={URL.createObjectURL(currentValue)}
+            className={styles.singleItemWrapper}
+          />
+        );
+      case "Youtube":
+        return (
+          <React.Fragment>
+            <img src={YoutubeImage} className={styles.singleItemWrapper} />
+            <a href="#"> {currentValue}</a>
+          </React.Fragment>
+        );
+    }
+  };
+  const startUploadingFile = () => {
+    uploadFile(
+      apiUrl,
+      reportType,
+      currentValue,
+      currentType,
+      (status, response) => {
+        if (status && response && onFileUploadedToServer)
+          onFileUploadedToServer(currentValue, response);
+      }
+    );
   };
   return (
     <React.Fragment>
@@ -110,25 +154,36 @@ const Uploader = (props) => {
         onClose={handleClose}
       >
         <div className={styles.uploaderWrapper}>
-          <div className={styles.iconWrapper}>
-            <div className={styles.editIcon}>
-              <FontAwesomeIcon
-                icon={faFileAlt}
-                size="8x"
-                style={{ paddingRight: "0.6rem", opacity: 0.4 }}
-              />
+          {currentValue != null ? (
+            <div className={styles.displayElementWrapper}>
+              {getCurrentDisplayElement()}
             </div>
-            <div className={styles.subtitleWrapper}>
-              <FontAwesomeIcon
-                icon={faFileAlt}
-                size="1x"
-                style={{ paddingRight: "1rem", color: "blue" }}
-              />
-              <p className={styles.subtitleText}>Click here to edit</p>
-            </div>
-          </div>
+          ) : (
+            <label style={{ cursor: "pointer" }}>
+              <div style={{ width: "0px", height: "0px", display: "none" }}>
+                {getUI()}
+              </div>
+              <div className={styles.iconWrapper}>
+                <div className={styles.editIcon}>
+                  <FontAwesomeIcon
+                    icon={faFileAlt}
+                    size="8x"
+                    style={{ paddingRight: "0.6rem", opacity: 0.4 }}
+                  />
+                </div>
+                <div className={styles.subtitleWrapper}>
+                  <FontAwesomeIcon
+                    icon={faFileAlt}
+                    size="1x"
+                    style={{ paddingRight: "1rem", color: "blue" }}
+                  />
+                  <p className={styles.subtitleText}>Click here to edit</p>
+                </div>
+              </div>
+            </label>
+          )}
           <div className={styles.inputWrapper}>
-            <div>
+            <div className={styles.fileSelection}>
               <p className={styles.label}>Type</p>
               <Select
                 labelId="demo-customized-select-label"
@@ -143,13 +198,14 @@ const Uploader = (props) => {
                 <MenuItem value={"Youtube"}>Youtube</MenuItem>
               </Select>
             </div>
-            <div>{getUI()}</div>
+            <div className={styles.fileSelection}> {getUI()}</div>
           </div>
           <div className={styles.buttonWrapper}>
             <Button
               style={{ fontSize: "0.9rem" }}
               color="secondary"
               variant="contained"
+              onClick={handleClose}
             >
               Cancel
             </Button>
@@ -160,6 +216,7 @@ const Uploader = (props) => {
               }}
               color="primary"
               variant="contained"
+              onClick={startUploadingFile}
             >
               Apply
             </Button>

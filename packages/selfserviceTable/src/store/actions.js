@@ -318,7 +318,7 @@ const getFormData = async (localData, type) => {
   let file = new File([blob], "test");
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("type", type);
+  formData.append("type", String(type).toUpperCase());
   return formData;
 };
 export const uploadFile = (

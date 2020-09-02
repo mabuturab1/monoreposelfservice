@@ -65,6 +65,39 @@ const hasValue = (val) => {
   if (typeof val === "object") return Object.keys(val).length > 0;
   else return String(val).length > 0;
 };
+const includesValue = (value, refValue, start = 0) => {
+  let val = String(value);
+  // console.log(Array.isArray(refValue), refValue);
+  if (Array.isArray(refValue))
+    return {
+      isIndex: true,
+      index: refValue.findIndex((el) => val.substring(start).startsWith(el)),
+    };
+  // console.log(val.substring(start), val.substring(start).startsWith(refValue));
+  return { isIndex: false, equal: val.substring(start).startsWith(refValue) };
+};
+const hasPrefixes = (value, prefix, prevValues, prevValStart = 0) => {
+  let start = 0;
+  // console.log(
+  //   "checking value in prefixes",
+  //   value,
+  //   prefix,
+  //   prevValues,
+  //   prevValStart
+  // );
+  if (prevValues) {
+    let obj = includesValue(value, prevValues);
+    if (obj.isIndex && obj.index >= 0) start = prevValues[obj.index].length;
+    else if (!obj.isIndex && obj.equal)
+      start = prevValStart + prevValues.length;
+    // console.log("prev obj is", obj, start);
+  }
+  const currentObj = includesValue(value, prefix, start);
+  if (currentObj.isIndex && currentObj.index >= 0) return true;
+  if (!currentObj.isIndex && currentObj.equal) return true;
+  // console.log("current obj is", currentObj);
+  return false;
+};
 const getYupData = (fieldType, JsonKey, JsonData) => {
   switch (JsonKey) {
     case "isRequired":
@@ -120,7 +153,30 @@ const getYupData = (fieldType, JsonKey, JsonData) => {
               : val.toString().length >= getNumber(JsonData[JsonKey]),
         ],
       };
-
+    case "countryCode":
+      return {
+        yupType: "test",
+        params: [
+          "len",
+          `Please use following prefix as ${JsonKey}: ${JsonData[JsonKey]}`,
+          (val) =>
+            checkValidValue(val) == null
+              ? false
+              : hasPrefixes(val, JsonData[JsonKey], null),
+        ],
+      };
+    case "prefixes":
+      return {
+        yupType: "test",
+        params: [
+          "len",
+          `Kindly country code & prefixes, specified in field edit mode`,
+          (val) =>
+            checkValidValue(val) == null
+              ? false
+              : hasPrefixes(val, JsonData[JsonKey], JsonData["countryCode"], 0),
+        ],
+      };
     case "max":
       return {
         yupType: !isDateField(fieldType) ? "test" : null,

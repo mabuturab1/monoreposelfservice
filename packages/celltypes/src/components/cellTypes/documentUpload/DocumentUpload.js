@@ -6,7 +6,7 @@ import { faFile, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 import { validateExtensions } from "../../common/utility";
 import InfoDialog from "../../common/infoDialog/InfoDialog";
-
+import Uploader from "@selfservicetable/uploader/src/App";
 const DocumentUpload = (props) => {
   const {
     name,
@@ -20,12 +20,15 @@ const DocumentUpload = (props) => {
     value: mValue,
     setFieldTouched,
     updateFieldData,
+    getServerFileLinks,
+    apiUrl,
+    reportType,
   } = { ...props };
   let value = mValue;
   if (!value) value = {};
   const [selectedFile, setSelectedFile] = useState({
-    filePath: value.f || DummyInitValues["DOCUMENT"],
-    tempFilePath: value.f || DummyInitValues["DOCUMENT"],
+    filePath: value.f || DummyInitValues["LOUNGE_FILE"],
+    tempFilePath: value.f || DummyInitValues["LOUNGE_FILE"],
     document: null,
     updated: true,
   });
@@ -70,48 +73,55 @@ const DocumentUpload = (props) => {
       tempFilePath: mValue.f,
     });
   }
+  const getUploadLinks = (originalData, serverData) => {
+    let tempPath = URL.createObjectURL(originalData);
+    localFileName.current = originalData.name;
+    setSelectedFile({
+      ...selectedFile,
+      tempFilePath: tempPath,
+      document: originalData,
+      updated: false,
+    });
+    if (serverData) updateFieldData(serverData);
+    setTimeout(() => onLoad(tempPath), 10);
+  };
   const inputUI = (
     <div className={styles.wrapper}>
       <InputIcon icon={faFile}>
         <label className={styles.fileInput}>
           {props.editAllowed ? (
             <React.Fragment>
-              <input
-                style={{ display: "none", overflow: "hidden" }}
-                type={props.editAllowed ? "file" : "text"}
-                disabled={!props.editAllowed}
-                onBlur={(e) => {}}
-                {...{ name, disabled, label, onBlur, placeholder }}
-                onChange={(event) => {
-                  if (
-                    !event.currentTarget.files ||
-                    event.currentTarget.files.length < 1
-                  )
-                    return;
+              <Uploader
+                apUrl={apiUrl}
+                reportType={reportType}
+                onFileUploadedToServer={getUploadLinks}
+              >
+                <input
+                  style={{ display: "none", overflow: "hidden" }}
+                  type={"text"}
+                  disabled={!props.editAllowed}
+                  onBlur={(e) => {}}
+                  {...{ name, disabled, label, onBlur, placeholder }}
+                  onChange={(event) => {
+                    if (
+                      !event.currentTarget.files ||
+                      event.currentTarget.files.length < 1
+                    )
+                      return;
 
-                  if (
-                    !validateExtensions(event.currentTarget.files[0], [".pdf"])
-                  ) {
-                    setShowError(true);
-                    return;
-                  }
-                  let tempPath = URL.createObjectURL(
-                    event.currentTarget.files[0]
-                  );
-                  localFileName.current = event.currentTarget.files[0].name;
-                  setSelectedFile({
-                    ...selectedFile,
-                    tempFilePath: tempPath,
-                    document: event.currentTarget.files[0],
-                    updated: false,
-                  });
-                  updateFieldData(tempPath, "FILE_UPDATE");
-                  setTimeout(() => onLoad(tempPath), 10);
-                }}
-                placeholder="Kindly select to upload a file"
-                accept="application/pdf"
-              />
-              Kindly select to upload a file
+                    if (
+                      !validateExtensions(event.currentTarget.files[0], [
+                        ".pdf",
+                      ])
+                    ) {
+                      setShowError(true);
+                      return;
+                    }
+                  }}
+                  placeholder="Kindly select to upload a file"
+                />
+                Kindly select to upload a file
+              </Uploader>
             </React.Fragment>
           ) : (
             <a className={styles.nolink} href={getHref()}>

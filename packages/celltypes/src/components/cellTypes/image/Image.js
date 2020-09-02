@@ -63,8 +63,9 @@ const Image = (props) => {
       // });
     }
   };
-
+  console.log("MVALUE", mValue, selectedFile);
   if (mValue && mValue.t && selectedFile.image != mValue.t) {
+    console.log("new mValue is", mValue);
     setSelectedFile({
       ...selectedFile,
       image: mValue.t,

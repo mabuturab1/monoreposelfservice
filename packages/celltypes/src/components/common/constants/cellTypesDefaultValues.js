@@ -30,7 +30,7 @@ export const DummyInitValues = {
   RADIO: "",
   OFFICER_SELECT: "",
   SCAN_QR: "",
-  DOCUMENT: "",
+  LOUNGE_FILE: "",
   CONTACT: "",
   MAP: "",
   ITEM_LIST: "",

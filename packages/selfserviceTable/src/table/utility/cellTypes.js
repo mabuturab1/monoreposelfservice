@@ -14,7 +14,7 @@ export const CellTypes = [
   { label: "Radio", value: "RADIO" },
   { label: "Officer Select", value: "OFFICER_SELECT" },
   { label: "Scan Qr", value: "SCAN_QR" },
-  { label: "Document", value: "DOCUMENT" },
+  { label: "Document", value: "LOUNGE_FILE" },
   { label: "Contact", value: "CONTACT" },
   { label: "Map", value: "MAP" },
   { label: "ITEM_LIST", value: "ITEM_LIST" },
@@ -39,10 +39,10 @@ export const DummyInitValues = {
   RADIO: "",
   OFFICER_SELECT: "",
   SCAN_QR: "",
-  DOCUMENT: "",
+  LOUNGE_FILE: "",
   CONTACT: "",
   MAP: "",
   ITEM_LIST: "",
   NESTED_DROPDOWN: {},
 };
-export const DocCells = ["IMAGE", "DOCUMENT"];
+export const DocCells = ["IMAGE", "LOUNGE_FILE"];

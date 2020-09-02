@@ -35,6 +35,10 @@ const TableCreator = (props) => {
     fetchNewDataTrigger,
   } = { ...props };
   let tableWrapper = useRef(null);
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
   const [showFreezedTable, setShowFreezedTable] = useState(false);
   const tempFreezedTable = useRef(false);
   const scrollTopTable = useRef(0);
@@ -69,8 +73,19 @@ const TableCreator = (props) => {
       key: i.toString(),
       skeletonPreview: "%%SKELETON_PREVIEW%%",
     });
-    dummyColumnWidth[i] = 80;
+    dummyColumnWidth[i] = Math.floor(windowDimensions.width / 10);
   }
+  useEffect(() => {
+    const updateWindowDimensions = () => {
+      setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    window.addEventListener("resize", updateWindowDimensions);
+
+    return () => window.removeEventListener("resize", updateWindowDimensions);
+  }, []);
   const getDummyTableData = () => {
     const showDummyHeader = props.tableHeaderPending && tableHeader.length < 1;
     let theader = showDummyHeader ? dummyTableHeader : tableHeader;
@@ -129,7 +144,7 @@ const TableCreator = (props) => {
     filterLogic: "AND",
     search: "",
     end: new Date(moment.now()),
-    start: new Date(moment().subtract(1, "months")),
+    start: new Date(moment().subtract(1, "years")),
   });
   if (fetchNewDataTrigger && fetchNewDataTrigger !== currentTrigger) {
     console.log("triggering new data fetch");
@@ -749,6 +764,7 @@ const TableCreator = (props) => {
                         updateCurrentScroll={updateCurrentScroll}
                         currentReportId={currentReportId}
                         apiUrl={apiUrl}
+                        reportType={reportType}
                         tableStatus={{
                           contentAddAble,
                           contentEditAble,

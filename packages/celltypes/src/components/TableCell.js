@@ -55,7 +55,7 @@ const MyTableCell = (props) => {
     RADIO: Radio,
     OFFICER_SELECT: OfficerSelect,
     SCAN_QR: ScanQr,
-    DOCUMENT: DocumentUpload,
+    LOUNGE_FILE: DocumentUpload,
     CONTACT: ContactData,
     MAP: MyMap,
     ITEM_LIST: ItemList,
@@ -145,6 +145,8 @@ const MyTableCell = (props) => {
       ...props.serverData,
       ...props.item,
       ...props.handlerFunctions,
+      apiUrl: props.apiUrl,
+      reportType: props.reportType,
       bearerToken: props.bearerToken,
       serverFieldType: item.type.toUpperCase(),
       rowData: props.rowData,
@@ -153,6 +155,7 @@ const MyTableCell = (props) => {
       disableReadOnlyMode: props.disableReadOnlyMode,
       editAllowed: props.editAllowed != null ? props.editAllowed : true,
       updateFieldData: updateFieldData,
+
       type: getType(item.type.toUpperCase()),
     };
 

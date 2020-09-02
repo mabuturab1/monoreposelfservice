@@ -16,16 +16,17 @@ const Document = ({ onSubmit }) => {
         setShowError(true);
         return;
       }
-      setSelectedFile({
-        value: URL.createObjectURL(event.currentTarget.files[0]),
+      let udpatedSelectFile = {
+        value: event.currentTarget.files[0],
         touched: true,
-      });
+      };
+      setSelectedFile(udpatedSelectFile);
+      proceedForSubmission(udpatedSelectFile);
     }
   };
-  const proceedForSubmission = () => {
-    console.log("PROCEEDING FOR SUBMISSION");
-    if (selectedFile.touched && onSubmit) {
-      onSubmit(selectedFile.value);
+  const proceedForSubmission = (submitFile) => {
+    if (submitFile.touched && onSubmit) {
+      onSubmit(submitFile.value);
     }
   };
   const handleError = () => {
@@ -45,19 +46,18 @@ const Document = ({ onSubmit }) => {
           title={"Sorry"}
         />
       ) : null}
-      <img
-        style={{ width: 0, height: 0, overflow: "hidden" }}
-        src={selectedFile.value}
-        onLoad={proceedForSubmission}
-        onError={handleError}
-      />
+
       <StyledInput
         headLabel={"Upload Documnet"}
         style={{ width: 0, height: 0, overflow: "hidden" }}
-        value={selectedFile.value}
         type={"file"}
+        accept="application/pdf"
         onChange={handleFileSelection}
-        text={"Kindly select PDF file"}
+        text={
+          selectedFile.value === ""
+            ? "Kindly select an image"
+            : "Update selected file"
+        }
       />
     </div>
   );

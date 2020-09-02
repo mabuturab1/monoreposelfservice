@@ -27,6 +27,7 @@ const InfiniteLoaderWrapper = ({
   tableHeaderSkeletonPreview,
   tableDataSkeletonPreview,
   currentReportId,
+  reportType,
 }) => {
   const isItemLoaded = ({ index }) => {
     return !!tableData[index];
@@ -67,6 +68,7 @@ const InfiniteLoaderWrapper = ({
               tableHeaderSkeletonPreview,
               tableDataSkeletonPreview,
               currentReportId,
+              reportType,
             }}
             showCircularIndicator={isNextPageLoading}
             rowCount={tableData.length}

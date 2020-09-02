@@ -18,8 +18,9 @@ export const validateExtensions = (fileInput, _validFileExtensions) => {
         break;
       }
     }
-    console.log("VALIDATION FAILED");
+
     if (!blnValid) {
+      console.log("VALIDATION FAILED");
       return false;
     }
   }

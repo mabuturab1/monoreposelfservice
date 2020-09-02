@@ -59,6 +59,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
   const scrollTopTable = useRef(null);
   const {
     apiUrl,
+    reportType,
     classes,
     columns,
     rowHeight,
@@ -74,6 +75,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     tableHeaderSkeletonPreview,
     tableDataSkeletonPreview,
     currentReportId,
+
     ...tableProps
   } = props;
 
@@ -107,7 +109,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     let currentValue = rowData[dataKey];
 
     if (currentValue === "%%SKELETON_PREVIEW%%") {
-      return <Skeleton style={{ width: "50px" }} />;
+      return <Skeleton style={{ width: "8vw" }} />;
     }
     const {
       handleChange,
@@ -143,6 +145,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
         serverData={{ ...myCell.data }}
         tableActionsClicked={tableActionsClicked}
         apiUrl={apiUrl}
+        reportType={reportType}
         bearerToken={Constants.bearerToken}
         handlerFunctions={{
           handleChange,
@@ -193,7 +196,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
 
   const headerRenderer = (headerData) => {
     if (headerData.skeletonPreview === "%%SKELETON_PREVIEW%%") {
-      return <Skeleton style={{ width: "50px" }} />;
+      return <Skeleton style={{ width: "8vw" }} />;
     }
 
     const { label, onHeaderClicked, dataKey, sortByColumn } = headerData;

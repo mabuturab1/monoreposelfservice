@@ -57,6 +57,7 @@ const image = ({ onSubmit }) => {
         headLabel={"Upload Image"}
         style={{ display: "none", overflow: "hidden" }}
         type={"file"}
+        accept="image/*"
         onChange={handleFileSelection}
         text={
           selectedFile.value === ""

@@ -8,7 +8,10 @@ const StyledInput = (props) => {
       {props.headLabel ? (
         <p className={styles.label}>{props.headLabel}</p>
       ) : null}
-      <label className={styles.fileInput}>
+      <label
+        className={styles.fileInput}
+        style={{ cursor: props.type === "text" ? "unset" : "cursor" }}
+      >
         <input
           className={styles.input}
           style={{ ...props.style }}

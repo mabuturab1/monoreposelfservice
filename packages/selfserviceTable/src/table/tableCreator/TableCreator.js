@@ -90,7 +90,16 @@ const TableCreator = (props) => {
     const showDummyHeader = props.tableHeaderPending && tableHeader.length < 1;
     let theader = showDummyHeader ? dummyTableHeader : tableHeader;
     let dummyTableData = [];
-    for (let i = 0; i < 50; i++) {
+    let totalItems = 50;
+    if (props.totalReportItems) {
+      totalItems = Math.min(50, props.totalReportItems - tableData.length);
+      console.log(
+        "total items are",
+        totalItems,
+        props.totalReportItems - tableData.length
+      );
+    }
+    for (let i = 0; i < totalItems; i++) {
       let dummyRow = {};
       for (let i = 0; i < theader.length; i++) {
         dummyRow[theader[i].key] = "%%SKELETON_PREVIEW%%";
@@ -98,7 +107,10 @@ const TableCreator = (props) => {
       dummyTableData.push(dummyRow);
     }
 
-    if (!showDummyHeader && showSkeletonForTableData()) {
+    if (
+      !showDummyHeader &&
+      (showSkeletonForTableData() || props.tableDataPending)
+    ) {
       console.log("RETURNING DUMMY DATA", dummyTableData);
       return (props.tableData || []).concat(dummyTableData);
     }
@@ -735,10 +747,10 @@ const TableCreator = (props) => {
                         editAllowed={editAllowed}
                         isNextPageLoading={props.tableDataPending}
                         loadNextPage={loadMoreItems}
-                        tableHeaderSkeletonPreview={showSkeletonForTableHeader()}
-                        tableDataSkeletonPreview={showSkeletonForTableData()}
+                        tableHeaderSkeletonPreview={false}
+                        tableDataSkeletonPreview={false}
                         tableData={
-                          showSkeletonForTableData()
+                          showSkeletonForTableData() || props.tableDataPending
                             ? getDummyTableData()
                             : props.tableData
                         }

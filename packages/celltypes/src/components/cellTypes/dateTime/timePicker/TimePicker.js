@@ -45,6 +45,7 @@ const TimePicker = (props) => {
   };
   let dateRangeClasses = [styles.timeLabel, styles.smallMargin];
   if (props.rangeError) dateRangeClasses.push(styles.redColor);
+
   return (
     <div className={styles.timePickerWrapper}>
       {props.min && props.max ? (

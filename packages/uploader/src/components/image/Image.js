@@ -8,23 +8,22 @@ const image = ({ onSubmit }) => {
   const [selectedFile, setSelectedFile] = useState({
     value: "",
     touched: false,
+    fileName: "",
   });
   const handleFileSelection = (event) => {
     if (event.currentTarget.files && event.currentTarget.files.length > 0) {
-      console.log(
-        "FILE URL IS",
-        URL.createObjectURL(event.currentTarget.files[0])
-      );
+      let file = event.currentTarget.files[0];
       setSelectedFile({
-        value: URL.createObjectURL(event.currentTarget.files[0]),
+        value: URL.createObjectURL(file),
         touched: true,
+        fileName: file.name,
       });
     }
   };
   console.log("SET SELECT FILE", selectedFile);
   const proceedForSubmission = () => {
     if (selectedFile.touched && onSubmit) {
-      onSubmit(selectedFile.value);
+      onSubmit(selectedFile.value, selectedFile.fileName);
     }
   };
   const handleError = () => {

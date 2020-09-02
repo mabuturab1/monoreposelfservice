@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styles from "./Uploader.module.scss";
 import InputBase from "@material-ui/core/InputBase";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { Button, Dialog } from "@material-ui/core";
+import { Button, Dialog, CircularProgress } from "@material-ui/core";
 import Image from "../image/Image";
 import Video from "../video/Video";
 import LinkInput from "../linkInput/LinkInput";
@@ -68,10 +68,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Uploader = (props) => {
-  const { onFileUploadedToServer, apiUrl, reportType } = props;
+  const { onFileUploadedToServer, apiUrl, reportType, bearerToken } = props;
   const classes = useStyles();
+  const fileName = useRef(null);
   const [open, setOpen] = useState(false);
   const [currentValue, setCurrentValue] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const handleClick = () => {
     setOpen(true);
   };
@@ -84,7 +86,8 @@ const Uploader = (props) => {
     setCurrentValue(null);
     setCurrentType(event.target.value);
   };
-  const handleDataSubmit = (data) => {
+  const handleDataSubmit = (data, name) => {
+    if (name) fileName.current = name;
     setCurrentValue(data);
   };
   const getUI = () => {
@@ -107,14 +110,14 @@ const Uploader = (props) => {
         return (
           <React.Fragment>
             <img src={PdfImage} className={styles.singleItemWrapper} />
-            <p>{currentValue.name}</p>
+            <p>{fileName.current}</p>
           </React.Fragment>
         );
       case "Video":
         return (
           <video
             controls
-            src={URL.createObjectURL(currentValue)}
+            src={currentValue}
             className={styles.singleItemWrapper}
           />
         );
@@ -122,20 +125,33 @@ const Uploader = (props) => {
         return (
           <React.Fragment>
             <img src={YoutubeImage} className={styles.singleItemWrapper} />
-            <a href="#"> {currentValue}</a>
+            <a href="#">{fileName.current}</a>
           </React.Fragment>
         );
     }
   };
   const startUploadingFile = () => {
+    if (currentType == "Youtube" && currentValue) {
+      onFileUploadedToServer(currentValue, currentValue, {
+        t: currentValue,
+        f: currentValue,
+      });
+      return;
+    }
+    setIsUploading(true);
+
     uploadFile(
       apiUrl,
       reportType,
       currentValue,
       currentType,
+      bearerToken,
       (status, response) => {
-        if (status && response && onFileUploadedToServer)
-          onFileUploadedToServer(currentValue, response);
+        setIsUploading(false);
+        if (status && response && onFileUploadedToServer) {
+          onFileUploadedToServer(currentValue, fileName.current, response);
+          handleClose();
+        }
       }
     );
   };
@@ -218,7 +234,13 @@ const Uploader = (props) => {
               variant="contained"
               onClick={startUploadingFile}
             >
-              Apply
+              {isUploading ? (
+                <div style={{ color: "white" }}>
+                  <CircularProgress size={20} color="inherit" />
+                </div>
+              ) : (
+                "Upload"
+              )}
             </Button>
           </div>
         </div>

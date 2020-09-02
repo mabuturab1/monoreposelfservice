@@ -9,6 +9,7 @@ const myVideo = ({ onSubmit }) => {
   const [selectedFile, setSelectedFile] = useState({
     value: "",
     touched: false,
+    fileName: "",
   });
   const handleFileSelection = (event) => {
     if (event.currentTarget.files && event.currentTarget.files.length > 0) {
@@ -24,9 +25,11 @@ const myVideo = ({ onSubmit }) => {
         setShowError(true);
         return;
       }
+      let file = event.currentTarget.files[0];
       let updatedObj = {
-        value: event.currentTarget.files[0],
+        value: URL.createObjectURL(file),
         touched: true,
+        fileName: file.name,
       };
       console.log("CURRENT TARGET", updatedObj);
       setSelectedFile(updatedObj);
@@ -35,7 +38,7 @@ const myVideo = ({ onSubmit }) => {
   };
   const proceedForSubmission = (updatedObj) => {
     if (updatedObj.touched && onSubmit) {
-      onSubmit(updatedObj.value);
+      onSubmit(updatedObj.value, updatedObj.fileName);
     }
   };
 

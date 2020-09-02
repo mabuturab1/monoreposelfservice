@@ -90,19 +90,6 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     return tableDataId + fieldKey;
   };
 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (updateCurrentScroll != null && event.ctrlKey)
-        updateCurrentScroll(scrollTopTable.current);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    // cleanup this component
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [updateCurrentScroll]);
   const getInitData = (el) => {
     if (el.type === "CONTACT") {
       let cell = columns.find((el) => el.type === "CONTACT");
@@ -307,6 +294,8 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
   };
   const onScrollTable = (event) => {
     scrollTopTable.current = event.scrollTop;
+    if (updateCurrentScroll != null)
+      updateCurrentScroll(scrollTopTable.current);
     // scrollOccurred();
   };
   return (

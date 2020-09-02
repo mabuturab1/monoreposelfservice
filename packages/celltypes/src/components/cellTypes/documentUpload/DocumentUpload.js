@@ -23,6 +23,7 @@ const DocumentUpload = (props) => {
     getServerFileLinks,
     apiUrl,
     reportType,
+    bearerToken,
   } = { ...props };
   let value = mValue;
   if (!value) value = {};
@@ -35,7 +36,8 @@ const DocumentUpload = (props) => {
   const [showError, setShowError] = useState(false);
   let src = value;
   let localFileName = useRef(null);
-  if (selectedFile.document) src = URL.createObjectURL(selectedFile.document);
+  if (selectedFile.document && typeof selectedFile.document === "object")
+    src = URL.createObjectURL(selectedFile.document);
 
   const onLoad = (updatedValue) => {
     setFieldValue(name, updatedValue);
@@ -73,13 +75,14 @@ const DocumentUpload = (props) => {
       tempFilePath: mValue.f,
     });
   }
-  const getUploadLinks = (originalData, serverData) => {
-    let tempPath = URL.createObjectURL(originalData);
-    localFileName.current = originalData.name;
+  const getUploadLinks = (tempPath, fileName, serverData) => {
+    console.log("OBTAINED DATA", tempPath, fileName, serverData);
+
+    localFileName.current = fileName;
     setSelectedFile({
       ...selectedFile,
       tempFilePath: tempPath,
-      document: originalData,
+      document: tempPath,
       updated: false,
     });
     if (serverData) updateFieldData(serverData);
@@ -94,6 +97,7 @@ const DocumentUpload = (props) => {
               <Uploader
                 apUrl={apiUrl}
                 reportType={reportType}
+                bearerToken={bearerToken}
                 onFileUploadedToServer={getUploadLinks}
               >
                 <input

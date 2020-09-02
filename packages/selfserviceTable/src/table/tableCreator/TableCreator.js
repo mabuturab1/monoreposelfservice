@@ -39,8 +39,8 @@ const TableCreator = (props) => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const [showFreezedTable, setShowFreezedTable] = useState(false);
-  const tempFreezedTable = useRef(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const tempIsScrolling = useRef(false);
   const scrollTopTable = useRef(0);
   const noFreezeColumnMessage = useRef(0);
   const tableData = props.tableData || [];
@@ -497,7 +497,7 @@ const TableCreator = (props) => {
     freezedColumnKeys.includes(el.key)
   );
   const getFreezedColumnWidth = () => {
-    if (!showFreezedTable || freezedColumnKeys.length < 1) return 0;
+    if (freezedColumnKeys.length < 1) return 0;
     return freezedColumnKeys
       .map((el) => columnsWidth[el])
       .reduce((a, b) => a + b, 0);
@@ -511,33 +511,19 @@ const TableCreator = (props) => {
     fieldDeleteAble: false,
   };
 
-  if (
-    freezedColumnKeys.length < 1 &&
-    props.showSnackbarContent != null &&
-    showFreezedTable
-  ) {
-    setTimeout(() =>
-      props.showSnackbarContent(
-        noFreezeColumnMessage.current === 0
-          ? "No Freeze Column Found"
-          : "Kindly freeze column by edit menu"
-      )
-    );
-    if (noFreezeColumnMessage.current === 0) noFreezeColumnMessage.current = 1;
-    else noFreezeColumnMessage.current = 0;
-  }
   const updateCurrentScroll = (val) => {
-    if (!showFreezedTable && !tempFreezedTable.current) {
-      scrollTopTable.current = val;
-      tempFreezedTable.current = true;
-
-      setShowFreezedTable(true);
+    if (freezedColumnKeys.length < 1) return;
+    if (!isScrolling && !tempIsScrolling.current) {
+      tempIsScrolling.current = true;
+      console.log("FREEZED TABLE STATE START", tempIsScrolling.current);
+      setIsScrolling(true);
     }
     if (timeoutTimer.current != null) clearTimeout(timeoutTimer.current);
     timeoutTimer.current = setTimeout(() => {
-      setShowFreezedTable(false);
-      tempFreezedTable.current = false;
-      console.log("FREEZED TABLE STATE END", tempFreezedTable.current);
+      scrollTopTable.current = val;
+      tempIsScrolling.current = false;
+      setIsScrolling(false);
+      console.log("FREEZED TABLE STATE END", tempIsScrolling.current);
     }, 400);
   };
   const showSkeletonForTableData = () => {
@@ -557,15 +543,13 @@ const TableCreator = (props) => {
     <TableVirtualized
       {...{
         tableData,
-
         formData,
-
         onHeaderClicked,
-
         updateFieldData,
         tableActionsClicked,
       }}
       scrollTop={scrollTopTable.current}
+      tableDataSkeletonPreview={isScrolling || tempIsScrolling.current}
       editAllowed={false}
       isFreezed={true}
       sortByColumn={() => {}}
@@ -667,7 +651,7 @@ const TableCreator = (props) => {
               <div
                 style={{ position: "relative", width: "100%", height: "100%" }}
               >
-                {showFreezedTable && freezedColumnKeys.length > 0 ? (
+                {freezedColumnKeys.length > 0 ? (
                   <div
                     className={styles.freezedTable}
                     style={{

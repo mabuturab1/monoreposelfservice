@@ -10,21 +10,22 @@ const getFormData = async (localData, type) => {
   formData.append("type", String(type).toUpperCase());
   return formData;
 };
-const config = {
-  headers: { Authorization: `Bearer ` },
-};
+const config = (token) => ({
+  headers: { Authorization: `Bearer ${token}` },
+});
 export const uploadFile = async (
   apiUrl,
   reportType,
   data,
   type,
-
+  token,
   isSuccess
 ) => {
   let formData = await getFormData(data, type);
   axios
-    .post(`${"/vbeta"}/uploads`, formData, config)
+    .post(`${"/vbeta"}/uploads`, formData, config(token))
     .then((response) => {
+      console.log("RESPONS OF UPLOAD", response);
       if (response) {
         isSuccess(true, response.data);
       } else {

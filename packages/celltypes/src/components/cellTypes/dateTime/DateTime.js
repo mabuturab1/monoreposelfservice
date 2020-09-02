@@ -97,8 +97,7 @@ const DateTime = (props) => {
     if (
       timeUpdateObtained &&
       min &&
-      processedTimeMoment.isBefore(moment(min, decodeFormat || submitFormat)) &&
-      pickerHasDate()
+      processedTimeMoment.isBefore(moment(min, decodeFormat || submitFormat))
     ) {
       updateDefaultValue();
       setDateRangeError(true);
@@ -107,8 +106,7 @@ const DateTime = (props) => {
     if (
       timeUpdateObtained &&
       max &&
-      processedTimeMoment.isAfter(moment(max, decodeFormat || submitFormat)) &&
-      pickerHasDate()
+      processedTimeMoment.isAfter(moment(max, decodeFormat || submitFormat))
     ) {
       updateDefaultValue();
       setDateRangeError(true);
@@ -186,8 +184,9 @@ const DateTime = (props) => {
     return pickers && pickers.length === 1 && pickers.includes("TIME");
   };
   const getWidth = () => {
-    if (pickerOnlyIncludesDate() || pickerOnlyIncludesTime()) return "17rem";
-    else return "35rem";
+    if (pickerOnlyIncludesTime()) return "17rem";
+    if (pickerOnlyIncludesDate()) return "20rem";
+    return "35rem";
   };
   return (
     <div className={styles.dateTimeWrapper}>

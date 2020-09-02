@@ -9,6 +9,7 @@ const Document = ({ onSubmit }) => {
   const [selectedFile, setSelectedFile] = useState({
     value: "",
     touched: false,
+    fileName: "",
   });
   const handleFileSelection = (event) => {
     if (event.currentTarget.files && event.currentTarget.files.length > 0) {
@@ -16,9 +17,11 @@ const Document = ({ onSubmit }) => {
         setShowError(true);
         return;
       }
+      let file = event.currentTarget.files[0];
       let udpatedSelectFile = {
-        value: event.currentTarget.files[0],
+        value: URL.createObjectURL(file),
         touched: true,
+        fileName: file.name,
       };
       setSelectedFile(udpatedSelectFile);
       proceedForSubmission(udpatedSelectFile);
@@ -26,7 +29,7 @@ const Document = ({ onSubmit }) => {
   };
   const proceedForSubmission = (submitFile) => {
     if (submitFile.touched && onSubmit) {
-      onSubmit(submitFile.value);
+      onSubmit(submitFile.value, submitFile.fileName);
     }
   };
   const handleError = () => {
@@ -55,7 +58,7 @@ const Document = ({ onSubmit }) => {
         onChange={handleFileSelection}
         text={
           selectedFile.value === ""
-            ? "Kindly select an image"
+            ? "Kindly select a pdf file"
             : "Update selected file"
         }
       />

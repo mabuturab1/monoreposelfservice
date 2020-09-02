@@ -19,6 +19,7 @@ const initialState = {
   fetchData: 1,
   freezedColumnKeys: [],
   totalUpdateFieldErrors: 0,
+  bearerToken: "",
   snackbarStatus: {
     updated: false,
     cellKey: "",

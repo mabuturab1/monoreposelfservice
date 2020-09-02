@@ -68,6 +68,32 @@ const hasValue = (val) => {
 const proceedWithoutCheck = (val, data) => {
   return (!data["isRequired"] || data["isDisabled"]) && val == null;
 };
+const includesValue = (value, refValue, start = 0) => {
+  let val = String(value);
+
+  if (Array.isArray(refValue))
+    return {
+      isIndex: true,
+      index: refValue.findIndex((el) => val.substring(start).startsWith(el)),
+    };
+
+  return { isIndex: false, equal: val.substring(start).startsWith(refValue) };
+};
+const hasPrefixes = (value, prefix, prevValues, prevValStart = 0) => {
+  let start = 0;
+
+  if (prevValues) {
+    let obj = includesValue(value, prevValues);
+    if (obj.isIndex && obj.index >= 0) start = prevValues[obj.index].length;
+    else if (!obj.isIndex && obj.equal)
+      start = prevValStart + prevValues.length;
+  }
+  const currentObj = includesValue(value, prefix, start);
+  if (currentObj.isIndex && currentObj.index >= 0) return true;
+  if (!currentObj.isIndex && currentObj.equal) return true;
+
+  return false;
+};
 const getYupData = (fieldType, JsonKey, JsonData) => {
   switch (JsonKey) {
     case "isRequired":
@@ -88,21 +114,35 @@ const getYupData = (fieldType, JsonKey, JsonData) => {
     case "email":
       return { yupType: "email", params: ["This email is not valid"] };
 
-    case "isPrefixed":
+    case "countryCode":
       return {
         yupType: "test",
         params: [
           "len",
-          `Please use Indonesian prefix in format ${JsonData[JsonKey]}xxxxxx`,
-          (val) => {
-            return (
-              proceedWithoutCheck(val, JsonData) ||
-              (checkValidValue(val) == null
-                ? false
-                : val.toString().slice(0, JsonData[JsonKey].length) ===
-                  JsonData[JsonKey].toString())
-            );
-          },
+          `Please use following prefix as ${JsonKey}: ${JsonData[JsonKey]}`,
+          (val) =>
+            proceedWithoutCheck(val, JsonData) ||
+            (checkValidValue(val) == null
+              ? false
+              : hasPrefixes(val, JsonData[JsonKey], null)),
+        ],
+      };
+    case "prefixes":
+      return {
+        yupType: "test",
+        params: [
+          "len",
+          `Kindly use country code & prefixes, specified in field edit mode`,
+          (val) =>
+            proceedWithoutCheck(val, JsonData) ||
+            (checkValidValue(val) == null
+              ? false
+              : hasPrefixes(
+                  val,
+                  JsonData[JsonKey],
+                  JsonData["countryCode"],
+                  0
+                )),
         ],
       };
     case "maxLength":

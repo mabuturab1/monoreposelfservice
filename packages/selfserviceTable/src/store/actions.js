@@ -2,12 +2,18 @@ import * as actionTypes from "./actionTypes";
 import * as Constants from "../table/constants/Constants";
 import axios from "axios";
 
-const config = {
-  headers: { Authorization: `Bearer ${Constants.bearerToken}` },
-};
+const config = (token) => ({
+  headers: { Authorization: `Bearer ${token}` },
+});
 export const getTableDataStart = () => {
   return {
     type: actionTypes.START_FETCHING_TABLE_DATA,
+  };
+};
+export const updateBearerToken = (data) => {
+  return {
+    type: actionTypes.UPDATE_BEARER_TOKEN,
+    payload: data,
   };
 };
 export const getTableDataFailed = () => {
@@ -251,12 +257,12 @@ export const getTableData = (
   params,
   isNewData = false
 ) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(getTableDataStart());
     if (isNewData) dispatch(clearTableData());
     return axios
       .get(`${"/vbeta"}/${reportType}/${reportId}/contents`, {
-        ...config,
+        ...config(getState().table.bearerToken),
         params: params,
       })
       .then((response) => {
@@ -279,10 +285,14 @@ export const getTableData = (
 };
 
 export const getTableHeader = (apiUrl, reportType, reportId) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    console.log("GETTABLE STATE", getState());
     dispatch(getTableHeaderStart());
     axios
-      .get(`${"/vbeta"}/${reportType}/${reportId}/fields`, config)
+      .get(
+        `${"/vbeta"}/${reportType}/${reportId}/fields`,
+        config(getState().table.bearerToken)
+      )
       .then((response) => {
         if (response) dispatch(getTableHeaderSuccess(response.data));
         else dispatch(getTableHeaderFailed());
@@ -299,15 +309,20 @@ export const getTableHeaderField = (
   fieldId,
   callback
 ) => {
-  axios
-    .get(`${"/vbeta"}/${reportType}/${reportId}/fields/${fieldId}`, config)
-    .then((response) => {
-      if (response && response.data) callback(response.data);
-      else callback(null);
-    })
-    .catch((error) => {
-      callback(null);
-    });
+  return (dispatch, getState) => {
+    axios
+      .get(
+        `${"/vbeta"}/${reportType}/${reportId}/fields/${fieldId}`,
+        config(getState().table.bearerToken)
+      )
+      .then((response) => {
+        if (response && response.data) callback(response.data);
+        else callback(null);
+      })
+      .catch((error) => {
+        callback(null);
+      });
+  };
 };
 
 const getFormData = async (localData, type) => {
@@ -345,7 +360,11 @@ export const uploadFile = (
     dispatch(getUploadFileStart());
     let formData = await getFormData(data, type);
     axios
-      .post(`${"/vbeta"}/uploads`, formData, config)
+      .post(
+        `${"/vbeta"}/uploads`,
+        formData,
+        config(getState().table.bearerToken)
+      )
       .then((response) => {
         if (response) {
           dispatch(getUploadFileSuccess(response.data));
@@ -373,7 +392,11 @@ export const addTableContent = (
   return (dispatch, getState) => {
     dispatch(getAddContentStart());
     axios
-      .post(`${"/vbeta"}/${reportType}/${reportId}/contents`, data, config)
+      .post(
+        `${"/vbeta"}/${reportType}/${reportId}/contents`,
+        data,
+        config(getState().table.bearerToken)
+      )
       .then((response) => {
         console.log("ADD TABLE CONTENT RESPONSE", response.data.data);
         if (response && response.data && response.data.data) {
@@ -405,23 +428,27 @@ export const getReportExportId = (
   apiUrl,
   reportType,
   reportId,
-  contentType,
+  params,
   callback
 ) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     axios
-      .get(`${"/vbeta"}/${reportType}/${reportId}/${contentType}`, config)
+      .get(`${"/vbeta"}/${reportType}/${reportId}/export`, {
+        ...config(getState().table.bearerToken),
+        params: params,
+      })
       .then((response) => {
         if (response && response.data) callback(response.data);
         else callback(null);
       })
       .catch((error) => {
+        console.log("ERROR IN getexport id", error);
         callback(null);
       });
   };
 };
 export const getDataFromWebScoket = (exportId) => {
-  const ws = new WebSocket(`${"/vbeta"}/ws/exports/${exportId}`);
+  const ws = new WebSocket(`${"/ws"}/exports/${exportId}`);
   ws.onopen = () => {
     console.log("Web socket connected");
   };
@@ -463,7 +490,7 @@ export const updateFieldData = (
       .put(
         `${"/vbeta"}/${reportType}/${reportId}/contents/${rowId}`,
         sendData,
-        config
+        config(getState().table.bearerToken)
       )
       .then((response) => {
         dispatch(
@@ -491,13 +518,13 @@ export const deleteTableContent = (
   fieldId,
   isSuccess
 ) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(getDeleteContentStart());
 
     axios
       .delete(
         `${"/vbeta"}/${reportType}/${reportId}/contents/${fieldId}`,
-        config
+        config(getState().table.bearerToken)
       )
       .then((response) => {
         if (response) {
@@ -521,10 +548,14 @@ export const addTableField = (
   data,
   isSuccess
 ) => {
-  return (dispatch, state) => {
+  return (dispatch, getState) => {
     dispatch(getAddFieldStart());
     axios
-      .post(`${"/vbeta"}/${reportType}/${reportId}/fields`, data, config)
+      .post(
+        `${"/vbeta"}/${reportType}/${reportId}/fields`,
+        data,
+        config(getState().table.bearerToken)
+      )
       .then((response) => {
         if (response && response.data && response.data.data) {
           dispatch(getAddFieldSuccess(response.data.data));
@@ -550,13 +581,13 @@ export const editTableField = (
   data,
   isSuccess
 ) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(getEditFieldStart());
     axios
       .put(
         `${"/vbeta"}/${reportType}/${reportId}/fields/${fieldKey}`,
         data,
-        config
+        config(getState().table.bearerToken)
       )
       .then((response) => {
         if (response) {
@@ -582,12 +613,12 @@ export const deleteTableField = (
   fieldKey,
   isSuccess
 ) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(getDeleteFieldStart());
     axios
       .delete(
         `${"/vbeta"}/${reportType}/${reportId}/fields/${fieldKey}`,
-        config
+        config(getState().table.bearerToken)
       )
       .then((response) => {
         if (response) {

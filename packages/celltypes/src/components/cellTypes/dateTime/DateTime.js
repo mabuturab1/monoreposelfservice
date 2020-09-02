@@ -68,7 +68,6 @@ const DateTime = (props) => {
 
   const handleClose = () => {
     setAnchorEl(null);
-    handleDataSubmit();
   };
 
   const handleDataSubmit = (updatedTime = {}) => {

@@ -275,6 +275,9 @@ const NewRecordData = (props) => {
                     myKey={el.key}
                     cellOriginalKey={el.key}
                     rowData={{ data: {} }}
+                    bearerToken={props.bearerToken}
+                    apiUrl={props.apiUrl}
+                    reportType={props.reportType}
                     updateFieldData={updateFieldData}
                     handlerFunctions={{
                       handleChange,

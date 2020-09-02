@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { withStyles } from "@material-ui/core/styles";
@@ -148,7 +148,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
         tableActionsClicked={tableActionsClicked}
         apiUrl={apiUrl}
         reportType={reportType}
-        bearerToken={Constants.bearerToken}
+        bearerToken={props.bearerToken}
         handlerFunctions={{
           handleChange,
           handleSubmit,
@@ -225,7 +225,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
         )}
         currentReportId={currentReportId}
         apiUrl={apiUrl}
-        token={Constants.bearerToken}
+        token={props.bearerToken}
         style={
           sortByColumn.key === dataKey ? { backgroundColor: "yellow" } : {}
         }

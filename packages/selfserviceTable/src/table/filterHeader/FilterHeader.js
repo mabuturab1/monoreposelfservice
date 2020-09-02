@@ -21,6 +21,7 @@ import * as Yup from "yup";
 import NewRecordDialog from "../../common/newRecordDialog/NewRecordDialog";
 import DateRangePicker from "@selfservicetable/celltypes/src/components/cellTypes/dateRangePicker/DateRangePicker";
 import ToggleLogicButtons from "./ToggleLogicButtons";
+import MenuButton from "../../common/menuButton/MenuButton";
 const FilterHeader = (props) => {
   const tableContext = useContext(TableContext);
   const searchConditions = [
@@ -236,14 +237,23 @@ const FilterHeader = (props) => {
   let getTwoDigitsNumber = (val) => {
     return ("0" + val.toString()).trim().slice(-2);
   };
-  const exportDataTable = () => {
+  const exportDataTable = (id) => {
+    let updatedParams = new URLSearchParams();
+    if (props.queryParams) {
+      props.queryParams.forEach((value, key) => {
+        updatedParams.append(key, value);
+      });
+    }
+    updatedParams.append("type", id);
     props.getReportExportId(
       props.apiUrl,
       reportType,
       props.currentReportId,
-      "contents_pdf",
+      updatedParams,
+
       (data) => {
         console.log("data of export is", data);
+        if (data && data.exportId) props.getDataFromWebScoket(data.exportId);
       }
     );
   };
@@ -289,22 +299,30 @@ const FilterHeader = (props) => {
         ) : (
           false
         )}
-        <div
-          onClick={exportDataTable}
-          className={[
-            styles.topHeaderItemWrapper,
-            styles.mediumPadding,
-
-            styles.applyElevation,
-          ].join(" ")}
+        <MenuButton
+          itemList={[
+            { id: "XLSX", label: "XLSX" },
+            { id: "PDF", label: "PDF" },
+            { id: "CSV", label: "CSV" },
+          ]}
+          onItemSelected={(id) => exportDataTable(id)}
         >
-          <FontAwesomeIcon
-            size={"lg"}
-            icon={faFileExport}
-            className={styles.icon}
-          />
-          <span className={styles.label}>Export</span>
-        </div>
+          <div
+            className={[
+              styles.topHeaderItemWrapper,
+              styles.mediumPadding,
+
+              styles.applyElevation,
+            ].join(" ")}
+          >
+            <FontAwesomeIcon
+              size={"lg"}
+              icon={faFileExport}
+              className={styles.icon}
+            />
+            <span className={styles.label}>Export</span>
+          </div>
+        </MenuButton>
         <div>
           <DateRangePicker onDateRangeChanged={onDateRangeSelect}>
             <div className={styles.dateRangeWrapper}>
@@ -524,13 +542,15 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     storeFilterData: (data) => dispatch(actions.getFilterData(data)),
-    getReportExportId: (apiUrl, reportType, reportId, contentType, callback) =>
+    getDataFromWebScoket: (id) => dispatch(actions.getDataFromWebScoket(id)),
+    getReportExportId: (apiUrl, reportType, reportId, params, callback) =>
       dispatch(
         actions.getReportExportId(
           apiUrl,
           reportType,
           reportId,
-          contentType,
+
+          params,
           callback
         )
       ),

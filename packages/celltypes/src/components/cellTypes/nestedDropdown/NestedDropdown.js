@@ -29,37 +29,7 @@ const NestedDropdown = ({
   const [fieldsData, setFieldsData] = useState(
     serverData && serverData.fields ? serverData.fields : []
   );
-  // console.log("STARTING NEW PRINT");
-  // console.log(
-  //   "edit allowed",
-  //   editAllowed,
-  //   "key",
-  //   myKey,
-  //   "classname",
-  //   className,
-  //   "rowWidth",
-  //   rowWidth,
-  //   "rowHeight",
-  //   rowHeight,
-  //   "serverData",
-  //   serverData,
-  //   "handle functions",
-  //   handlerFunctions,
-  //   "row data",
-  //   rowData,
-  //   "cell original key",
-  //   cellOriginalKey,
-  //   "update field data",
-  //   updateFieldData,
-  //   "app schema obj",
-  //   appSchemaObj,
-  //   "app error obj",
-  //   appErrorObj,
-  //   "app touched obj",
-  //   appTouchedObj,
-  //   "item",
-  //   item
-  // );
+
   const getNewData = (newKey, newValue) => {
     const params = new URLSearchParams();
     queryParams.forEach((value, key) => {
@@ -92,7 +62,7 @@ const NestedDropdown = ({
       ...dropdownData.current,
       ...data,
     };
-    // getNewData(key, data[key]);
+    getNewData(key, data[key]);
     updateFieldData(
       rowId,
       {

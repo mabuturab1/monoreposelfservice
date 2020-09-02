@@ -67,7 +67,7 @@ const hasValue = (val) => {
 };
 const includesValue = (value, refValue, start = 0) => {
   let val = String(value);
-  // console.log(Array.isArray(refValue), refValue);
+
   if (Array.isArray(refValue))
     return {
       isIndex: true,
@@ -78,13 +78,7 @@ const includesValue = (value, refValue, start = 0) => {
 };
 const hasPrefixes = (value, prefix, prevValues, prevValStart = 0) => {
   let start = 0;
-  // console.log(
-  //   "checking value in prefixes",
-  //   value,
-  //   prefix,
-  //   prevValues,
-  //   prevValStart
-  // );
+
   if (prevValues) {
     let obj = includesValue(value, prevValues);
     if (obj.isIndex && obj.index >= 0) start = prevValues[obj.index].length;
@@ -95,7 +89,7 @@ const hasPrefixes = (value, prefix, prevValues, prevValStart = 0) => {
   const currentObj = includesValue(value, prefix, start);
   if (currentObj.isIndex && currentObj.index >= 0) return true;
   if (!currentObj.isIndex && currentObj.equal) return true;
-  // console.log("current obj is", currentObj);
+
   return false;
 };
 const getYupData = (fieldType, JsonKey, JsonData) => {
@@ -170,7 +164,7 @@ const getYupData = (fieldType, JsonKey, JsonData) => {
         yupType: "test",
         params: [
           "len",
-          `Kindly country code & prefixes, specified in field edit mode`,
+          `Kindly use country code & prefixes, specified in field edit mode`,
           (val) =>
             checkValidValue(val) == null
               ? false

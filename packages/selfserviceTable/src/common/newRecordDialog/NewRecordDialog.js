@@ -14,6 +14,8 @@ const mapStateToProps = (state) => {
     reportId: state.table.currentReportId,
     apiUrl: state.table.apiAddress,
     reportType: state.table.reportType,
+    bearerToken: state.table.bearerToken,
+    reportType: state.table.reportType,
   };
 };
 
@@ -43,8 +45,10 @@ const mapDispatchToProps = (dispatch) => {
           forcedUpdate
         )
       ),
-    addTableContent: (apiUrl, reportId, data, isSuccess) =>
-      dispatch(actions.addTableContent(apiUrl, reportId, data, isSuccess)),
+    addTableContent: (apiUrl, reportType, reportId, data, isSuccess) =>
+      dispatch(
+        actions.addTableContent(apiUrl, reportType, reportId, data, isSuccess)
+      ),
   };
 };
 

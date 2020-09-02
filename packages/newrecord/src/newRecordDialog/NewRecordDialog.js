@@ -88,12 +88,18 @@ const NewRecordDialog = (props) => {
   const submitStaticData = (values) => {
     if (!values || Object.keys(values).length < 1) return;
     setDataUpdateStatus(DataUpdateStatus.updating);
-    props.addTableContent(props.apiUrl, props.reportId, values, (isSuccess) => {
-      if (isSuccess) handleClose();
-      setDataUpdateStatus(
-        isSuccess ? DataUpdateStatus.updated : DataUpdateStatus.error
-      );
-    });
+    props.addTableContent(
+      props.apiUrl,
+      props.reportType,
+      props.reportId,
+      values,
+      (isSuccess) => {
+        if (isSuccess) handleClose();
+        setDataUpdateStatus(
+          isSuccess ? DataUpdateStatus.updated : DataUpdateStatus.error
+        );
+      }
+    );
   };
   return (
     <React.Fragment>

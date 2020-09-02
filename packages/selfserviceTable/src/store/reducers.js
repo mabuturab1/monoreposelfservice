@@ -19,7 +19,8 @@ const initialState = {
   fetchData: 1,
   freezedColumnKeys: [],
   totalUpdateFieldErrors: 0,
-  bearerToken: "",
+  bearerToken:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiI3MTdmZDk2Mjk1NWZhZGVjMTQ5ODI1YmM1NGVhNjQ0ZSIsInVzZXJJZCI6ImRmOGM5MWFiODMzNTQ1ODA5MzJjOTU5N2YyN2FlZGU3IiwiaWF0IjoxNTkyNzk3NTcyLCJleHAiOjE2MDA5Mjc3Mzd9.e37FF1HpZt7o5MSJUBDFLw961GaBNESjs2ElHNQTJkM",
   snackbarStatus: {
     updated: false,
     cellKey: "",
@@ -209,6 +210,8 @@ const reducer = (state = initialState, action) => {
       });
     case actionTypes.FETCH_NEW_DATA:
       return updateObject(state, { fetchData: state.fetchData + 1 });
+    case actionTypes.UPDATE_BEARER_TOKEN:
+      return updateObject(state, { bearerToken: action.payload });
     case actionTypes.ADD_FIELD_SUCCESS:
       return updateObject(state, {
         tableHeader: (state.tableHeader || []).concat(action.payload),

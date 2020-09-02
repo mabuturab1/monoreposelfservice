@@ -245,8 +245,7 @@ const TableCreator = (props) => {
   const getValidationSchemaObject = useCallback(() => {
     return Yup.object().shape(createValidationSchema());
   }, [createValidationSchema]);
-  const fetchTableData = useCallback(() => {
-    console.log("FETCHING TABLE DATA");
+  const getCurrentQueryParams = () => {
     const params = new URLSearchParams();
     params.append("pageNumber", queryParams.pageNumber);
     params.append("pageSize", queryParams.pageSize);
@@ -267,7 +266,11 @@ const TableCreator = (props) => {
       params.append("start", getFormattedDate(queryParams.start));
     if (queryParams.end != null)
       params.append("end", getFormattedDate(queryParams.end));
-
+    return params;
+  };
+  const fetchTableData = useCallback(() => {
+    console.log("FETCHING TABLE DATA");
+    const params = getCurrentQueryParams();
     mFetchTableData(
       apiUrl,
       reportType,
@@ -624,6 +627,7 @@ const TableCreator = (props) => {
               >
                 <FilterHeader
                   getCurrentUpdateCycle={() => currentUpdateCycle.current}
+                  queryParams={getCurrentQueryParams()}
                   totalReportItems={props.totalReportItems}
                   contentAddAble={contentAddAble}
                   contentEditAble={contentEditAble}
@@ -761,6 +765,7 @@ const TableCreator = (props) => {
                         currentReportId={currentReportId}
                         apiUrl={apiUrl}
                         reportType={reportType}
+                        bearerToken={props.bearerToken}
                         tableStatus={{
                           contentAddAble,
                           contentEditAble,

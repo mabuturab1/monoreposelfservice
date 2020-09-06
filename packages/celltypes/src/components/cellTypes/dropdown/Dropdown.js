@@ -129,7 +129,10 @@ const Dropdown = (props) => {
       );
     }
   }
-  if (value && currentValue !== selectValue.originalState)
+  if (
+    (value && currentValue !== selectValue.originalState) ||
+    (!value && selectValue.originalState !== "")
+  )
     setSelectValue({
       originalState: currentValue,
       tempState: currentValue,

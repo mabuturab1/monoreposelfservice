@@ -62,8 +62,10 @@ const NestedDropdown = ({
   };
   const isKeyEnabled = (keyVal) => {
     let fieldIndex = fieldsData.findIndex((el) => el.key === keyVal);
+
     return fieldIndex <= currentFieldKeyIndex;
   };
+
   const getNextFieldKey = (prevKey) => {
     let index = fieldsData.findIndex((el) => el.key === prevKey);
     console.log(fieldsData, index, prevKey);
@@ -76,9 +78,12 @@ const NestedDropdown = ({
       ...dropdownData.current,
       ...data,
     };
+
     let previousValues = { ...dropdownData.current };
-    fieldsData.forEach((el) => {
-      if (!isKeyEnabled(el.key)) delete previousValues[el.key];
+    let fieldIndex = fieldsData.findIndex((el) => el.key === key);
+    if (fieldIndex < 0) fieldIndex = fieldsData.length;
+    fieldsData.forEach((el, index) => {
+      if (index > fieldIndex) delete previousValues[el.key];
     });
     dropdownData.current = { ...previousValues };
 

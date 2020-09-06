@@ -41,7 +41,7 @@ const DateTime = (props) => {
 
   if (showFormat) possibleFormats.push(showFormat);
   let dateValid = moment(mValue, [decodeFormat, submitFormat, showFormat]);
-  console.log("VALID DATE", dateValid.isValid());
+
   if (dateValid.isValid()) {
     value = mValue;
     isDateValid = true;

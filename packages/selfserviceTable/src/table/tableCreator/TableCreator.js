@@ -42,7 +42,7 @@ const TableCreator = (props) => {
   const [isScrolling, setIsScrolling] = useState(false);
   const tempIsScrolling = useRef(false);
   const scrollTopTable = useRef(0);
-  const noFreezeColumnMessage = useRef(0);
+
   const tableData = props.tableData || [];
   const [currentTrigger, setCurrentTrigger] = useState(
     fetchNewDataTrigger || 1
@@ -245,7 +245,7 @@ const TableCreator = (props) => {
   const getValidationSchemaObject = useCallback(() => {
     return Yup.object().shape(createValidationSchema());
   }, [createValidationSchema]);
-  const getCurrentQueryParams = () => {
+  const getCurrentQueryParams = useCallback(() => {
     const params = new URLSearchParams();
     params.append("pageNumber", queryParams.pageNumber);
     params.append("pageSize", queryParams.pageSize);
@@ -254,7 +254,7 @@ const TableCreator = (props) => {
       params.append("sortDirection", queryParams.order);
     if (
       queryParams.filters.toString() !== "" &&
-      queryParams.filterLogic != ""
+      queryParams.filterLogic !== ""
     ) {
       queryParams.filters.forEach((value, key) => {
         params.append(key, value);
@@ -267,7 +267,7 @@ const TableCreator = (props) => {
     if (queryParams.end != null)
       params.append("end", getFormattedDate(queryParams.end));
     return params;
-  };
+  }, [queryParams]);
   const fetchTableData = useCallback(() => {
     console.log("FETCHING TABLE DATA");
     const params = getCurrentQueryParams();
@@ -278,7 +278,14 @@ const TableCreator = (props) => {
       params,
       queryParams.isNewKey
     );
-  }, [mFetchTableData, apiUrl, reportType, currentReportId, queryParams]);
+  }, [
+    mFetchTableData,
+    apiUrl,
+    reportType,
+    currentReportId,
+    queryParams,
+    getCurrentQueryParams,
+  ]);
 
   const updateApiUrl = useCallback(() => {
     mUpdateApiUrl(apiUrl);
@@ -336,7 +343,14 @@ const TableCreator = (props) => {
         queryParams,
         queryParams.isNewKey
       );
-  }, [fetchTableData, apiUrl, currentReportId, queryParams, staticData]);
+  }, [
+    fetchTableData,
+    apiUrl,
+    currentReportId,
+    queryParams,
+    reportType,
+    staticData,
+  ]);
   useEffect(() => {
     if (!apiUrl) return;
     updateApiUrl(apiUrl);
@@ -419,7 +433,7 @@ const TableCreator = (props) => {
     }
     if (
       newFilter.toString() !== queryParams.filters.toString() ||
-      logic != queryParams.filterLogic
+      logic !== queryParams.filterLogic
     ) {
       let newQueryParams = {
         ...queryParams,

@@ -29,13 +29,19 @@ const DateTime = (props) => {
   } = {
     ...props,
   };
-
+  let generalFormat = "YYYY-MM-DD HH:mm";
   let submitFormat = mSubmitFormat;
   let decodeFormat = mDecodeFormat;
   let showFormat = mShowFormat;
   let value = null;
   let isDateValid = false;
-  let dateValid = moment(mValue);
+  let possibleFormats = [generalFormat];
+  if (decodeFormat) possibleFormats.push(decodeFormat);
+  if (submitFormat) possibleFormats.push(submitFormat);
+
+  if (showFormat) possibleFormats.push(showFormat);
+  let dateValid = moment(mValue, [decodeFormat, submitFormat, showFormat]);
+  console.log("VALID DATE", dateValid.isValid());
   if (dateValid.isValid()) {
     value = mValue;
     isDateValid = true;
@@ -60,7 +66,7 @@ const DateTime = (props) => {
   };
   const [anchorEl, setAnchorEl] = useState(null);
   const [dateRangeError, setDateRangeError] = useState(false);
-  let generalFormat = "YYYY-MM-DD HH:mm";
+
   const handleClick = (event) => {
     if (!props.editAllowed) return;
     setAnchorEl(event.currentTarget);
@@ -127,6 +133,7 @@ const DateTime = (props) => {
   let getTwoDigitsNumber = (val) => {
     return ("0" + val.toString()).trim().slice(-2);
   };
+
   let getProcessedTime = (selectedDates, updatedTime, isUpdateAvailable) => {
     if (!isUpdateAvailable) return selectedDates;
     let tempDate = moment(selectedDates);
@@ -135,9 +142,7 @@ const DateTime = (props) => {
       tempDate.format("yyyy-MM-DD") +
       "T" +
       getTwoDigitsNumber(
-        +updatedTime.hours === 12 && clock.trim() === "AM"
-          ? +updatedTime.hours - 12
-          : +updatedTime.hours + (clock.trim() === "PM" ? 12 : 0) || "00"
+        moment(updatedTime.hours + " " + clock, "hh A").format("HH")
       ) +
       ":" +
       getTwoDigitsNumber(updatedTime.mins || "00").trim() +

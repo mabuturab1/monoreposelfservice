@@ -43,8 +43,8 @@ const Text = (props) => {
   };
   const onKeyDown = (e) => {
     if (
-      (serverFieldType === "NUMBER" && event.key === ".") ||
-      event.key === ","
+      serverFieldType === "NUMBER" &&
+      (event.key === "." || event.key === ",")
     ) {
       e.preventDefault();
       return;

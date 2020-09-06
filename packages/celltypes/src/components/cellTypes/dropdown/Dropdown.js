@@ -84,12 +84,12 @@ const Dropdown = (props) => {
   };
 
   // console.log("Rendering dropdown", touched, error);
-  const currentValue =
-    value &&
-    ((valuesList && valuesList.includes(value)) ||
-      (!valuesList && options && options.includes(value)))
-      ? value
-      : "";
+  const currentValue = value
+    ? //  &&
+      // ((valuesList && valuesList.includes(value)) ||
+      //   (!valuesList && options && options.includes(value)))
+      value
+    : "";
   const [selectValue, setSelectValue] = useState({
     originalState: currentValue,
     tempState: currentValue,
@@ -137,6 +137,7 @@ const Dropdown = (props) => {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+
   const inputUI = (
     <div className={[classes.margin].join(" ")}>
       <div className={styles.inputWrapper}>

@@ -8,7 +8,7 @@ import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import EditIcon from "@material-ui/icons/Edit";
 import CellEditDialog from "../../../common/cellEditDialog/cellEditDialog";
 import ConfirmationDialog from "../../../common/confirmationDialog/ConfirmationDialog";
-import { getTableHeaderField } from "../../../store/actions";
+
 import { connect } from "react-redux";
 const TableHeaderSettings = (props) => {
   const isNewField = Object.keys(props.cellSpecs).length < 1;
@@ -120,15 +120,21 @@ const TableHeaderSettings = (props) => {
   };
   const updateFieldData = () => {
     if (!key) return;
-
-    getTableHeaderField(apiUrl, reportType, currentReportId, key, (data) => {
-      if (data && data.key && data.type)
-        updateCellSpecs({
-          key: data.key,
-          type: data.type,
-          data: { ...data },
-        });
-    });
+    console.log("IN TABLE HEADER SETTINGS UPDATED", key);
+    props.getTableHeaderField(
+      apiUrl,
+      reportType,
+      currentReportId,
+      key,
+      (data) => {
+        if (data && data.key && data.type)
+          updateCellSpecs({
+            key: data.key,
+            type: data.type,
+            data: { ...data },
+          });
+      }
+    );
   };
   const handleItemClicked = (i, j) => {
     const section = headerData[i];
@@ -240,6 +246,16 @@ const mapDispatchToProps = (dispatch) => {
     deleteTableField: (apiUrl, reportType, currentReportId, fieldKey) =>
       dispatch(
         actions.deleteTableField(apiUrl, reportType, currentReportId, fieldKey)
+      ),
+    getTableHeaderField: (apiUrl, reportType, reportId, fieldId, callback) =>
+      dispatch(
+        actions.getTableHeaderField(
+          apiUrl,
+          reportType,
+          reportId,
+          fieldId,
+          callback
+        )
       ),
     updateFieldData: (apiUrl, reportType, currentReportId, fieldKey, data) =>
       dispatch(

@@ -5,7 +5,7 @@ const NestedDropdown = ({
   editAllowed,
   myKey,
   className,
-
+  name,
   rowWidth,
   rowHeight,
   serverData,
@@ -16,7 +16,7 @@ const NestedDropdown = ({
   appSchemaObj,
   appErrorObj,
   appTouchedObj,
-
+  setFieldValue,
   apiUrl,
   item,
   bearerToken,
@@ -26,11 +26,12 @@ const NestedDropdown = ({
 
   let dropdownData = useRef(item && item.value ? item.value : {});
   const [queryParams, setQueryParams] = useState(new URLSearchParams());
+  const [currentFieldKeyIndex, setCurrentFieldKeyIndex] = useState(0);
   const [fieldsData, setFieldsData] = useState(
     serverData && serverData.fields ? serverData.fields : []
   );
 
-  const getNewData = (newKey, newValue) => {
+  const getNewData = (fieldKey, newKey, newValue) => {
     const params = new URLSearchParams();
     queryParams.forEach((value, key) => {
       params.append(key, value);
@@ -41,30 +42,54 @@ const NestedDropdown = ({
       apiUrl,
       reportType,
       collection,
+      fieldKey,
       params,
       bearerToken,
       (data) => {
         if (data === null || data.length < 1) return;
         let newArr = fieldsData.map((el) => ({ ...el }));
-        let fieldIndex = newArr.findIndex((el) => el.key === newKey);
+        let fieldIndex = newArr.findIndex((el) => el.key === fieldKey);
         if (fieldIndex < 0) return;
 
         newArr[fieldIndex] = {
           ...newArr[fieldIndex],
           options: data,
         };
+        setCurrentFieldKeyIndex(fieldIndex);
         setFieldsData(newArr);
       }
     );
   };
+  const isKeyEnabled = (keyVal) => {
+    let fieldIndex = fieldsData.findIndex((el) => el.key === keyVal);
+    return fieldIndex <= currentFieldKeyIndex;
+  };
+  const getNextFieldKey = (prevKey) => {
+    let index = fieldsData.findIndex((el) => el.key === prevKey);
+    console.log(fieldsData, index, prevKey);
+    if (index < 0 || index + 1 >= fieldsData.length) return null;
+    return fieldsData[index + 1].key;
+  };
   const mUpdateFieldData = (rowId, data, key, isSuccess, updateKey) => {
     dropdownData.current = {
+      ...rowData.data[cellOriginalKey],
       ...dropdownData.current,
       ...data,
     };
-    getNewData(key, data[key]);
+    let previousValues = { ...dropdownData.current };
+    fieldsData.forEach((el) => {
+      if (!isKeyEnabled(el.key)) delete previousValues[el.key];
+    });
+    dropdownData.current = { ...previousValues };
+
+    let nextFieldKey = getNextFieldKey(key);
+
+    if (nextFieldKey) {
+      getNewData(nextFieldKey, key, data[key]);
+    }
+
     updateFieldData(
-      rowId,
+      rowData.id,
       {
         ...rowData.data,
         [cellOriginalKey]: { ...dropdownData.current },
@@ -87,7 +112,6 @@ const NestedDropdown = ({
         <div key={i} style={{ flex: 1, minWidth: "160px" }}>
           <TableCell
             {...{
-              editAllowed,
               rowWidth,
               rowHeight,
               handlerFunctions,
@@ -98,6 +122,9 @@ const NestedDropdown = ({
               className,
             }}
             cellOriginalKey={el.key}
+            editAllowed={
+              (editAllowed != null ? editAllowed : true) && isKeyEnabled(el.key)
+            }
             rowData={{ data: {} }}
             updateFieldData={mUpdateFieldData}
             serverData={{ ...el }}

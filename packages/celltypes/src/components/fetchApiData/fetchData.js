@@ -26,13 +26,14 @@ export const getSubfieldsData = (
   apiUrl,
   reportType,
   collection,
+  fieldKey,
   params,
 
   bearerToken,
   callback
 ) => {
   axios
-    .get(`${"/vbeta"}/distincts/${reportType}/${collection}`, {
+    .get(`${"/vbeta"}/distincts/${reportType}/${collection}/${fieldKey}`, {
       ...config(bearerToken),
       params: params,
     })

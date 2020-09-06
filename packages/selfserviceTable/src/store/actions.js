@@ -1,7 +1,7 @@
 import * as actionTypes from "./actionTypes";
-import * as Constants from "../table/constants/Constants";
 import axios from "axios";
-
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
 const config = (token) => ({
   headers: { Authorization: `Bearer ${token}` },
 });
@@ -310,6 +310,7 @@ export const getTableHeaderField = (
   callback
 ) => {
   return (dispatch, getState) => {
+    console.log("GET TABLE HEADER FIELD");
     axios
       .get(
         `${"/vbeta"}/${reportType}/${reportId}/fields/${fieldId}`,
@@ -447,24 +448,43 @@ export const getReportExportId = (
       });
   };
 };
-export const getDataFromWebScoket = (exportId) => {
-  const ws = new WebSocket(`${"/ws"}/exports/${exportId}`);
-  ws.onopen = () => {
-    console.log("Web socket connected");
-  };
-  ws.onmessage = (data) => {
-    console.log(JSON.parse(data));
-    ws.close();
-  };
-  ws.onerror = (error) => {
-    console.log("error occurred", error);
-    ws.close();
+export const getDataFromWebSocket = (exportId) => {
+  return (dispatch, getState) => {
+    console.log("GET DATA FROM WEBSOCKET CALLED");
+    var stompClient = Stomp.over(new SockJS(`/vbeta/ws`));
+    console.log("HEADERS ARE", getState(), {
+      ...config(getState().table.bearerToken).headers,
+    });
+    stompClient.debug = (f) => f;
+    stompClient.connect(
+      { ...config(getState().table.bearerToken).headers },
+      function (frame) {
+        console.log("frame is", frame);
+        stompClient.subscribe(`/${exportId}`, function (data) {
+          // topic handler
+          console.log("data is1", data);
+        });
+        stompClient.subscribe(`/topic/${exportId}`, function (data) {
+          // topic handler
+          console.log("data is2", data);
+        });
+        stompClient.subscribe(`/exports/${exportId}`, function (data) {
+          // topic handler
+          console.log("data is3", data);
+        });
+        stompClient.subscribe(`/topic/exports/${exportId}`, function (data) {
+          // topic handler
+          console.log("data is4", data);
+        });
+      }
+    );
   };
 };
 export const updateFieldData = (
   apiUrl,
-  reportId,
   reportType,
+  reportId,
+
   rowId,
   data,
   newKey,

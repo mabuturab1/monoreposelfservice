@@ -4,9 +4,12 @@ const schemaCreator = (headerCellSpecs, nullable = false) => {
   let { type, data } = headerCellSpecs;
   if (!yup[toYup(type)]) return {};
   let validator = yup[toYup(type)]();
-
-  const { yupType, params } = localAssignments(type);
-  if (yupType && validator[yupType]) validator = validator[yupType](...params);
+  const localValidationArr = localAssignments(type);
+  localValidationArr.forEach((el) => {
+    const { yupType, params } = el;
+    if (yupType && validator[yupType])
+      validator = validator[yupType](...params);
+  });
   if (nullable) {
     validator = validator["nullable"]();
   }
@@ -23,16 +26,23 @@ const schemaCreator = (headerCellSpecs, nullable = false) => {
   return validator;
 };
 const localAssignments = (type) => {
-  if (toYup(type) === "number")
-    return {
+  let returnValues = [];
+  if (toYup(type) === "number") {
+    returnValues.push({
       yupType: "typeError",
       params: ["Kindly specify a number"],
-    };
-  return {
-    yupType: null,
-    params: null,
-  };
+    });
+  }
+  if (type === "PHONENUMBER") {
+    let regex = new RegExp("^[0-9]+$");
+    returnValues.push({
+      yupType: "test",
+      params: ["len", `Not a valid number`, (val) => regex.test(val)],
+    });
+  }
+  return returnValues;
 };
+
 const toYup = (type) => {
   switch (type) {
     case "TEXT":

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { withStyles } from "@material-ui/core/styles";
@@ -55,14 +55,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
     headerHeight: Constants.tableHeaderHeight,
     rowHeight: Constants.tableRowHeight,
   };
-  const [isScrolling, setIsScrolling] = useState(false);
-  const tempIsScrolling = useRef(false);
-  const currentScrollSpeed = useRef({
-    currentScrollDiff: 0,
 
-    refValue: 0,
-  });
-  const timerInterval = useRef(null);
   const scrollTopTable = useRef(null);
   const {
     apiUrl,
@@ -262,36 +255,7 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
   // };
   let tableClasses = [classes.table];
   if (isFreezed) tableClasses.push("freezedTable");
-  const canShowSkeletonPreview = (value) => {
-    let currentSpeedData = { ...currentScrollSpeed.current };
-    if (currentSpeedData.refValue === 0) {
-      currentSpeedData.refValue = value;
-      currentScrollSpeed.current = currentSpeedData;
-      return false;
-    }
-    currentSpeedData.currentScrollDiff = value - currentSpeedData.refValue;
-    currentScrollSpeed.current = currentSpeedData;
-    console.log("SCROLL:current speed data", currentSpeedData);
-    if (Math.abs(currentSpeedData.currentScrollDiff) > 30) return true;
-    else return false;
-  };
-  const setScrollParams = (val) => {
-    console.log("SCROLL:setting scroll params to", val);
-    setIsScrolling(val);
-    tempIsScrolling.current = val;
-  };
-  const scrollOccurred = () => {
-    let shouldShowSkeleton = canShowSkeletonPreview(scrollTopTable.current);
-    console.log("SCROLL:RESULT OF SHOULD SHOW SKELETON", shouldShowSkeleton);
-    if (!isScrolling && !tempIsScrolling.current && shouldShowSkeleton) {
-      setScrollParams(true);
-    }
-    if (timerInterval.current) clearTimeout(timerInterval.current);
-    timerInterval.current = setTimeout(() => {
-      setScrollParams(false);
-      currentScrollSpeed.current = { currentScrollDiff: 0, refValue: 0 };
-    }, 300);
-  };
+
   const onScrollTable = (event) => {
     scrollTopTable.current = event.scrollTop;
     if (updateCurrentScroll != null)

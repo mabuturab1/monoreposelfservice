@@ -84,7 +84,7 @@ const MyTableCell = (props) => {
   if (item && item.type && item.type.toUpperCase() === "NESTED_DROPDOWN")
     return <NestedDropdown {...props} />;
   const submitData = (rowDataContent, dataToSubmit, updateType) => {
-    console.log("submitting data", rowDataContent, dataToSubmit);
+    console.log("submitting data", rowDataContent, dataToSubmit, props.rowData);
     if (props.updateFieldData)
       props.updateFieldData(
         props.rowData.id,

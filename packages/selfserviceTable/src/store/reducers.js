@@ -66,6 +66,7 @@ const getUpdatedTableData = (tableData, payload) => {
     id: el.id,
     data: { ...el.data },
   }));
+  console.log("UPDATE TABLE DATA", tableData, payload);
   newTableData[index] = {
     id: payload.id,
     data: { ...payload.data, actions: true },

@@ -253,7 +253,7 @@ const FilterHeader = (props) => {
 
       (data) => {
         console.log("data of export is", data);
-        if (data && data.exportId) props.getDataFromWebScoket(data.exportId);
+        if (data && data.exportId) props.getDataFromWebSocket(data.exportId);
       }
     );
   };
@@ -542,7 +542,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     storeFilterData: (data) => dispatch(actions.getFilterData(data)),
-    getDataFromWebScoket: (id) => dispatch(actions.getDataFromWebScoket(id)),
+    getDataFromWebSocket: (id) => dispatch(actions.getDataFromWebSocket(id)),
     getReportExportId: (apiUrl, reportType, reportId, params, callback) =>
       dispatch(
         actions.getReportExportId(

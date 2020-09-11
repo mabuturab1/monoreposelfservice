@@ -3,7 +3,10 @@ import styles from "./Document.module.scss";
 import StyledInput from "../styledInput/StyledInput";
 import { validateExtensions } from "../utility";
 import InfoDialog from "../infoDialog/InfoDialog";
-import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faExclamationCircle,
+  faUpload,
+} from "@fortawesome/free-solid-svg-icons";
 const Document = ({ onSubmit }) => {
   const [showError, setShowError] = useState(false);
   const [selectedFile, setSelectedFile] = useState({
@@ -51,6 +54,7 @@ const Document = ({ onSubmit }) => {
       ) : null}
 
       <StyledInput
+        icon={faUpload}
         headLabel={"Upload Documnet"}
         style={{ width: 0, height: 0, overflow: "hidden" }}
         type={"file"}

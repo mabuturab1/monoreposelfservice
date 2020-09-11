@@ -30,14 +30,14 @@ const BootstrapInput = withStyles((theme) => ({
     borderRadius: 4,
     position: "relative",
     width: "100%",
-    border: "1px solid rgba(0, 0, 50, 0.4)",
-    color: "#4a4a4a",
+    border: "1px solid #707070",
+    color: "#222222",
     fontWeight: "500",
-    fontSize: "0.8rem",
-
+    fontSize: "0.9rem",
+    backgroundColor: "#fff",
     MozBorderRadius: "0.6rem",
     WebkitBorderRadius: "0.6rem",
-    padding: "3px 1.6rem 3px 0.75rem",
+    padding: "8px 1.6rem 8px 0.75rem",
     transition: theme.transitions.create(["border-color", "box-shadow"]),
     // Use the system font instead of the default Roboto font.
     fontFamily: ["Roboto", "sans-serif"].join(","),
@@ -57,8 +57,20 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     borderRadius: "0.6rem",
   },
+  listStyles: {
+    backgroundColor: "#EEECEC",
+  },
+  buttonRoot: {
+    fontSize: "0.9rem",
+    padding: "0 10px",
+    padding: "3px 10px",
+    width: "44%",
+    fontWeight: 400,
+  },
+  containedPrimary: { backgroundColor: "#4E88F5" },
+  containedSecondary: { backgroundColor: "#D9D9D9" },
   menuItem: {
-    color: "#4a4a4a",
+    color: "#222222",
     fontWeight: "500",
     fontSize: "0.8rem",
     padding: "0.4rem 1.6rem",
@@ -184,14 +196,14 @@ const Uploader = (props) => {
                   <FontAwesomeIcon
                     icon={faFileAlt}
                     size="8x"
-                    style={{ paddingRight: "0.6rem", opacity: 0.4 }}
+                    style={{ paddingRight: "0.6rem", color: "#BFBFBF" }}
                   />
                 </div>
                 <div className={styles.subtitleWrapper}>
                   <FontAwesomeIcon
                     icon={faFileAlt}
                     size="1x"
-                    style={{ paddingRight: "1rem", color: "blue" }}
+                    style={{ paddingRight: "1rem", color: "#4E88F5" }}
                   />
                   <p className={styles.subtitleText}>Click here to edit</p>
                 </div>
@@ -218,7 +230,10 @@ const Uploader = (props) => {
           </div>
           <div className={styles.buttonWrapper}>
             <Button
-              style={{ fontSize: "0.9rem" }}
+              classes={{
+                root: classes.buttonRoot,
+                containedSecondary: classes.containedSecondary,
+              }}
               color="secondary"
               variant="contained"
               onClick={handleClose}
@@ -226,9 +241,9 @@ const Uploader = (props) => {
               Cancel
             </Button>
             <Button
-              style={{
-                fontSize: "0.9rem",
-                marginLeft: "1rem",
+              classes={{
+                root: classes.buttonRoot,
+                containedPrimary: classes.containedPrimary,
               }}
               color="primary"
               variant="contained"

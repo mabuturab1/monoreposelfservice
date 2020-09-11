@@ -6,11 +6,23 @@ import { MuiPickersUtilsProvider, Calendar } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/moment";
 import TimePicker from "./timePicker/TimePicker";
 import moment from "moment";
-import { Popover, Button } from "@material-ui/core";
+import { Popover, Button, makeStyles } from "@material-ui/core";
 import { DummyInitValues } from "../../common/constants/cellTypesDefaultValues";
 import Tooltip from "../../tooltip/Tooltip";
+const useStyles = makeStyles((theme) => ({
+  buttonRoot: {
+    fontSize: "0.9rem",
+    padding: "0 10px",
+    padding: "3px 10px",
+    width: "44%",
+    fontWeight: 400,
+  },
+  containedPrimary: { backgroundColor: "#4E88F5" },
+  containedSecondary: { backgroundColor: "#D9D9D9" },
+}));
 
 const DateTime = (props) => {
+  const classes = useStyles();
   const {
     name,
 
@@ -252,7 +264,12 @@ const DateTime = (props) => {
               {pickerOnlyIncludesDate() ? (
                 <div className={styles.calendarButtonWrapper}>
                   <Button
-                    style={{ fontSize: "0.9rem" }}
+                    color="secondary"
+                    variant="contained"
+                    classes={{
+                      root: classes.buttonRoot,
+                      containedSecondary: classes.containedSecondary,
+                    }}
                     color="secondary"
                     variant="contained"
                     onClick={() => setAnchorEl(null)}
@@ -260,9 +277,11 @@ const DateTime = (props) => {
                     Cancel
                   </Button>
                   <Button
-                    style={{
-                      fontSize: "0.9rem",
-                      marginLeft: "1rem",
+                    color="primary"
+                    variant="contained"
+                    classes={{
+                      root: classes.buttonRoot,
+                      containedPrimary: classes.containedPrimary,
                     }}
                     color="primary"
                     variant="contained"

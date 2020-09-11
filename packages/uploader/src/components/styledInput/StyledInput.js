@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./StyledInput.module.scss";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const StyledInput = (props) => {
   let inputData = { ...props };
   delete inputData.headLabel;
@@ -18,6 +19,7 @@ const StyledInput = (props) => {
           {...inputData}
         />
         {props.text}
+        <FontAwesomeIcon icon={props.icon} className={styles.absoluteIcon} />
       </label>
     </div>
   );

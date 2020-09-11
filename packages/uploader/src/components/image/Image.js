@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import styles from "./Image.module.scss";
 import StyledInput from "../styledInput/StyledInput";
 import InfoDialog from "../infoDialog/InfoDialog";
-import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faExclamationCircle,
+  faUpload,
+} from "@fortawesome/free-solid-svg-icons";
 const image = ({ onSubmit }) => {
   const [showError, setShowError] = useState(false);
   const [selectedFile, setSelectedFile] = useState({
@@ -53,6 +56,7 @@ const image = ({ onSubmit }) => {
         />
       ) : null}
       <StyledInput
+        icon={faUpload}
         headLabel={"Upload Image"}
         style={{ display: "none", overflow: "hidden" }}
         type={"file"}

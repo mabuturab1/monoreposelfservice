@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import StyledInput from "../styledInput/StyledInput";
+import { faCopy } from "@fortawesome/free-solid-svg-icons";
 const LinkInput = ({ onSubmit }) => {
   const [value, setValue] = useState("");
   const handleSubmit = () => {
@@ -7,6 +8,7 @@ const LinkInput = ({ onSubmit }) => {
   };
   return (
     <StyledInput
+      icon={faCopy}
       style={{
         width: "100%",
         height: "100%",

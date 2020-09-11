@@ -155,9 +155,11 @@ const NewRecordData = (props) => {
       props.onSubmit(staticValues, docValues);
     }
   };
-  const updateFieldData = (rowId, data, newKey, isSuccess) => {
+  const updateFieldData = (rowId, data, newKey, isSuccess, setFieldValue) => {
     resultData.current = { ...resultData.current, ...data };
+
     isSuccess(true);
+    setFieldValue(newKey, data[newKey]);
   };
   const getSaveButtonStatus = () => {
     switch (dataUpdateStatus) {
@@ -278,7 +280,15 @@ const NewRecordData = (props) => {
                     bearerToken={props.bearerToken}
                     apiUrl={props.apiUrl}
                     reportType={props.reportType}
-                    updateFieldData={updateFieldData}
+                    updateFieldData={(rowId, data, newKey, isSuccess) =>
+                      updateFieldData(
+                        rowId,
+                        data,
+                        newKey,
+                        isSuccess,
+                        setFieldValue
+                      )
+                    }
                     handlerFunctions={{
                       handleChange,
                       handleSubmit,

@@ -1,7 +1,20 @@
 import React, { useState } from "react";
 import styles from "./TimePicker.module.scss";
 import * as moment from "moment";
+import { makeStyles, Button } from "@material-ui/core";
+const useStyles = makeStyles((theme) => ({
+  buttonRoot: {
+    fontSize: "0.9rem",
+    padding: "0 10px",
+    padding: "3px 10px",
+    width: "14rem",
+    fontWeight: 400,
+  },
+  containedPrimary: { backgroundColor: "#4E88F5" },
+  containedSecondary: { backgroundColor: "#D9D9D9" },
+}));
 const TimePicker = (props) => {
+  const classes = useStyles();
   const [errorState, setErrorState] = useState(false);
   const { hours, mins, clock, onApply, onCancel } = { ...props };
   let getLocalTime = (dateVal, val) => {
@@ -115,15 +128,27 @@ const TimePicker = (props) => {
         ) : null}
       </div>
       <div className={styles.buttonWrapper}>
-        <button
+        <Button
+          color="secondary"
+          variant="contained"
+          classes={{
+            root: classes.buttonRoot,
+            containedSecondary: classes.containedSecondary,
+          }}
+          style={{ marginBottom: "1rem" }}
           onClick={() => {
             if (onCancel) onCancel();
           }}
-          className={styles.button}
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
+          color="primary"
+          variant="contained"
+          classes={{
+            root: classes.buttonRoot,
+            containedPrimary: classes.containedPrimary,
+          }}
           onClick={() => {
             if (parseInt(timeVal.hours) < 1 || parseInt(timeVal.hours) > 12) {
               setErrorState(true);
@@ -131,10 +156,9 @@ const TimePicker = (props) => {
             }
             if (onApply) onApply(timeVal);
           }}
-          className={styles.button}
         >
           Apply
-        </button>
+        </Button>
       </div>
     </div>
   );

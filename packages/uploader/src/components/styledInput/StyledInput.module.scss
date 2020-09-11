@@ -5,10 +5,10 @@
   font-size: 0.8rem;
   background-color: transparent;
   font-family: inherit;
+  border: 1px solid #707070;
   //   padding: 0.4rem 1rem;
   &,
   &:focus {
-    border: 1px solid rgba(0, 0, 50, 0.4);
     outline: none;
     border-radius: 0.3rem;
   }
@@ -24,21 +24,22 @@
   }
 }
 .fileInput {
+  position: relative;
   display: block;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   min-height: 1.5rem;
   text-align: center;
-  color: #939393;
-  padding: 0;
+  color: "#222222";
+  padding: 8px 10px;
   display: flex;
   align-items: center;
-  padding-left: 10px;
 
+  font-weight: 500;
   cursor: pointer;
   min-width: 7rem;
-  border: 1px solid rgba(0, 0, 50, 0.4);
+  border: 1px solid #707070;
   outline: none;
-  border-radius: 0.3rem;
+  border-radius: 0.6rem;
 }
 .wrapper {
   display: flex;
@@ -49,4 +50,13 @@
   color: black;
   margin-bottom: 0.5rem;
   font-weight: 500;
+  position: relative;
+}
+.absoluteIcon {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  z-index: 10000;
+  color: #434343;
 }

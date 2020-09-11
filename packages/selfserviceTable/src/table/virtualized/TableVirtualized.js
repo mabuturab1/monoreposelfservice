@@ -262,6 +262,11 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
       updateCurrentScroll(scrollTopTable.current);
     // scrollOccurred();
   };
+  const tableHasNoFields = () => {
+    return (
+      columns.length === 1 && columns[0].dataKey === "%OPEN_NEW_FIELD_DIALOG%"
+    );
+  };
   return (
     <React.Fragment>
       {/* <div className={"scrollButtonTableVirtual"}>
@@ -298,7 +303,11 @@ const VirtualizedTable = React.forwardRef((props, ref) => {
             onRowsRendered={onRowsRendered}
             noRowsRenderer={() => (
               <div className="no-data">
-                {tableData.length > 0 ? <div></div> : "No data found"}
+                {tableData.length > 0 || tableHasNoFields() ? (
+                  <div></div>
+                ) : (
+                  "No data found"
+                )}
               </div>
             )}
             ref={ref}

@@ -75,3 +75,18 @@ table tr:last-child td:last-child {
 .freezedTable .ReactVirtualized_Table_Grid {
   overflow-y: hidden !important;
 }
+.addData {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  z-index: 10;
+  font-family: "Roboto", "sans-serif";
+  color: #4a4a4a;
+  font-weight: 500;
+  font-size: 1.2rem;
+}

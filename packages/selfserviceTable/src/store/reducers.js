@@ -255,7 +255,11 @@ const reducer = (state = initialState, action) => {
     case actionTypes.REMOVE_ERROR:
       return updateObject(state, { serverError: "" });
     case actionTypes.UPDATING_CURRENT_REPORT_ID:
-      return updateObject(state, { currentReportId: action.payload });
+      return updateObject(state, {
+        currentReportId: action.payload,
+        tableData: [],
+        tableHeader: [],
+      });
     case actionTypes.UPDATE_API_URL:
       return updateObject(state, { apiAddress: action.payload });
     case actionTypes.UPDATE_REPORT_TYPE:

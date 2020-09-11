@@ -49,14 +49,15 @@ const TableCreator = (props) => {
   );
 
   let concatArr = [];
-  if (createAt)
+  if (createAt) {
     concatArr.push({
       key: "createAt",
       label: "Create At",
       type: "READONLY_TEXT",
     });
-
-  if (fieldAddAble !== false)
+  }
+  if (!props.tableHeader || props.tableHeader.length < 1) concatArr = [];
+  if (fieldAddAble !== false && !props.tableHeaderPending)
     concatArr.push({
       key: "%OPEN_NEW_FIELD_DIALOG%",
       icon: "Add",
@@ -64,7 +65,6 @@ const TableCreator = (props) => {
       isIcon: true,
     });
 
-  if (!props.tableHeader || props.tableHeader.length < 1) concatArr = [];
   const dummyTableHeader = [];
   let dummyColumnWidth = {};
   for (let i = 0; i < 20; i++) {
@@ -145,6 +145,7 @@ const TableCreator = (props) => {
   } = {
     ...props,
   };
+
   const currentUpdateCycle = useRef(0);
   const [queryParams, setQueryParams] = useState({
     pageNumber: 0,
@@ -334,6 +335,7 @@ const TableCreator = (props) => {
       if (props.updateQueryParams) props.updateQueryParams(newQueryParams);
     }
   };
+
   useEffect(() => {
     if (!staticData)
       fetchTableData(
@@ -556,6 +558,15 @@ const TableCreator = (props) => {
     );
     return props.tableHeaderPending && tableHeader.length < 1;
   };
+  const tableHasNoData = () => {
+    return (
+      !props.tableHeaderPending &&
+      !props.tableDataPending &&
+      tableData.length < 1 &&
+      tableHeader.length === 1 &&
+      tableHeader[0].key === "%OPEN_NEW_FIELD_DIALOG%"
+    );
+  };
   let freezedTable = (formData) => (
     <TableVirtualized
       {...{
@@ -596,6 +607,9 @@ const TableCreator = (props) => {
           cellTypes: CellTypes,
         }}
       >
+        {tableHasNoData() ? (
+          <div className={styles.addData}>Kindly add new data in the table</div>
+        ) : null}
         {tableData.length > 0 ? (
           <React.Fragment>
             <div className={styles.scrollButton} onClick={setScrollToEnd}>
@@ -656,6 +670,7 @@ const TableCreator = (props) => {
               </div>
             </div>
           ) : null}
+
           <Formik
             initialValues={getInitValues()}
             enableReinitialize={true}
@@ -721,30 +736,6 @@ const TableCreator = (props) => {
                     ) : null}
 
                     {
-                      // props.tableHeaderPending ? (
-                      //   <div
-                      //     style={{
-                      //       width: staticData ? "500px" : "100vw",
-                      //       height: "100%",
-
-                      //       display: "flex",
-                      //       justifyContent: "center",
-                      //       alignItems: "center",
-                      //     }}
-                      //   >
-                      //     {props.tableDataPending ? (
-                      //       <Loader
-                      //         type="ThreeDots"
-                      //         color="#00BFFF"
-                      //         height={50}
-                      //         width={50}
-                      //         timeout={0} //3 secs
-                      //       />
-                      //     ) : (
-                      //       <h4 className={styles.noData}>No Record Found</h4>
-                      //     )}
-                      //   </div>
-                      // ) :
                       <InfiniteLoader
                         editAllowed={editAllowed}
                         isNextPageLoading={props.tableDataPending}

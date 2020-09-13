@@ -8,9 +8,9 @@ module.exports = function (app) {
     })
   );
   app.use(
-    "/vbeta/ws",
+    "/ws",
     createProxyMiddleware({
-      target: "http://35.174.214.251:12123",
+      target: "http://35.174.214.251:12124/ws",
       changeOrigin: true,
       ws: true,
     })

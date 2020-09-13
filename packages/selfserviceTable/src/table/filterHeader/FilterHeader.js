@@ -7,12 +7,13 @@ import {
   faFilter,
   faUnlock,
   faFileExport,
+  faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import styles from "./FilterHeader.module.scss";
 import TableContext from "../context/TableContext";
 import TableFilter from "../tableFilter/TableFilter";
-import { Popover, CircularProgress, Button } from "@material-ui/core";
+import { Popover, CircularProgress, Button, Tooltip } from "@material-ui/core";
 import { connect } from "react-redux";
 import schemaCreator from "../utility/schemaCreator";
 import * as actions from "../../store/actions";
@@ -22,6 +23,7 @@ import NewRecordDialog from "../../common/newRecordDialog/NewRecordDialog";
 import DateRangePicker from "@selfservicetable/celltypes/src/components/cellTypes/dateRangePicker/DateRangePicker";
 import ToggleLogicButtons from "./ToggleLogicButtons";
 import MenuButton from "../../common/menuButton/MenuButton";
+import Loader from "react-loader-spinner";
 const FilterHeader = (props) => {
   const tableContext = useContext(TableContext);
   const searchConditions = [
@@ -54,13 +56,31 @@ const FilterHeader = (props) => {
   const [currentUpdateCycle, setCurrentUpdateCycle] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
   const [editAllowed, setEditAllowd] = useState(tableContext.editAllowed);
-
+  const [downloadStatus, setDownloadStatus] = useState({
+    isDownloading: false,
+    links: "",
+  });
+  const exportButtonClasses = [
+    styles.topHeaderItemWrapper,
+    styles.mediumPadding,
+    styles.applyElevation,
+  ].join(" ");
   const reportType = props.reportType;
   const intervalTimer = useRef(0);
+  const resetDownloadStatus = () => {
+    if (
+      downloadStatus.isDownloading ||
+      (downloadStatus.links && downloadStatus.links != "")
+    ) {
+      setDownloadStatus({ isDownloading: false, links: "" });
+    }
+  };
   let updateReduxState = (filter) => {
     props.storeFilterData({ filter: filter, logic: filterLogic.current });
-    if (props.handleNewFilterData)
+    if (props.handleNewFilterData) {
       props.handleNewFilterData(filter, filterLogic.current);
+      resetDownloadStatus();
+    }
   };
   let addNewFilter = ({ values }, numFilterValue) => {
     let filterName = new Date().getTime();
@@ -237,6 +257,14 @@ const FilterHeader = (props) => {
   let getTwoDigitsNumber = (val) => {
     return ("0" + val.toString()).trim().slice(-2);
   };
+  const isDownloadabelLink = () => {
+    return downloadStatus.links && downloadStatus.links != "";
+  };
+  const downloadFile = () => {
+    console.log("Downloading file");
+    window.open(downloadStatus.links);
+  };
+  const getCurrentDownloadStatus = () => ({ ...downloadStatus });
   const exportDataTable = (id) => {
     let updatedParams = new URLSearchParams();
     if (props.queryParams) {
@@ -253,7 +281,24 @@ const FilterHeader = (props) => {
 
       (data) => {
         console.log("data of export is", data);
-        if (data && data.exportId) props.getDataFromWebSocket(data.exportId);
+        if (data && data.exportId) {
+          setDownloadStatus({ isDownloading: true, links: "" });
+          props.getDataFromWebSocket(data.exportId, (fileLinks) => {
+            console.log("file links are", fileLinks, {
+              ...getCurrentDownloadStatus(),
+            });
+            if (downloadStatus.isDownloading) {
+              console.log(
+                "setting download links to false",
+                downloadStatus.isDownloading
+              );
+              setDownloadStatus({
+                isDownloading: false,
+                links: fileLinks && fileLinks.f,
+              });
+            }
+          });
+        }
       }
     );
   };
@@ -299,30 +344,71 @@ const FilterHeader = (props) => {
         ) : (
           false
         )}
-        <MenuButton
-          itemList={[
-            { id: "XLSX", label: "XLSX" },
-            { id: "PDF", label: "PDF" },
-            { id: "CSV", label: "CSV" },
-          ]}
-          onItemSelected={(id) => exportDataTable(id)}
-        >
+        {isDownloadabelLink() && props.websocketConnected && (
           <div
-            className={[
-              styles.topHeaderItemWrapper,
-              styles.mediumPadding,
-
-              styles.applyElevation,
-            ].join(" ")}
+            className={[exportButtonClasses]
+              .concat(styles.downloadButtonStyle)
+              .join(" ")}
+            onClick={() => {
+              downloadFile();
+            }}
           >
             <FontAwesomeIcon
               size={"lg"}
-              icon={faFileExport}
+              icon={faDownload}
               className={styles.icon}
             />
-            <span className={styles.label}>Export</span>
+            <span className={styles.label}>Download</span>
           </div>
-        </MenuButton>
+        )}
+        {downloadStatus.isDownloading && props.websocketConnected && (
+          <Tooltip title="Click to cancel">
+            <div
+              className={exportButtonClasses}
+              onClick={() =>
+                setDownloadStatus({ isDownloading: false, links: "" })
+              }
+            >
+              <Loader
+                type="ThreeDots"
+                color="#00BFFF"
+                height={15}
+                width={40}
+                timeout={0}
+              />
+            </div>
+          </Tooltip>
+        )}
+        {!downloadStatus.isDownloading && props.websocketConnected && (
+          <MenuButton
+            itemList={[
+              { id: "XLSX", label: "XLSX" },
+              { id: "PDF", label: "PDF" },
+              { id: "CSV", label: "CSV" },
+            ]}
+            onItemSelected={(id) => exportDataTable(id)}
+          >
+            <div
+              className={[
+                styles.topHeaderItemWrapper,
+                styles.mediumPadding,
+
+                styles.applyElevation,
+              ].join(" ")}
+            >
+              {
+                <React.Fragment>
+                  <FontAwesomeIcon
+                    size={"lg"}
+                    icon={faFileExport}
+                    className={styles.icon}
+                  />
+                  <span className={styles.label}>Export</span>
+                </React.Fragment>
+              }
+            </div>
+          </MenuButton>
+        )}
         <div>
           <DateRangePicker onDateRangeChanged={onDateRangeSelect}>
             <div className={styles.dateRangeWrapper}>
@@ -480,28 +566,6 @@ const FilterHeader = (props) => {
                       onChange={(data) => (filterLogic.current = data)}
                     />
                   ) : null}
-                  {/* {filterData.numFilters > 0 ? (
-                    <Button
-                      color="secondary"
-                      onClick={(e) => {
-                        if (filterData.numFilters < 1) return;
-                        let numberOfFilters = filterData.numFilters - 1;
-
-                        updateFilterValues(
-                          mProps,
-                          numberOfFilters,
-                          true,
-                          filterDataState.numFilters > 0
-                        );
-                      }}
-                      className={[
-                        styles.materialFilterButton,
-                        styles.danger,
-                      ].join(" ")}
-                    >
-                      Remove Filter
-                    </Button>
-                  ) : null} */}
                 </div>
                 <div className={styles.applyWrapper}>
                   {filterData.numFilters ? (
@@ -536,13 +600,15 @@ const mapStateToProps = (state) => {
     currentReportId: state.table.currentReportId,
     apiUrl: state.table.apiAddress,
     reportType: state.table.reportType,
+    websocketConnected: state.table.websocketConnected,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     storeFilterData: (data) => dispatch(actions.getFilterData(data)),
-    getDataFromWebSocket: (id) => dispatch(actions.getDataFromWebSocket(id)),
+    getDataFromWebSocket: (id, callback) =>
+      dispatch(actions.getDataFromWebSocket(id, callback)),
     getReportExportId: (apiUrl, reportType, reportId, params, callback) =>
       dispatch(
         actions.getReportExportId(

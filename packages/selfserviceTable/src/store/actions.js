@@ -5,6 +5,12 @@ import Stomp from "stompjs";
 const config = (token) => ({
   headers: { Authorization: `Bearer ${token}` },
 });
+export const getWebSocketConnectionStatus = (data) => {
+  return {
+    type: actionTypes.UPDATE_WEB_SOCKET_CONNECTION,
+    payload: data,
+  };
+};
 export const getTableDataStart = () => {
   return {
     type: actionTypes.START_FETCHING_TABLE_DATA,
@@ -448,36 +454,30 @@ export const getReportExportId = (
       });
   };
 };
-export const getDataFromWebSocket = (exportId) => {
+export const getConnectedToWebSocket = () => {
   return (dispatch, getState) => {
-    console.log("GET DATA FROM WEBSOCKET CALLED");
-    var stompClient = Stomp.over(new SockJS(`/vbeta/ws`));
-    console.log("HEADERS ARE", getState(), {
-      ...config(getState().table.bearerToken).headers,
-    });
-    stompClient.debug = (f) => f;
-    stompClient.connect(
+    window.stompClient = Stomp.over(
+      new SockJS(`http://35.174.214.251:12124/ws`)
+    );
+    window.stompClient.debug = (f) => f;
+    window.stompClient.connect(
       { ...config(getState().table.bearerToken).headers },
       function (frame) {
-        console.log("frame is", frame);
-        stompClient.subscribe(`/${exportId}`, function (data) {
-          // topic handler
-          console.log("data is1", data);
-        });
-        stompClient.subscribe(`/topic/${exportId}`, function (data) {
-          // topic handler
-          console.log("data is2", data);
-        });
-        stompClient.subscribe(`/exports/${exportId}`, function (data) {
-          // topic handler
-          console.log("data is3", data);
-        });
-        stompClient.subscribe(`/topic/exports/${exportId}`, function (data) {
-          // topic handler
-          console.log("data is4", data);
-        });
+        dispatch(getWebSocketConnectionStatus(true));
+        console.log("FRAME CONNECTED", frame);
       }
     );
+  };
+};
+export const getDataFromWebSocket = (exportId, callback) => {
+  return (dispatch, getState) => {
+    window.stompClient.subscribe(`/exports/${exportId}`, function (data) {
+      console.log("body is", data);
+      let { body } = data;
+      let updatedData = body;
+      if (typeof body === "string") updatedData = JSON.parse(body);
+      if (callback) callback(updatedData);
+    });
   };
 };
 export const updateFieldData = (

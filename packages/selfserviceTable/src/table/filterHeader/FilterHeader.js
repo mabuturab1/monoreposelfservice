@@ -13,7 +13,7 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import styles from "./FilterHeader.module.scss";
 import TableContext from "../context/TableContext";
 import TableFilter from "../tableFilter/TableFilter";
-import { Popover, CircularProgress, Button, Tooltip } from "@material-ui/core";
+import { Popover, CircularProgress, Button } from "@material-ui/core";
 import { connect } from "react-redux";
 import schemaCreator from "../utility/schemaCreator";
 import * as actions from "../../store/actions";
@@ -36,6 +36,7 @@ const FilterHeader = (props) => {
   ];
   const searchConditionsValues = ["<", "<=", ">", ">=", ":>", "::"];
   const filterObj = props.filterData || {};
+  let cancelTimeout = useRef(null);
   const filterDataState = filterObj.filter || {
     idsArr: [],
     data: {},
@@ -60,6 +61,7 @@ const FilterHeader = (props) => {
     isDownloading: false,
     links: "",
   });
+
   const exportButtonClasses = [
     styles.topHeaderItemWrapper,
     styles.mediumPadding,
@@ -68,12 +70,7 @@ const FilterHeader = (props) => {
   const reportType = props.reportType;
   const intervalTimer = useRef(0);
   const resetDownloadStatus = () => {
-    if (
-      downloadStatus.isDownloading ||
-      (downloadStatus.links && downloadStatus.links != "")
-    ) {
-      setDownloadStatus({ isDownloading: false, links: "" });
-    }
+    setDownloadStatus({ isDownloading: false, links: "" });
   };
   let updateReduxState = (filter) => {
     props.storeFilterData({ filter: filter, logic: filterLogic.current });
@@ -258,13 +255,13 @@ const FilterHeader = (props) => {
     return ("0" + val.toString()).trim().slice(-2);
   };
   const isDownloadabelLink = () => {
-    return downloadStatus.links && downloadStatus.links != "";
+    return downloadStatus.links && downloadStatus.links !== "";
   };
   const downloadFile = () => {
-    console.log("Downloading file");
-    window.open(downloadStatus.links);
+    console.log("Downloading file", downloadStatus.links);
+    window.location.assign(downloadStatus.links);
   };
-  const getCurrentDownloadStatus = () => ({ ...downloadStatus });
+
   const exportDataTable = (id) => {
     let updatedParams = new URLSearchParams();
     if (props.queryParams) {
@@ -280,23 +277,22 @@ const FilterHeader = (props) => {
       updatedParams,
 
       (data) => {
-        console.log("data of export is", data);
+        if (cancelTimeout.current) {
+          clearTimeout(cancelTimeout.current);
+        }
+        cancelTimeout.current = setTimeout(() => {
+          setDownloadStatus({ isDownloading: false, links: "" });
+          if (props.showSnackbarContent)
+            props.showSnackbarContent("Cannot fetch file");
+        }, 30000);
         if (data && data.exportId) {
           setDownloadStatus({ isDownloading: true, links: "" });
           props.getDataFromWebSocket(data.exportId, (fileLinks) => {
-            console.log("file links are", fileLinks, {
-              ...getCurrentDownloadStatus(),
+            clearTimeout(cancelTimeout.current);
+            setDownloadStatus({
+              isDownloading: false,
+              links: fileLinks && fileLinks.f,
             });
-            if (downloadStatus.isDownloading) {
-              console.log(
-                "setting download links to false",
-                downloadStatus.isDownloading
-              );
-              setDownloadStatus({
-                isDownloading: false,
-                links: fileLinks && fileLinks.f,
-              });
-            }
           });
         }
       }
@@ -358,26 +354,21 @@ const FilterHeader = (props) => {
               icon={faDownload}
               className={styles.icon}
             />
-            <span className={styles.label}>Download</span>
+            <span className={[styles.label, styles.textWhite].join(" ")}>
+              Download
+            </span>
           </div>
         )}
         {downloadStatus.isDownloading && props.websocketConnected && (
-          <Tooltip title="Click to cancel">
-            <div
-              className={exportButtonClasses}
-              onClick={() =>
-                setDownloadStatus({ isDownloading: false, links: "" })
-              }
-            >
-              <Loader
-                type="ThreeDots"
-                color="#00BFFF"
-                height={15}
-                width={40}
-                timeout={0}
-              />
-            </div>
-          </Tooltip>
+          <div className={exportButtonClasses}>
+            <Loader
+              type="ThreeDots"
+              color="#00BFFF"
+              height={15}
+              width={40}
+              timeout={0}
+            />
+          </div>
         )}
         {!downloadStatus.isDownloading && props.websocketConnected && (
           <MenuButton
@@ -606,6 +597,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    showSnackbarContent: (data) => dispatch(actions.showSnackbarContent(data)),
     storeFilterData: (data) => dispatch(actions.getFilterData(data)),
     getDataFromWebSocket: (id, callback) =>
       dispatch(actions.getDataFromWebSocket(id, callback)),

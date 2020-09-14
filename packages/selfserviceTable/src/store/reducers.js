@@ -20,8 +20,9 @@ const initialState = {
   freezedColumnKeys: [],
   totalUpdateFieldErrors: 0,
   websocketConnected: false,
+  websocketAddress: "",
   bearerToken:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiI3MTdmZDk2Mjk1NWZhZGVjMTQ5ODI1YmM1NGVhNjQ0ZSIsInVzZXJJZCI6ImRmOGM5MWFiODMzNTQ1ODA5MzJjOTU5N2YyN2FlZGU3IiwiaWF0IjoxNTkyNzk3NTcyLCJleHAiOjE2MDA5Mjc3Mzd9.e37FF1HpZt7o5MSJUBDFLw961GaBNESjs2ElHNQTJkM",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiI3MTdmZDk2Mjk1NWZhZGVjMTQ5ODI1YmM1NGVhNjQ0ZSIsInVzZXJJZCI6IjVmMmEzMGVmOWIwNmQ3MzAzZDEyOTkzZCIsImlhdCI6MTU5Mjc5NzU3MiwiZXhwIjoxNjAwOTI3NzM3fQ.FXLEag7u7I6xkmstwqidSWPSfrhmz_vu6EjeuXrBDu0",
   snackbarStatus: {
     updated: false,
     cellKey: "",
@@ -169,6 +170,8 @@ const reducer = (state = initialState, action) => {
       });
     case actionTypes.CLEAR_TABLE_DATA:
       return updateObject(state, { tableData: [] });
+    case actionTypes.UPDATE_WEB_SOCKET_ADDRESS:
+      return updateObject(state, { websocketAddress: action.payload });
     case actionTypes.ADD_FREEZED_COLUMN:
       let prevFreezed = [action.payload];
       if (!state.freezedColumnKeys.includes("indexIdNumber"))

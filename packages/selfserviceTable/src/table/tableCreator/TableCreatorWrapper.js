@@ -33,9 +33,12 @@ const mapDispatchToProps = (dispatch) => {
     updateApiUrl: (apiAddress) => dispatch(actions.updateApiUrl(apiAddress)),
     updateCurrentReportId: (currentReportId) =>
       dispatch(actions.updateCurrentReportId(currentReportId)),
+    updateWebsocketAddress: (websocketAddress) =>
+      dispatch(actions.updateWebsocketAddress(websocketAddress)),
     deleteTableContent: (apiUrl, reportType, reportId, rowId) =>
       dispatch(actions.deleteTableContent(apiUrl, reportType, reportId, rowId)),
-    getConnectedToWebSocket: () => dispatch(actions.getConnectedToWebSocket()),
+    getConnectedToWebSocket: (websocketAddress) =>
+      dispatch(actions.getConnectedToWebSocket(websocketAddress)),
     uploadFile: (
       apiUrl,
       reportType,

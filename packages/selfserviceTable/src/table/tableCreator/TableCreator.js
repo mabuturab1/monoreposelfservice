@@ -140,6 +140,7 @@ const TableCreator = (props) => {
     staticData,
     fetchTableData: mFetchTableData,
     fetchTableHeader: mFetchTableHeader,
+    websocketAddress,
     getConnectedToWebSocket: mGetConnectedToWebSocket,
     updateApiUrl: mUpdateApiUrl,
     updateCurrentReportId: mUpdateCurrentReportId,
@@ -195,8 +196,8 @@ const TableCreator = (props) => {
     mFetchTableHeader(apiUrl, reportType, currentReportId);
   }, [mFetchTableHeader, apiUrl, reportType, currentReportId]);
   const getConnectedToWebSocket = useCallback(() => {
-    mGetConnectedToWebSocket();
-  }, [mGetConnectedToWebSocket]);
+    mGetConnectedToWebSocket(websocketAddress);
+  }, [mGetConnectedToWebSocket, websocketAddress]);
   const createValidationSchema = useCallback(() => {
     let prevSchema = {};
     let cellSpecs = createHeaderSpecs(tableHeader);
@@ -373,7 +374,7 @@ const TableCreator = (props) => {
   }, [fetchTableHeader, apiUrl, currentReportId, staticData, currentTrigger]);
   useEffect(() => {
     if (!staticData) getConnectedToWebSocket();
-  }, [getConnectedToWebSocket]);
+  }, [getConnectedToWebSocket, staticData]);
   useEffect(() => {
     currentUpdateCycle.current += 1;
   }, [editAllowed, currentUpdateCycle]);

@@ -109,6 +109,12 @@ export const getAddToFreezedColumn = (data) => {
     payload: data,
   };
 };
+export const updateWebsocketAddress = (data) => {
+  return {
+    type: actionTypes.UPDATE_WEB_SOCKET_ADDRESS,
+    payload: data,
+  };
+};
 export const getRemoveFromFreezedColumn = (data) => {
   return {
     type: actionTypes.REMOVE_FREEZED_COLUMN,
@@ -454,11 +460,9 @@ export const getReportExportId = (
       });
   };
 };
-export const getConnectedToWebSocket = () => {
+export const getConnectedToWebSocket = (websocketAddress) => {
   return (dispatch, getState) => {
-    window.stompClient = Stomp.over(
-      new SockJS(`http://35.174.214.251:12124/ws`)
-    );
+    window.stompClient = Stomp.over(new SockJS(websocketAddress));
     window.stompClient.debug = (f) => f;
     window.stompClient.connect(
       { ...config(getState().table.bearerToken).headers },

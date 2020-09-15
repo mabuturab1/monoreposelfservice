@@ -15,6 +15,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { uploadFile } from "./uploadFunctions";
 import PdfImage from "../../../public/pdfImage.png";
 import YoutubeImage from "../../../public/youtube.png";
+import VideoImage from "../../../public/video.png";
+
 const BootstrapInput = withStyles((theme) => ({
   root: {
     minWidth: "5rem",
@@ -81,6 +83,11 @@ const useStyles = makeStyles((theme) => ({
 
 const Uploader = (props) => {
   const { onFileUploadedToServer, apiUrl, reportType, bearerToken } = props;
+  let { value: mValue } = props;
+  let initValue = {};
+  if (mValue && mValue.f && mValue.tp) {
+    initValue = { ...mValue };
+  }
   const classes = useStyles();
   const fileName = useRef(null);
   const [open, setOpen] = useState(false);
@@ -91,9 +98,13 @@ const Uploader = (props) => {
   };
   const handleClose = () => {
     setOpen(false);
+    setCurrentValue(null);
+    setIsUploading(false);
+    fileName.current = null;
   };
+
   const id = open ? "popover" : undefined;
-  const [currentType, setCurrentType] = useState("Image");
+  const [currentType, setCurrentType] = useState(initValue.tp || "Image");
   const handleChange = (event) => {
     setCurrentValue(null);
     setCurrentType(event.target.value);
@@ -103,51 +114,91 @@ const Uploader = (props) => {
     setCurrentValue(data);
   };
   const getUI = () => {
-    switch (currentType) {
-      case "Image":
+    switch (currentType.toUpperCase()) {
+      case "IMAGE":
         return <Image onSubmit={handleDataSubmit} />;
       case "PDF":
         return <Document onSubmit={handleDataSubmit} />;
-      case "Video":
+      case "VIDEO":
         return <Video onSubmit={handleDataSubmit} />;
-      case "Youtube":
+      case "YOUTUBE":
         return <LinkInput onSubmit={handleDataSubmit} />;
     }
   };
-  const getCurrentDisplayElement = () => {
-    switch (currentType) {
-      case "Image":
-        return <img src={currentValue} className={styles.singleItemWrapper} />;
+  const transformCurrentType = (value) => {
+    switch (value.toUpperCase()) {
+      case "IMAGE":
+        return "Image";
       case "PDF":
+        return "PDF";
+      case "YOUTUBE":
+        return "Youtube";
+      case "VIDEO":
+        return "Video";
+      default:
+        return value;
+    }
+  };
+  const getCurrentDisplayElement = () => {
+    switch (currentType.toUpperCase()) {
+      case "IMAGE":
+        return (
+          <img
+            src={currentValue || initValue.t}
+            className={styles.singleItemWrapper}
+          />
+        );
+      case "PDF":
+        let returnElementPDF = currentValue ? (
+          <img src={PdfImage} className={styles.singleItemWrapper} />
+        ) : (
+          <img
+            src={initValue.t || PdfImage}
+            className={styles.singleItemWrapper}
+          />
+        );
+
         return (
           <React.Fragment>
-            <img src={PdfImage} className={styles.singleItemWrapper} />
-            <p>{fileName.current}</p>
+            {returnElementPDF}
+            {fileName.current && <p>{fileName.current}</p>}
           </React.Fragment>
         );
-      case "Video":
-        return (
+      case "VIDEO":
+        let returnElementVideo = currentValue ? (
           <video
             controls
             src={currentValue}
             className={styles.singleItemWrapper}
           />
+        ) : (
+          <img
+            src={initValue.t || VideoImage}
+            className={styles.singleItemWrapper}
+          />
         );
-      case "Youtube":
+        return returnElementVideo;
+      case "YOUTUBE":
+        let returnElementYoutube = currentValue ? (
+          <img src={YoutubeImage} className={styles.singleItemWrapper} />
+        ) : (
+          <img src={initValue.t} className={styles.singleItemWrapper} />
+        );
         return (
           <React.Fragment>
-            <img src={YoutubeImage} className={styles.singleItemWrapper} />
-            <a href="#">{fileName.current}</a>
+            {returnElementYoutube}
+            {fileName.current && <a href="#">{fileName.current}</a>}
           </React.Fragment>
         );
     }
   };
   const startUploadingFile = () => {
-    if (currentType == "Youtube" && currentValue) {
+    if (currentType.toUpperCase() == "YOUTUBE" && currentValue) {
       onFileUploadedToServer(currentValue, currentValue, {
         t: currentValue,
         f: currentValue,
       });
+
       return;
     }
     setIsUploading(true);
@@ -162,11 +213,13 @@ const Uploader = (props) => {
         setIsUploading(false);
         if (status && response && onFileUploadedToServer) {
           onFileUploadedToServer(currentValue, fileName.current, response);
+
           handleClose();
         }
       }
     );
   };
+
   return (
     <React.Fragment>
       <div onClick={handleClick}>{props.children}</div>
@@ -182,9 +235,12 @@ const Uploader = (props) => {
         onClose={handleClose}
       >
         <div className={styles.uploaderWrapper}>
-          {currentValue != null ? (
+          {currentValue != null || initValue.t != null ? (
             <div className={styles.displayElementWrapper}>
               {getCurrentDisplayElement()}
+              {!currentValue && initValue.f && (
+                <a href={initValue.f}>View the file</a>
+              )}
             </div>
           ) : (
             <label style={{ cursor: "pointer" }}>
@@ -216,7 +272,7 @@ const Uploader = (props) => {
               <Select
                 labelId="demo-customized-select-label"
                 id="demo-customized-select"
-                value={currentType}
+                value={transformCurrentType(currentType)}
                 onChange={handleChange}
                 input={<BootstrapInput />}
               >
@@ -245,6 +301,7 @@ const Uploader = (props) => {
                 root: classes.buttonRoot,
                 containedPrimary: classes.containedPrimary,
               }}
+              disabled={currentValue == null}
               color="primary"
               variant="contained"
               onClick={startUploadingFile}

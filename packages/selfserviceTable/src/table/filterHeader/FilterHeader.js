@@ -257,6 +257,11 @@ const FilterHeader = (props) => {
   const isDownloadabelLink = () => {
     return downloadStatus.links && downloadStatus.links !== "";
   };
+  const processDownloadMenu = (id) => {
+    if (id === "DOWNLOAD") return downloadFile();
+    else if (id === "RESET")
+      return setDownloadStatus({ isDownloading: false, links: "" });
+  };
   const downloadFile = () => {
     console.log("Downloading file", downloadStatus.links);
     window.location.assign(downloadStatus.links);
@@ -283,7 +288,7 @@ const FilterHeader = (props) => {
         cancelTimeout.current = setTimeout(() => {
           setDownloadStatus({ isDownloading: false, links: "" });
           if (props.showSnackbarContent)
-            props.showSnackbarContent("Cannot fetch file");
+            props.showSnackbarContent("Cannot fetch file at the moment");
         }, 30000);
         if (data && data.exportId) {
           setDownloadStatus({ isDownloading: true, links: "" });
@@ -341,23 +346,28 @@ const FilterHeader = (props) => {
           false
         )}
         {isDownloadabelLink() && props.websocketConnected && (
-          <div
-            className={[exportButtonClasses]
-              .concat(styles.downloadButtonStyle)
-              .join(" ")}
-            onClick={() => {
-              downloadFile();
-            }}
+          <MenuButton
+            itemList={[
+              { id: "DOWNLOAD", label: "Download" },
+              { id: "RESET", label: "Reset" },
+            ]}
+            onItemSelected={(id) => processDownloadMenu(id)}
           >
-            <FontAwesomeIcon
-              size={"lg"}
-              icon={faDownload}
-              className={styles.icon}
-            />
-            <span className={[styles.label, styles.textWhite].join(" ")}>
-              Download
-            </span>
-          </div>
+            <div
+              className={[exportButtonClasses]
+                .concat(styles.downloadButtonStyle)
+                .join(" ")}
+            >
+              <FontAwesomeIcon
+                size={"lg"}
+                icon={faDownload}
+                className={styles.icon}
+              />
+              <span className={[styles.label, styles.textWhite].join(" ")}>
+                Download
+              </span>
+            </div>
+          </MenuButton>
         )}
         {downloadStatus.isDownloading && props.websocketConnected && (
           <div className={exportButtonClasses}>

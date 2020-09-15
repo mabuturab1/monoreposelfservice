@@ -96,6 +96,7 @@ const DocumentUpload = (props) => {
             <React.Fragment>
               <Uploader
                 apUrl={apiUrl}
+                value={mValue}
                 reportType={reportType}
                 bearerToken={bearerToken}
                 onFileUploadedToServer={getUploadLinks}

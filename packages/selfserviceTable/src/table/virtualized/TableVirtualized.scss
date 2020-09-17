@@ -81,6 +81,7 @@
 }
 .freezedTable * {
   scrollbar-width: none !important;
+  overflow: hidden !important;
 }
 .freezedTable ::-webkit-scrollbar {
   display: none;

@@ -69,11 +69,11 @@ table tr:last-child td:last-child {
   position: absolute;
   top: 0;
   height: 100%;
-  z-index: 1000000;
+  z-index: 100;
   background: white;
 }
 .freezedTable .ReactVirtualized_Table_Grid {
-  overflow-y: hidden !important;
+  overflow: hidden !important;
 }
 .addData {
   position: absolute;

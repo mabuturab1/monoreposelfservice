@@ -16,6 +16,7 @@ import { uploadFile } from "./uploadFunctions";
 import PdfImage from "../../../public/pdfImage.png";
 import YoutubeImage from "../../../public/youtube.png";
 import VideoImage from "../../../public/video.png";
+import DummyImage from "../../../public/image.png";
 
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -80,9 +81,14 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "'Roboto','sans-serif'",
   },
 }));
-
-const Uploader = (props) => {
-  const { onFileUploadedToServer, apiUrl, reportType, bearerToken } = props;
+const UploaderContent = (props) => {
+  const {
+    onFileUploadedToServer,
+    apiUrl,
+    reportType,
+    bearerToken,
+    handleClose,
+  } = props;
   let { value: mValue } = props;
   let initValue = {};
   if (mValue && mValue.f && mValue.tp) {
@@ -90,20 +96,10 @@ const Uploader = (props) => {
   }
   const classes = useStyles();
   const fileName = useRef(null);
-  const [open, setOpen] = useState(false);
+
   const [currentValue, setCurrentValue] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-  const handleClick = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-    setCurrentValue(null);
-    setIsUploading(false);
-    fileName.current = null;
-  };
-
-  const id = open ? "popover" : undefined;
+  const initCurrentType = useRef(initValue.tp || "Image");
   const [currentType, setCurrentType] = useState(initValue.tp || "Image");
   const handleChange = (event) => {
     setCurrentValue(null);
@@ -122,7 +118,14 @@ const Uploader = (props) => {
       case "VIDEO":
         return <Video onSubmit={handleDataSubmit} />;
       case "YOUTUBE":
-        return <LinkInput onSubmit={handleDataSubmit} />;
+        return (
+          <LinkInput
+            initValue={
+              (initValue.tp || "").toUpperCase() === "YOUTUBE" && initValue.f
+            }
+            onSubmit={handleDataSubmit}
+          />
+        );
     }
   };
   const transformCurrentType = (value) => {
@@ -139,17 +142,29 @@ const Uploader = (props) => {
         return value;
     }
   };
+  const showUpdatedElement = () => {
+    return (
+      currentValue != null ||
+      currentType.toUpperCase() !== initCurrentType.current.toUpperCase()
+    );
+  };
   const getCurrentDisplayElement = () => {
     switch (currentType.toUpperCase()) {
       case "IMAGE":
-        return (
+        let returnElementImage = showUpdatedElement() ? (
           <img
-            src={currentValue || initValue.t}
+            src={currentValue || DummyImage}
+            className={styles.singleItemWrapper}
+          />
+        ) : (
+          <img
+            src={initValue.t || DummyImage}
             className={styles.singleItemWrapper}
           />
         );
+        return returnElementImage;
       case "PDF":
-        let returnElementPDF = currentValue ? (
+        let returnElementPDF = showUpdatedElement() ? (
           <img src={PdfImage} className={styles.singleItemWrapper} />
         ) : (
           <img
@@ -165,12 +180,16 @@ const Uploader = (props) => {
           </React.Fragment>
         );
       case "VIDEO":
-        let returnElementVideo = currentValue ? (
-          <video
-            controls
-            src={currentValue}
-            className={styles.singleItemWrapper}
-          />
+        let returnElementVideo = showUpdatedElement() ? (
+          currentValue ? (
+            <video
+              controls
+              src={currentValue}
+              className={styles.singleItemWrapper}
+            />
+          ) : (
+            <img src={VideoImage} className={styles.singleItemWrapper} />
+          )
         ) : (
           <img
             src={initValue.t || VideoImage}
@@ -179,7 +198,7 @@ const Uploader = (props) => {
         );
         return returnElementVideo;
       case "YOUTUBE":
-        let returnElementYoutube = currentValue ? (
+        let returnElementYoutube = showUpdatedElement() ? (
           <img src={YoutubeImage} className={styles.singleItemWrapper} />
         ) : (
           <img src={initValue.t} className={styles.singleItemWrapper} />
@@ -193,14 +212,6 @@ const Uploader = (props) => {
     }
   };
   const startUploadingFile = () => {
-    if (currentType.toUpperCase() == "YOUTUBE" && currentValue) {
-      onFileUploadedToServer(currentValue, currentValue, {
-        t: currentValue,
-        f: currentValue,
-      });
-
-      return;
-    }
     setIsUploading(true);
 
     uploadFile(
@@ -221,6 +232,102 @@ const Uploader = (props) => {
   };
 
   return (
+    <div className={styles.uploaderWrapper}>
+      {currentValue != null || initValue.t != null ? (
+        <div className={styles.displayElementWrapper}>
+          {getCurrentDisplayElement()}
+          {!showUpdatedElement() && initValue.f && (
+            <a href={initValue.f}>View the file</a>
+          )}
+        </div>
+      ) : (
+        <label style={{ cursor: "pointer" }}>
+          <div style={{ width: "0px", height: "0px", display: "none" }}>
+            {getUI()}
+          </div>
+          <div className={styles.iconWrapper}>
+            <div className={styles.editIcon}>
+              <FontAwesomeIcon
+                icon={faFileAlt}
+                size="8x"
+                style={{ paddingRight: "0.6rem", color: "#BFBFBF" }}
+              />
+            </div>
+            <div className={styles.subtitleWrapper}>
+              <FontAwesomeIcon
+                icon={faFileAlt}
+                size="1x"
+                style={{ paddingRight: "1rem", color: "#4E88F5" }}
+              />
+              <p className={styles.subtitleText}>Click here to edit</p>
+            </div>
+          </div>
+        </label>
+      )}
+      <div className={styles.inputWrapper}>
+        <div className={styles.fileSelection}>
+          <p className={styles.label}>Type</p>
+          <Select
+            labelId="demo-customized-select-label"
+            id="demo-customized-select"
+            value={transformCurrentType(currentType)}
+            onChange={handleChange}
+            input={<BootstrapInput />}
+          >
+            <MenuItem value={"Image"}>Image</MenuItem>
+            <MenuItem value={"PDF"}>PDF</MenuItem>
+            <MenuItem value={"Video"}>Video</MenuItem>
+            <MenuItem value={"Youtube"}>Youtube</MenuItem>
+          </Select>
+        </div>
+        <div className={styles.fileSelection}> {getUI()}</div>
+      </div>
+      <div className={styles.buttonWrapper}>
+        <Button
+          classes={{
+            root: classes.buttonRoot,
+            containedSecondary: classes.containedSecondary,
+          }}
+          color="secondary"
+          variant="contained"
+          onClick={handleClose}
+        >
+          Cancel
+        </Button>
+        <Button
+          classes={{
+            root: classes.buttonRoot,
+            containedPrimary: classes.containedPrimary,
+          }}
+          disabled={currentValue == null}
+          color="primary"
+          variant="contained"
+          onClick={startUploadingFile}
+        >
+          {isUploading ? (
+            <div style={{ color: "white" }}>
+              <CircularProgress size={20} color="inherit" />
+            </div>
+          ) : (
+            "Upload"
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+};
+const Uploader = (props) => {
+  const [open, setOpen] = useState(false);
+  const id = open ? "popover" : undefined;
+  const classes = useStyles();
+  const handleClick = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
     <React.Fragment>
       <div onClick={handleClick}>{props.children}</div>
 
@@ -234,88 +341,7 @@ const Uploader = (props) => {
         open={open}
         onClose={handleClose}
       >
-        <div className={styles.uploaderWrapper}>
-          {currentValue != null || initValue.t != null ? (
-            <div className={styles.displayElementWrapper}>
-              {getCurrentDisplayElement()}
-              {!currentValue && initValue.f && (
-                <a href={initValue.f}>View the file</a>
-              )}
-            </div>
-          ) : (
-            <label style={{ cursor: "pointer" }}>
-              <div style={{ width: "0px", height: "0px", display: "none" }}>
-                {getUI()}
-              </div>
-              <div className={styles.iconWrapper}>
-                <div className={styles.editIcon}>
-                  <FontAwesomeIcon
-                    icon={faFileAlt}
-                    size="8x"
-                    style={{ paddingRight: "0.6rem", color: "#BFBFBF" }}
-                  />
-                </div>
-                <div className={styles.subtitleWrapper}>
-                  <FontAwesomeIcon
-                    icon={faFileAlt}
-                    size="1x"
-                    style={{ paddingRight: "1rem", color: "#4E88F5" }}
-                  />
-                  <p className={styles.subtitleText}>Click here to edit</p>
-                </div>
-              </div>
-            </label>
-          )}
-          <div className={styles.inputWrapper}>
-            <div className={styles.fileSelection}>
-              <p className={styles.label}>Type</p>
-              <Select
-                labelId="demo-customized-select-label"
-                id="demo-customized-select"
-                value={transformCurrentType(currentType)}
-                onChange={handleChange}
-                input={<BootstrapInput />}
-              >
-                <MenuItem value={"Image"}>Image</MenuItem>
-                <MenuItem value={"PDF"}>PDF</MenuItem>
-                <MenuItem value={"Video"}>Video</MenuItem>
-                <MenuItem value={"Youtube"}>Youtube</MenuItem>
-              </Select>
-            </div>
-            <div className={styles.fileSelection}> {getUI()}</div>
-          </div>
-          <div className={styles.buttonWrapper}>
-            <Button
-              classes={{
-                root: classes.buttonRoot,
-                containedSecondary: classes.containedSecondary,
-              }}
-              color="secondary"
-              variant="contained"
-              onClick={handleClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              classes={{
-                root: classes.buttonRoot,
-                containedPrimary: classes.containedPrimary,
-              }}
-              disabled={currentValue == null}
-              color="primary"
-              variant="contained"
-              onClick={startUploadingFile}
-            >
-              {isUploading ? (
-                <div style={{ color: "white" }}>
-                  <CircularProgress size={20} color="inherit" />
-                </div>
-              ) : (
-                "Upload"
-              )}
-            </Button>
-          </div>
-        </div>
+        <UploaderContent {...props} {...{ handleClick, handleClose }} />
       </Dialog>
     </React.Fragment>
   );

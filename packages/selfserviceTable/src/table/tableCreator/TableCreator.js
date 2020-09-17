@@ -517,17 +517,18 @@ const TableCreator = (props) => {
       }
     }, 5);
   };
-  const freezedColumnKeys = props.freezedColumnKeys || [];
+  const freezedColumnKeys = useRef([]);
+  freezedColumnKeys.current = props.freezedColumnKeys || [];
   const tableHeaderFreezed = tableHeader.filter((el) =>
-    freezedColumnKeys.includes(el.key)
+    freezedColumnKeys.current.includes(el.key)
   );
   const cellSpecsNew = createHeaderSpecs(tableHeader);
   const cellSpecsFreezed = cellSpecsNew.filter((el) =>
-    freezedColumnKeys.includes(el.key)
+    freezedColumnKeys.current.includes(el.key)
   );
   const getFreezedColumnWidth = () => {
-    if (freezedColumnKeys.length < 1) return 0;
-    return freezedColumnKeys
+    if (freezedColumnKeys.current.length < 1) return 0;
+    return freezedColumnKeys.current
       .map((el) => columnsWidth[el])
       .reduce((a, b) => a + b, 0);
   };
@@ -541,8 +542,9 @@ const TableCreator = (props) => {
   };
 
   const updateCurrentScroll = (val) => {
-    if (freezedColumnKeys.length < 1) return;
-    if (!isScrolling && !tempIsScrolling.current) {
+    console.log(freezedColumnKeys.current.length);
+    if (freezedColumnKeys.current.length < 1) return;
+    if (!tempIsScrolling.current) {
       tempIsScrolling.current = true;
       console.log("FREEZED TABLE STATE START", tempIsScrolling.current);
       setIsScrolling(true);
@@ -694,14 +696,14 @@ const TableCreator = (props) => {
               <div
                 style={{ position: "relative", width: "100%", height: "100%" }}
               >
-                {freezedColumnKeys.length > 0 ? (
+                {freezedColumnKeys.current.length > 0 ? (
                   <div
                     className={styles.freezedTable}
                     style={{
                       width: getFreezedColumnWidth(),
                       height: `calc(100% - ${20}px)`,
-                      maxWidth: "50vw",
-                      overflow: "auto",
+                      maxWidth: "70vw",
+                      overflow: "hidden",
                     }}
                   >
                     {freezedTable(formData)}

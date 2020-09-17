@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import StyledInput from "../styledInput/StyledInput";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
-const LinkInput = ({ onSubmit }) => {
-  const [value, setValue] = useState("");
+const LinkInput = ({ initValue, onSubmit }) => {
+  const [value, setValue] = useState(initValue || "");
   const handleSubmit = () => {
     if (value.length > 0 && onSubmit) onSubmit(value);
   };

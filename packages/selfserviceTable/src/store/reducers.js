@@ -22,7 +22,7 @@ const initialState = {
   websocketConnected: false,
   websocketAddress: "",
   bearerToken:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiI3MTdmZDk2Mjk1NWZhZGVjMTQ5ODI1YmM1NGVhNjQ0ZSIsInVzZXJJZCI6IjVmMmEzMGVmOWIwNmQ3MzAzZDEyOTkzZCIsImlhdCI6MTU5Mjc5NzU3MiwiZXhwIjoxNjAwOTI3NzM3fQ.FXLEag7u7I6xkmstwqidSWPSfrhmz_vu6EjeuXrBDu0",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiI3MTdmZDk2Mjk1NWZhZGVjMTQ5ODI1YmM1NGVhNjQ0ZSIsInVzZXJJZCI6IjVmNTg3ZWRiODNlZjVjNzZmMGY1NDYzYyIsImlhdCI6MTU5Mjc5NzU3MiwiZXhwIjoxNjAwOTI3NzM3fQ.kOG1znrRFBrVWFWWunsWFbSccDFDjJBGgy5pEbMipOI",
   snackbarStatus: {
     updated: false,
     cellKey: "",

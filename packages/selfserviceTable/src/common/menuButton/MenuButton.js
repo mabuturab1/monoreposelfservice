@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     marginRight: theme.spacing(2),
   },
+  menuAbove: {
+    zIndex: 10000,
+  },
 }));
 
 const MenuButton = (props) => {
@@ -77,7 +80,7 @@ const MenuButton = (props) => {
                 transformOrigin: "right bottom",
               }}
             >
-              <Paper>
+              <Paper classes={{ root: classes.menuAbove }}>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList autoFocusItem={open} id="menu-list-grow">
                     {menuItemsList.map((el, index) => (

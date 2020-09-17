@@ -3,6 +3,12 @@ const getFormData = async (localData, type) => {
   console.log("local image file url is", localData);
 
   if (!localData) return;
+  if (type && String(type).toUpperCase() === "YOUTUBE") {
+    const formData = new FormData();
+    formData.append("type", String(type).toUpperCase());
+    formData.append("embedUrl", String(localData));
+    return formData;
+  }
   let blob = await fetch(localData).then((r) => r.blob());
   let file = new File([blob], "test");
   const formData = new FormData();
